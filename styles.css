@@ -48,12 +48,15 @@ body {
     padding: 28px 22px 70px;
 }
 
+/* Kopfbereich Wohnradar: Desktop dreispaltig, mobil zweizeilig */
 header {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
     align-items: center;
+    column-gap: 24px;
+    row-gap: 5px;
     margin-bottom: 32px;
-    padding-bottom: 1px;
+    padding-bottom: 15px;
     border-bottom: 1px solid var(--line);
 }
 
@@ -62,9 +65,83 @@ header {
     font-size: 22px;
     font-weight: 800;
     letter-spacing: -.8px;
+    line-height: 1.2;
+    white-space: nowrap;
 }
 
 .brand em { color: var(--ink); font-style: normal; }
+
+.header-description {
+    margin: 0;
+    min-width: 0;
+    color: var(--muted);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.35;
+}
+
+.header-description .separator {
+    color: var(--accent);
+    padding: 0 5px;
+}
+
+.home-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    min-height: 40px;
+    padding: 8px 12px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    background: var(--card);
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.home-link:hover {
+    background: var(--card2);
+    border-color: var(--accent);
+}
+
+.home-link:focus-visible {
+    outline: 2px solid var(--accent-dark);
+    outline-offset: 2px;
+}
+
+@media (max-width: 700px) {
+    header {
+        grid-template-columns: minmax(0, 1fr) auto;
+        column-gap: 12px;
+        row-gap: 8px;
+        margin-bottom: 23px;
+        padding-bottom: 13px;
+    }
+
+    .brand {
+        grid-column: 1;
+        grid-row: 1;
+        font-size: 21px;
+    }
+
+    .home-link {
+        grid-column: 2;
+        grid-row: 1;
+        min-height: 36px;
+        padding: 7px 10px;
+        font-size: 12px;
+    }
+
+    .header-description {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        font-size: 13px;
+    }
+}
 
 h2 {
     margin: 0 0 21px;
@@ -567,4 +644,74 @@ details[open] summary { margin-bottom: 14px; }
   }
   .mobile-place-suggestions button small { display:block; color:var(--muted); font-size:12px; }
   .mobile-place-empty { padding:18px 12px; color:var(--muted); }
+}
+
+
+/* HEADER: Desktop und kompakte Smartphone-Ansicht */
+
+.home-icon {
+  display: none;
+}
+
+/* Kompakter mobiler Header */
+
+@media (max-width: 700px) {
+
+  header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 36px;
+    grid-template-rows: auto auto;
+    column-gap: 10px;
+    row-gap: 2px;
+    align-items: center;
+    padding-bottom: 10px;
+    margin-bottom: 18px;
+  }
+
+  .brand {
+    grid-column: 1;
+    grid-row: 1;
+    font-size: 21px;
+    line-height: 1.15;
+    white-space: nowrap;
+  }
+
+  .header-description {
+    grid-column: 1;
+    grid-row: 2;
+    min-width: 0;
+    margin: 0;
+    overflow: visible;
+    font-size: 12px;
+    line-height: 1.35;
+    white-space: normal;
+    text-overflow: clip;
+  }
+
+  .header-description .separator {
+    padding: 0 3px;
+  }
+
+  .home-link {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    min-height: 36px;
+    padding: 0;
+    border: none;
+    background: transparent;
+  }
+
+  .home-icon {
+    display: block;
+  }
+
+  .home-text {
+    display: none;
+  }
 }

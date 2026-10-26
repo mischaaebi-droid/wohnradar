@@ -81,8 +81,41 @@ async function starteBauland() {
       )
     );
 
+    
+    // Progressive Korrektur der Baulandpreise
+    // Zuschlag zwischen 7 und 15 Prozent
+
+    const korrekturStufen = [
+      [4000, 1.09],
+      [6000, 1.1],
+      [8000, 1.11],
+      [10000, 1.13],
+      [12000, 1.14],
+      [15000, 1.16],
+      [20000, 1.17]
+    ];
+
+    function baulandKorrektur(preis) {
+      if (preis <= 4000) return 1.09;
+      if (preis >= 20000) return 1.17;
+
+      for (let i = 1; i < korrekturStufen.length; i++) {
+        const [p2, f2] = korrekturStufen[i];
+        const [p1, f1] = korrekturStufen[i - 1];
+
+        if (preis <= p2) {
+          const anteil = (preis - p1) / (p2 - p1);
+          return f1 + anteil * (f2 - f1);
+        }
+      }
+
+      return 1.15;
+    }
+
     const base = p * share *
-      (type === 'multi' ? .65 : .35);
+      (type === 'multi' ? .65 : .35) *
+      baulandKorrektur(p);
+
 
     $('estimate').textContent =
       'CHF ' + fmt(base);
@@ -95,8 +128,8 @@ async function starteBauland() {
 
     $('buildLabel').textContent =
       type === 'multi'
-        ? 'Mehrfamilienhaus'
-        : 'Einfamilienhaus';
+        ? 'Hoch (Mehrfamilienhaus)'
+        : 'Tief (Einfamilienhaus)';
 
     $('apartmentPrice').textContent =
       'CHF ' + fmt(p) + '/m²';

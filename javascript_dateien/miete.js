@@ -1,3 +1,4 @@
+
 "use strict";
 
 /*
@@ -98,6 +99,8 @@ async function starteMietrechner() {
 
   let selection = defaultZip;
 
+  let mietwertFreigegeben = false;
+
   let parking = {
     garage: 0,
     outside: 0
@@ -142,10 +145,31 @@ async function starteMietrechner() {
     new: 1.08
   };
 
-  const parkingAddition = {
-    garage: 130,
-    outside: 65
-  };
+  // Parkplatzmieten nach dem Mietpreisniveau der PLZ (q50, 80 m²).
+  const mietniveaus = Object.values(MODEL)
+    .map(p => estimate(p.q50, 80))
+    .filter(Number.isFinite)
+    .sort((a, b) => a - b);
+
+  function perzentil(werte, anteil) {
+    const index = (werte.length - 1) * anteil;
+    const unten = Math.floor(index);
+    const oben = Math.ceil(index);
+    return werte[unten] +
+      (werte[oben] - werte[unten]) * (index - unten);
+  }
+
+  const minimumMietniveau = perzentil(mietniveaus, 0.05);
+  const maximumMietniveau = perzentil(mietniveaus, 0.95);
+
+  function parkplatzMiete(plz, minimum, maximum) {
+    const mietniveau = estimate(MODEL[plz].q50, 80);
+    const anteil = Math.max(0, Math.min(1,
+      (mietniveau - minimumMietniveau) /
+      (maximumMietniveau - minimumMietniveau)
+    ));
+    return Math.round((minimum + anteil * (maximum - minimum)) / 5) * 5;
+  }
 
   function exteriorPremium(type, area) {
 
@@ -255,10 +279,10 @@ async function starteMietrechner() {
       berechneNebenkosten(area, selection);
 
     const garageBetrag =
-      parking.garage * parkingAddition.garage;
+      parking.garage * parkplatzMiete(selection, 85, 220);
 
     const aussenBetrag =
-      parking.outside * parkingAddition.outside;
+      parking.outside * parkplatzMiete(selection, 30, 130);
 
     const brutto =
       netto +
@@ -266,12 +290,14 @@ async function starteMietrechner() {
       garageBetrag +
       aussenBetrag;
 
-    text("netRent", money(netto));
+    text("netRent", money(mietwertFreigegeben ? netto : 0));
+    text("netout", money(mietwertFreigegeben ? netto : 0));
 
     text(
       "utilities",
-      money(nebenkosten)
+      money(mietwertFreigegeben ? nebenkosten : 0)
     );
+    text("utilitiesout", money(mietwertFreigegeben ? nebenkosten : 0));
 
     text(
       "garageLabel",
@@ -280,7 +306,7 @@ async function starteMietrechner() {
 
     text(
       "garageout",
-      "+" + money(garageBetrag)
+      "+" + money(mietwertFreigegeben ? garageBetrag : 0)
     );
 
     text(
@@ -290,12 +316,12 @@ async function starteMietrechner() {
 
     text(
       "outsideout",
-      "+" + money(aussenBetrag)
+      "+" + money(mietwertFreigegeben ? aussenBetrag : 0)
     );
 
     text(
       "estimate",
-      money(brutto)
+      money(mietwertFreigegeben ? brutto : 0)
     );
 
     /* -------------------------------------
@@ -380,7 +406,7 @@ async function starteMietrechner() {
     suggestionList.style.display = "block";
     suggestionList.style.visibility = "visible";
     suggestionList.style.opacity = "1";
-
+    
     placeInput.setAttribute(
       "aria-expanded",
       "true"
@@ -827,6 +853,17 @@ async function starteMietrechner() {
       );
     });
 
+  // Mietbeträge erst nach Klick auf "Mietwert bestimmen" anzeigen.
+  for (const id of ["estimateButtonDesktop", "estimateButtonMobile"]) {
+    const button = $(id);
+    if (button) {
+      button.addEventListener("click", () => {
+        mietwertFreigegeben = true;
+        refresh();
+      });
+    }
+  }
+
   /* =====================================================
      13. ZURÜCKSETZEN
      ===================================================== */
@@ -857,6 +894,8 @@ async function starteMietrechner() {
             );
           });
       }
+
+      mietwertFreigegeben = false;
 
       parking = {
         garage: 0,

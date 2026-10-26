@@ -1,11 +1,9 @@
+
 "use strict";
 
 /*
  * WOHNRADAR – Eigentumswohnungen
- *
  * Datenbasis: RealAdvisor-PLZ-Medianpreise aus wohnungspreise.json.
- * Zuschläge und Abschläge sind transparente Modellannahmen, nicht
- * aus der PLZ-CSV empirisch geschätzte Koeffizienten.
  */
 
 async function starteWohnungswert() {
@@ -17,16 +15,14 @@ async function starteWohnungswert() {
     }
 
     const DATA = await antwort.json();
-
     const $ = id => document.getElementById(id);
-
-    const fmt = n =>
-        Math.round(n).toLocaleString('de-CH');
-
-    const clamp = (n, min, max) =>
-        Math.max(min, Math.min(max, n));
-
+    const fmt = n => Math.round(n).toLocaleString('de-CH');
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
     const YEAR = 2026;
+
+    // ==========================================================
+    // MODELLPARAMETER
+    // ==========================================================
 
     const PARTS = [
         {id:'kitchen',label:'Küche',cost:26000,life:30,exp:.55},
@@ -86,61 +82,65 @@ async function starteWohnungswert() {
         }
     ];
 
+    // ==========================================================
+    // STATUS
+    // ==========================================================
+
     const S = {
         plz: DATA['5400'] ? '5400' : Object.keys(DATA)[0],
-        garage:1,
-        outside:0,
-        mode:'normal',
-        renovations:{}
+        garage: 0,
+        outside: 0,
+        mode: 'normal',
+        renovations: {},
+        placeSelected: false,
+        estimateRequested: false
     };
 
     function normalize(t) {
         return String(t)
             .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g,'')
+            .replace(/[\u0300-\u036f]/g, '')
             .toLowerCase()
             .trim();
     }
 
-    const places = Object.entries(DATA).map(([plz,d]) => ({
+    const places = Object.entries(DATA).map(([plz, d]) => ({
         plz,
-        ort:d.ort,
-        norm:normalize(plz+' '+d.ort)
+        ort: d.ort,
+        norm: normalize(plz + ' ' + d.ort)
     }));
 
-
     // ==========================================================
-    // RENOVATIONEN – UNVERÄNDERT
+    // RENOVATIONEN
     // ==========================================================
 
-    function renovationYears(mode,b) {
+    function renovationYears(mode, b) {
 
-        const out={};
+        const out = {};
 
-        for(const p of PARTS) {
+        for (const p of PARTS) {
 
             const age =
-                mode==='old'
-                    ? YEAR-b
-                    : mode==='new'
-                        ? Math.min(YEAR-b,4)
-                        : Math.min(YEAR-b,DEFAULT_AGES[p.id]);
+                mode === 'old'
+                    ? YEAR - b
+                    : mode === 'new'
+                        ? Math.min(YEAR - b, 4)
+                        : Math.min(YEAR - b, DEFAULT_AGES[p.id]);
 
-            out[p.id]=YEAR-age;
+            out[p.id] = YEAR - age;
         }
 
         return out;
     }
 
-
     function renderRenos() {
 
-        const b=+$('built').value;
+        const b = +$('built').value;
 
-        $('ageFields').innerHTML=PARTS.map(p=>{
+        $('ageFields').innerHTML = PARTS.map(p => {
 
-            const yr=clamp(
-                S.renovations[p.id]??b,
+            const yr = clamp(
+                S.renovations[p.id] ?? b,
                 b,
                 YEAR
             );
@@ -150,7 +150,7 @@ async function starteWohnungswert() {
                     <div class="rangehead">
                         <label for="reno_${p.id}">${p.label}</label>
                         <output id="renov_${p.id}">
-                            ${yr===b?'Seit Baujahr ('+b+')':yr}
+                            ${yr === b ? 'Seit Baujahr (' + b + ')' : yr}
                         </output>
                     </div>
                     <input
@@ -167,15 +167,15 @@ async function starteWohnungswert() {
 
         }).join('');
 
-        document.querySelectorAll('[data-reno]').forEach(el=>{
+        document.querySelectorAll('[data-reno]').forEach(el => {
 
-            el.addEventListener('input',()=>{
+            el.addEventListener('input', () => {
 
-                S.renovations[el.dataset.reno]=+el.value;
+                S.renovations[el.dataset.reno] = +el.value;
 
-                $('renov_'+el.dataset.reno).textContent=
-                    +el.value===b
-                        ? 'Seit Baujahr ('+b+')'
+                $('renov_' + el.dataset.reno).textContent =
+                    +el.value === b
+                        ? 'Seit Baujahr (' + b + ')'
                         : el.value;
 
                 calc();
@@ -183,34 +183,31 @@ async function starteWohnungswert() {
         });
     }
 
-
     function setMode(mode) {
 
-        S.mode=mode;
+        S.mode = mode;
 
-        S.renovations=renovationYears(
+        S.renovations = renovationYears(
             mode,
             +$('built').value
         );
 
-        document.querySelectorAll('[data-cond]').forEach(btn=>
+        document.querySelectorAll('[data-cond]').forEach(btn => {
             btn.classList.toggle(
                 'active',
-                btn.dataset.cond===mode
-            )
-        );
+                btn.dataset.cond === mode
+            );
+        });
 
         renderRenos();
-
         calc();
     }
 
-
     // ==========================================================
-    // LAGE- UND KOMFORTREGLER – UNVERÄNDERT
+    // LAGE- UND KOMFORTREGLER
     // ==========================================================
 
-    $('sliders').innerHTML=METRICS.map(s=>`
+    $('sliders').innerHTML = METRICS.map(s => `
         <div class="range">
             <div class="rangehead">
                 <label for="${s.id}">${s.label}</label>
@@ -220,267 +217,192 @@ async function starteWohnungswert() {
                 id="${s.id}"
                 type="range"
                 min="0"
-                max="${s.values.length-1}"
+                max="${s.values.length - 1}"
                 value="0"
                 step="1"
             >
         </div>
     `).join('');
 
-
     // ==========================================================
-    // NEUE ORTSSUCHE
+    // ORTSSUCHE
     // ==========================================================
 
-    const placeInput=$('placeInput');
-    const suggestionList=$('suggestions');
-    const placeHint=$('placeHint');
+    const placeInput = $('placeInput');
+    const suggestionList = $('suggestions');
+    const placeHint = $('placeHint');
 
-    const mobilePlaceMode=
-        window.matchMedia('(max-width: 840px)');
+    const mobilePlaceMode = window.matchMedia('(max-width: 840px)');
 
-    let placeFocused=false;
-    let activeSuggestion=-1;
-    let selectingPlace=false;
-    let keyboardTimer=null;
+    let placeFocused = false;
+    let activeSuggestion = -1;
+    let selectingPlace = false;
+    let keyboardTimer = null;
 
-    // Beim ersten Laden keine Gemeinde anzeigen.
-    placeInput.value='';
-
-    placeInput.placeholder='Ort oder PLZ eingeben';
-
-    placeInput.setAttribute('autocomplete','off');
-
-
-    // ----------------------------------------------------------
-    // Vorschläge schliessen
-    // ----------------------------------------------------------
+    placeInput.value = '';
+    placeInput.placeholder = 'Ort oder PLZ eingeben';
+    placeInput.setAttribute('autocomplete', 'off');
 
     function closeSuggestions() {
 
         clearTimeout(keyboardTimer);
 
         suggestionList.classList.add('hide');
+        suggestionList.style.display = 'none';
 
-        suggestionList.style.display='none';
+        placeInput.setAttribute('aria-expanded', 'false');
+        placeInput.removeAttribute('aria-activedescendant');
 
-        placeInput.setAttribute(
-            'aria-expanded',
-            'false'
-        );
-
-        placeInput.removeAttribute(
-            'aria-activedescendant'
-        );
-
-        activeSuggestion=-1;
+        activeSuggestion = -1;
     }
-
-
-    // ----------------------------------------------------------
-    // Vorschläge anzeigen
-    // ----------------------------------------------------------
 
     function showSuggestions() {
 
         suggestionList.classList.remove('hide');
+        suggestionList.style.display = 'block';
+        suggestionList.style.visibility = 'visible';
+        suggestionList.style.opacity = '1';
 
-        suggestionList.style.display='block';
-
-        suggestionList.style.visibility='visible';
-
-        suggestionList.style.opacity='1';
-
-        placeInput.setAttribute(
-            'aria-expanded',
-            'true'
-        );
+        placeInput.setAttribute('aria-expanded', 'true');
     }
-
-
-    // ----------------------------------------------------------
-    // Gemeinde auswählen
-    // ----------------------------------------------------------
 
     function choose(plz) {
 
-        if(!DATA[plz]) return;
+        if (!DATA[plz]) return;
 
-        selectingPlace=false;
+        selectingPlace = false;
 
-        S.plz=plz;
+        S.plz = plz;
+        S.placeSelected = true;
 
-        placeInput.value=
-            plz+' '+DATA[plz].ort;
+        placeInput.value = plz + ' ' + DATA[plz].ort;
 
         closeSuggestions();
 
-        placeHint.textContent='';
-
+        placeHint.textContent = '';
         placeInput.blur();
 
         calc();
     }
 
-
-    // ----------------------------------------------------------
-    // Passende Gemeinden suchen
-    // ----------------------------------------------------------
-
     function suggestions() {
 
-        const raw=normalize(placeInput.value);
+        const raw = normalize(placeInput.value);
 
-        if(!placeFocused || raw.length<3) {
-
+        if (!placeFocused || raw.length < 3) {
             closeSuggestions();
-
             return;
         }
 
-        const matches=places
-            .filter(p=>
+        const matches = places
+            .filter(p =>
                 p.plz.startsWith(raw) ||
                 normalize(p.ort).startsWith(raw) ||
-                p.norm.includes(' '+raw)
+                p.norm.includes(' ' + raw)
             )
-            .sort((a,b)=>{
+            .sort((a, b) => {
 
-                const aa=
+                const aa =
                     normalize(a.ort).startsWith(raw) ||
                     a.plz.startsWith(raw);
 
-                const bb=
+                const bb =
                     normalize(b.ort).startsWith(raw) ||
                     b.plz.startsWith(raw);
 
-                return Number(bb)-Number(aa) ||
-                    a.ort.localeCompare(b.ort,'de');
+                return Number(bb) - Number(aa) ||
+                    a.ort.localeCompare(b.ort, 'de');
             })
-            .slice(0,12);
+            .slice(0, 12);
 
         suggestionList.replaceChildren();
 
-        activeSuggestion=-1;
+        activeSuggestion = -1;
+        placeInput.removeAttribute('aria-activedescendant');
 
-        placeInput.removeAttribute(
-            'aria-activedescendant'
-        );
-
-        if(!matches.length) {
-
+        if (!matches.length) {
             closeSuggestions();
-
             return;
         }
 
-        matches.forEach((p,i)=>{
+        matches.forEach((p, i) => {
 
-            const btn=document.createElement('button');
+            const btn = document.createElement('button');
 
-            btn.type='button';
+            btn.type = 'button';
+            btn.setAttribute('role', 'option');
+            btn.setAttribute('aria-selected', 'false');
 
-            btn.setAttribute(
-                'role',
-                'option'
-            );
+            btn.id = 'suggest_' + i;
+            btn.dataset.plz = p.plz;
 
-            btn.setAttribute(
-                'aria-selected',
-                'false'
-            );
+            btn.append(document.createTextNode(p.ort + ' '));
 
-            btn.id='suggest_'+i;
-
-            btn.dataset.plz=p.plz;
-
-            btn.append(
-                document.createTextNode(p.ort+' ')
-            );
-
-            const small=document.createElement('small');
-
-            small.textContent='PLZ '+p.plz;
+            const small = document.createElement('small');
+            small.textContent = 'PLZ ' + p.plz;
 
             btn.append(small);
 
             btn.addEventListener(
                 'pointerdown',
-                e=>e.preventDefault()
+                e => e.preventDefault()
             );
 
-            btn.addEventListener(
-                'click',
-                ()=>choose(p.plz)
-            );
+            btn.addEventListener('click', () => choose(p.plz));
 
             suggestionList.append(btn);
         });
 
         showSuggestions();
 
+        // Smartphone: Tastatur nach 700 ms schliessen,
+        // Vorschlagsliste aber geöffnet lassen.
 
-        // ------------------------------------------------------
-        // SMARTPHONE: 700 MS TIPP-PAUSE
-        // ------------------------------------------------------
-
-        if(mobilePlaceMode.matches) {
+        if (mobilePlaceMode.matches) {
 
             clearTimeout(keyboardTimer);
 
-            keyboardTimer=setTimeout(()=>{
+            keyboardTimer = setTimeout(() => {
 
-                // Nur schliessen, wenn das Eingabefeld
-                // noch aktiv ist und Treffer vorhanden sind.
-                if(
-                    document.activeElement===placeInput &&
+                if (
+                    document.activeElement === placeInput &&
                     !suggestionList.classList.contains('hide') &&
                     suggestionList.querySelector('button')
                 ) {
 
-                    selectingPlace=true;
-
-                    // Smartphone-Tastatur schliessen.
+                    selectingPlace = true;
                     placeInput.blur();
 
-                    // Vorschläge bleiben geöffnet.
-                    requestAnimationFrame(()=>{
-
-                        if(selectingPlace) {
+                    requestAnimationFrame(() => {
+                        if (selectingPlace) {
                             showSuggestions();
                         }
                     });
                 }
 
-            },700);
+            }, 700);
         }
     }
 
-
-    // ----------------------------------------------------------
-    // Tastatur-Navigation
-    // ----------------------------------------------------------
-
     function highlightSuggestion(i) {
 
-        const buttons=[
+        const buttons = [
             ...suggestionList.querySelectorAll('button')
         ];
 
-        if(!buttons.length) return;
+        if (!buttons.length) return;
 
-        activeSuggestion=
-            (i+buttons.length)%buttons.length;
+        activeSuggestion =
+            (i + buttons.length) % buttons.length;
 
-        buttons.forEach((b,j)=>{
-
+        buttons.forEach((b, j) => {
             b.setAttribute(
                 'aria-selected',
-                String(j===activeSuggestion)
+                String(j === activeSuggestion)
             );
         });
 
-        const activeButton=buttons[activeSuggestion];
+        const activeButton = buttons[activeSuggestion];
 
         placeInput.setAttribute(
             'aria-activedescendant',
@@ -488,468 +410,420 @@ async function starteWohnungswert() {
         );
 
         activeButton.scrollIntoView({
-            block:'nearest'
+            block: 'nearest'
         });
     }
 
-
     // ==========================================================
-    // BEWERTUNG – UNVERÄNDERT
+    // BEWERTUNG
     // ==========================================================
 
-    function calc(){
+    function calc() {
 
-        const d=DATA[S.plz];
+        const d = DATA[S.plz];
 
-        if(!d)return;
+        if (!d) return;
 
-        const w=+$('living').value;
-        const balcony=+$('land').value;
-        const b=+$('built').value;
-        const m=d.median;
+        const w = +$('living').value;
+        const balcony = +$('land').value;
+        const b = +$('built').value;
+        const m = d.median;
 
-        const floor=+$('floor').value;
-        const lift=$('lift').value==='yes';
+        const floor = +$('floor').value;
+        const lift = $('lift').value === 'yes';
 
-        const type=document.querySelector(
+        const type = document.querySelector(
             'input[name=apartmentType]:checked'
         ).value;
 
-        $('livingv').textContent=fmt(w)+' m²';
-        $('landv').textContent=fmt(balcony)+' m²';
+        $('livingv').textContent = fmt(w) + ' m²';
+        $('landv').textContent = fmt(balcony) + ' m²';
+        $('builtv').textContent = b;
 
-        $('builtv').textContent=b;
+        $('floorv').textContent =
+            floor === 0 ? 'Erdgeschoss' : floor + '. Stock';
 
-        $('floorv').textContent=
-            floor===0?'Erdgeschoss':floor+'. Stock';
+        $('garagev').textContent = S.garage;
+        $('outsidev').textContent = S.outside;
 
-        $('garagev').textContent=S.garage;
-        $('outsidev').textContent=S.outside;
+        // ------------------------------------------------------
+        // GRUNDWERT
+        // ------------------------------------------------------
 
+        const base =
+            m * w * Math.pow(w / 100, -.035);
 
-        // Inseratekalibrierung:
-        // geringe Grössendegression, Referenz 100 m².
+        // ------------------------------------------------------
+        // BALKON / TERRASSE
+        // ------------------------------------------------------
 
-        const base=m*w*Math.pow(w/100,-.035);
+        const effectiveBalcony =
+            Math.min(balcony, 40) +
+            Math.max(0, balcony - 40) * .35;
 
+        const balconyValue =
+            m * .22 * effectiveBalcony;
 
-        // Balkon/Terrasse:
-        // 22 % des lokalen Wohnflächenpreises;
-        // ab 40 m² sinkender Grenznutzen.
+        // ------------------------------------------------------
+        // ALTER UND RENOVATIONEN
+        // ------------------------------------------------------
 
-        const effectiveBalcony=
-            Math.min(balcony,40)+
-            Math.max(0,balcony-40)*.35;
+        let ageDed = 0;
+        let referenceAgeDed = 0;
 
-        const balconyValue=
-            m*.22*effectiveBalcony;
+        for (const p of PARTS) {
 
+            const cost =
+                p.cost *
+                Math.pow(w / 100, p.exp) *
+                Math.pow(m / 10000, .18);
 
-        let ageDed=0;
-        let referenceAgeDed=0;
-
-        for(const p of PARTS){
-
-            const cost=
-                p.cost*
-                Math.pow(w/100,p.exp)*
-                Math.pow(m/10000,.18);
-
-            const renovated=clamp(
-                Number(S.renovations[p.id]??b)||b,
+            const renovated = clamp(
+                Number(S.renovations[p.id] ?? b) || b,
                 b,
                 YEAR
             );
 
-            ageDed+=cost*
+            ageDed += cost *
                 clamp(
-                    (YEAR-renovated)/p.life,
+                    (YEAR - renovated) / p.life,
                     0,
                     1
                 );
 
-            // Der Median steht für eine durchschnittlich
-            // unterhaltene Wohnung.
-
-            referenceAgeDed+=cost*
+            referenceAgeDed += cost *
                 clamp(
-                    DEFAULT_AGES[p.id]/p.life,
+                    DEFAULT_AGES[p.id] / p.life,
                     0,
                     1
                 );
         }
 
-
-        // Keine pauschale 6%-Aufwertung.
-        // Nur die Abweichung der tatsächlichen Abnutzung
-        // von der typischen Referenzwohnung wirkt sich aus.
-        //
-        // Balkonflächen sind im gelieferten Datensatz
-        // nicht separat ausgewiesen und bleiben deshalb
-        // als voller zusätzlicher Modellwert enthalten.
-
-        const gross=
-            base+
-            balconyValue+
+        const gross =
+            base +
+            balconyValue +
             referenceAgeDed;
 
-        const afterAge=
-            Math.max(0,gross-ageDed);
+        const afterAge =
+            Math.max(0, gross - ageDed);
 
+        // ------------------------------------------------------
+        // WOHNUNGSTYP
+        // ------------------------------------------------------
 
-        const typePct={
-            standard:0,
-            attic:8,
-            garden:2
+        const typePct = {
+            standard: 0,
+            attic: 8,
+            garden: 2
         }[type];
 
+        // ------------------------------------------------------
+        // STOCKWERK UND LIFT
+        // ------------------------------------------------------
 
-        // Geschossvorteil nur mit Lift uneingeschränkt;
-        // ohne Lift hohe Stockwerke im Nachteil.
-
-        const floorPct=lift
-            ?clamp((floor-2)*.7,-1.4,4)
-            :(floor<=2
-                ?clamp((floor-2)*.7,-1.4,0)
-                :-Math.min(7,(floor-2)*1.8)
+        const floorPct = lift
+            ? clamp((floor - 2) * .7, -1.4, 4)
+            : (
+                floor <= 2
+                    ? clamp((floor - 2) * .7, -1.4, 0)
+                    : -Math.min(7, (floor - 2) * 1.8)
             );
 
-        const liftPct=
-            lift?0:(floor>=2?-1.5:0);
+        const liftPct =
+            lift ? 0 : (floor >= 2 ? -1.5 : 0);
 
+        // ------------------------------------------------------
+        // MIKROLAGE UND QUALITÄT
+        // ------------------------------------------------------
 
-        let micro=0;
-        let quality=0;
+        let micro = 0;
+        let quality = 0;
 
-        for(const s of METRICS){
+        for (const s of METRICS) {
 
-            const i=+$(s.id).value;
+            const i = +$(s.id).value;
 
-            $(s.id+'v').textContent=s.names[i];
+            $(s.id + 'v').textContent = s.names[i];
 
-            if(s.id==='quality') {
-                quality=s.values[i];
+            if (s.id === 'quality') {
+                quality = s.values[i];
             } else {
-                micro+=s.values[i];
+                micro += s.values[i];
             }
         }
 
-        micro=clamp(micro,-20,20);
+        micro = clamp(micro, -20, 20);
 
-
-        const adjusted=
-            afterAge*
+        const adjusted =
+            afterAge *
             (
-                1+
+                1 +
                 (
-                    typePct+
-                    floorPct+
-                    liftPct+
-                    micro+
+                    typePct +
+                    floorPct +
+                    liftPct +
+                    micro +
                     quality
-                )/100
+                ) / 100
             );
 
+        // ======================================================
+        // GARAGEN UND AUSSENPARKPLÄTZE – KORRIGIERT
+        // ======================================================
 
-        // Referenz: ein Garagenplatz bereits
-        // im lokalen Median enthalten.
-
-        const gp=clamp(
-            32000+.35*(m-10000),
+        const gp = clamp(
+            32000 + .35 * (m - 10000),
             25000,
             42000
         );
 
-        const ap=clamp(
-            12000+.25*(m-10000),
+        const ap = clamp(
+            12000 + .25 * (m - 10000),
             7000,
             19000
         );
 
-        const garageAdjustment=
-            (S.garage-1)*gp;
+        // 0 Garagen = CHF 0
+        // 1 Garage  = 1 × Einzelpreis
+        // 2 Garagen = 2 × Einzelpreis
+        // usw.
 
-        const outsideAdjustment=
-            S.outside*ap;
+        const garageAdjustment = S.garage * gp;
 
+        const outsideAdjustment = S.outside * ap;
 
-        // Kalibrierung gegen unabhängige Inserate.
-        // Der Faktor 0.94 korrigiert das
-        // durchschnittliche Referenzniveau.
+        // ======================================================
+        // KALIBRIERUNG – UNVERÄNDERT
+        // ======================================================
 
-        const ageFactor=
-            b<1980?.88455:
-            b<2000?.90010:
-            b<2015?1.02600:
+        const ageFactor =
+            b < 1980 ? .88455 :
+            b < 2000 ? .90010 :
+            b < 2015 ? 1.02600 :
             1.03701;
 
-        const renovationWeight=
-            S.mode==='new'
-                ?0
-                :S.mode==='old'
-                    ?.5
-                    :1;
+        const renovationWeight =
+            S.mode === 'new'
+                ? 0
+                : S.mode === 'old'
+                    ? .5
+                    : 1;
 
-        const calibratedAgeFactor=
-            1+(ageFactor-1)*renovationWeight;
+        const calibratedAgeFactor =
+            1 + (ageFactor - 1) * renovationWeight;
 
+        const generalFactor = 1 / 1.034;
 
-        // Nachkalibrierung anhand der Inserateprüfung.
-        //
-        // Allgemeines Niveau:
-        // Median Schätzwert/Inserat = 1.034.
-        //
-        // Sehr grosse Wohnungen (220–350 m²):
-        // Verhältnis 0.9132.
-        //
-        // Grössenkorrektur steigt ab 220 m²
-        // und erreicht bei 300 m² den vollen Ausgleich.
+        const largeHomeWeight =
+            clamp((w - 220) / 80, 0, 1);
 
-        const generalFactor=1/1.034;
+        const largeHomeFactor =
+            1 +
+            largeHomeWeight *
+            ((1.034 / .9132) - 1);
 
-        const largeHomeWeight=
-            clamp((w-220)/80,0,1);
-
-        const largeHomeFactor=
-            1+
-            largeHomeWeight*
-            ((1.034/.9132)-1);
-
-
-        const rawResult=
-            (adjusted*.94)*
-            calibratedAgeFactor+
-            garageAdjustment+
+        const rawResult =
+            (adjusted * .94) *
+            calibratedAgeFactor +
+            garageAdjustment +
             outsideAdjustment;
 
-        const result=Math.max(
+        const result = Math.max(
             0,
-            rawResult*
-            generalFactor*
+            rawResult *
+            generalFactor *
             largeHomeFactor
         );
 
+        // ======================================================
+        // VERKEHRSWERT – ERST NACH KLICK ANZEIGEN
+        // ======================================================
 
-        // Ergebnis anzeigen.
+        $('estimate').textContent =
+            S.placeSelected && S.estimateRequested
+                ? 'CHF ' + fmt(result)
+                : 'CHF 0';
 
-        $('estimate').textContent=
-            'CHF '+fmt(result);
+        // ------------------------------------------------------
+        // ALTERSABZUG
+        // ------------------------------------------------------
 
-        $('ageout').textContent=
-            '− CHF '+fmt(ageDed);
+        $('ageout').textContent =
+            '− CHF ' + fmt(ageDed);
 
+        // ------------------------------------------------------
+        // ANZAHL GARAGEN
+        // ------------------------------------------------------
 
-        $('garageLabel').textContent=
-            S.garage+' '+
+        $('garageLabel').textContent =
+            S.garage + ' ' +
             (
-                S.garage===1
-                    ?'Garagenplatz'
-                    :'Garagenplätze'
+                S.garage === 1
+                    ? 'Garagenplatz'
+                    : 'Garagenplätze'
             );
 
-        $('outsideLabel').textContent=
-            S.outside+' '+
+        // ------------------------------------------------------
+        // ANZAHL AUSSENPARKPLÄTZE
+        // ------------------------------------------------------
+
+        $('outsideLabel').textContent =
+            S.outside + ' ' +
             (
-                S.outside===1
-                    ?'Aussenparkplatz'
-                    :'Aussenparkplätze'
+                S.outside === 1
+                    ? 'Aussenparkplatz'
+                    : 'Aussenparkplätze'
             );
 
+        // ------------------------------------------------------
+        // GARAGENWERT
+        // ------------------------------------------------------
 
-        $('garageout').textContent=
-            (
-                garageAdjustment>=0
-                    ?'+ '
-                    :'− '
-            )+
-            'CHF '+
-            fmt(Math.abs(garageAdjustment));
+        $('garageout').textContent =
+            '+ CHF ' + fmt(garageAdjustment);
 
-        $('outsideout').textContent=
-            '+ CHF '+fmt(outsideAdjustment);
+        // ------------------------------------------------------
+        // AUSSENPARKPLATZWERT
+        // ------------------------------------------------------
+
+        $('outsideout').textContent =
+            '+ CHF ' + fmt(outsideAdjustment);
     }
-
 
     // ==========================================================
     // EREIGNISSE DER ORTSSUCHE
     // ==========================================================
 
-    // ----------------------------------------------------------
-    // Suchfeld antippen:
-    // Sofort leer und bereit für neue Eingabe.
-    // ----------------------------------------------------------
+    placeInput.addEventListener('focus', () => {
 
-    placeInput.addEventListener('focus',()=>{
-
-        selectingPlace=false;
-
-        placeFocused=true;
+        selectingPlace = false;
+        placeFocused = true;
 
         closeSuggestions();
 
-        placeInput.value='';
+        placeInput.value = '';
+        placeInput.placeholder = '';
 
-        placeInput.placeholder='';
-
-        placeHint.textContent='';
+        placeHint.textContent = '';
     });
 
+    placeInput.addEventListener('input', () => {
 
-    // ----------------------------------------------------------
-    // Eingabe
-    // ----------------------------------------------------------
+        // Neue Eingabe: bisherige Ortsauswahl ungültig.
+        S.placeSelected = false;
+        S.estimateRequested = false;
 
-    placeInput.addEventListener('input',()=>{
+        calc();
 
-        placeHint.textContent=
+        placeHint.textContent =
             placeInput.value.trim()
-                ?'Ort oder PLZ auswählen'
-                :'';
+                ? 'Ort oder PLZ auswählen'
+                : '';
 
         suggestions();
     });
 
+    $('clearPlace').addEventListener('click', () => {
 
-    // ----------------------------------------------------------
-    // Suchfeld löschen
-    // ----------------------------------------------------------
-
-    $('clearPlace').addEventListener('click',()=>{
-
-        selectingPlace=false;
+        selectingPlace = false;
 
         closeSuggestions();
 
-        placeInput.value='';
+        placeInput.value = '';
 
-        placeHint.textContent=
+        S.placeSelected = false;
+        S.estimateRequested = false;
+
+        calc();
+
+        placeHint.textContent =
             'Ortschaft oder PLZ eingeben';
 
         placeInput.focus();
     });
 
+    placeInput.addEventListener('keydown', e => {
 
-    // ----------------------------------------------------------
-    // Tastaturbedienung
-    // ----------------------------------------------------------
-
-    placeInput.addEventListener('keydown',e=>{
-
-        const buttons=[
+        const buttons = [
             ...suggestionList.querySelectorAll('button')
         ];
 
-        if(
-            e.key==='ArrowDown' &&
-            buttons.length
-        ) {
+        if (e.key === 'ArrowDown' && buttons.length) {
+
+            e.preventDefault();
+            highlightSuggestion(activeSuggestion + 1);
+
+        } else if (e.key === 'ArrowUp' && buttons.length) {
 
             e.preventDefault();
 
             highlightSuggestion(
-                activeSuggestion+1
+                activeSuggestion < 0
+                    ? buttons.length - 1
+                    : activeSuggestion - 1
             );
 
-        } else if(
-            e.key==='ArrowUp' &&
-            buttons.length
-        ) {
-
-            e.preventDefault();
-
-            highlightSuggestion(
-                activeSuggestion<0
-                    ?buttons.length-1
-                    :activeSuggestion-1
-            );
-
-        } else if(
-            e.key==='Enter' &&
-            buttons.length
-        ) {
+        } else if (e.key === 'Enter' && buttons.length) {
 
             e.preventDefault();
 
             choose(
-                buttons[
-                    Math.max(0,activeSuggestion)
-                ].dataset.plz
+                buttons[Math.max(0, activeSuggestion)].dataset.plz
             );
 
-        } else if(
-            e.key==='Escape'
-        ) {
+        } else if (e.key === 'Escape') {
 
-            selectingPlace=false;
-
+            selectingPlace = false;
             closeSuggestions();
-
             placeInput.blur();
         }
     });
 
+    placeInput.addEventListener('blur', () => {
 
-    // ----------------------------------------------------------
-    // Fokusverlust
-    // ----------------------------------------------------------
+        placeInput.placeholder = 'Ort oder PLZ eingeben';
 
-    placeInput.addEventListener('blur',()=>{
-
-        placeInput.placeholder=
-            'Ort oder PLZ eingeben';
-
-        if(!selectingPlace) {
+        if (!selectingPlace) {
             clearTimeout(keyboardTimer);
         }
 
-        placeFocused=false;
+        placeFocused = false;
 
-        setTimeout(()=>{
+        setTimeout(() => {
 
-            // Auf dem Smartphone bleibt die Liste
-            // nach dem automatischen Schliessen
-            // der Tastatur geöffnet.
-
-            if(!selectingPlace) {
+            if (!selectingPlace) {
                 closeSuggestions();
             }
 
-            if(
+            if (
                 !selectingPlace &&
                 placeInput.value.trim() &&
-                placeInput.value.trim()!==
-                    S.plz+' '+DATA[S.plz].ort
+                placeInput.value.trim() !==
+                    S.plz + ' ' + DATA[S.plz].ort
             ) {
 
-                placeHint.textContent=
+                placeHint.textContent =
                     'Bitte einen Ort aus den Vorschlägen wählen';
             }
 
-        },160);
+        }, 160);
     });
 
+    document.addEventListener('pointerdown', e => {
 
-    // ----------------------------------------------------------
-    // Ausserhalb der Suche tippen
-    // ----------------------------------------------------------
-
-    document.addEventListener('pointerdown',e=>{
-
-        if(
+        if (
             !placeInput.contains(e.target) &&
             !suggestionList.contains(e.target) &&
             !$('clearPlace').contains(e.target)
         ) {
 
-            selectingPlace=false;
-
+            selectingPlace = false;
             closeSuggestions();
         }
     });
 
-
     // ==========================================================
-    // ÜBRIGE EREIGNISSE – UNVERÄNDERT
+    // EREIGNISSE DER REGLER
     // ==========================================================
 
     [
@@ -957,136 +831,192 @@ async function starteWohnungswert() {
         'land',
         'floor',
         'lift',
-        ...METRICS.map(s=>s.id)
-    ].forEach(id=>
-        $(id).addEventListener('input',calc)
-    );
+        ...METRICS.map(s => s.id)
+    ].forEach(id => {
 
+        $(id).addEventListener('input', calc);
+    });
 
     document.querySelectorAll(
         'input[name=apartmentType]'
-    ).forEach(el=>
-        el.addEventListener('change',calc)
-    );
+    ).forEach(el => {
 
+        el.addEventListener('change', calc);
+    });
 
-    $('built').addEventListener('input',()=>{
+    $('built').addEventListener('input', () => {
 
-        S.renovations=renovationYears(
+        S.renovations = renovationYears(
             S.mode,
             +$('built').value
         );
 
         renderRenos();
-
         calc();
     });
 
+    document.querySelectorAll('[data-cond]').forEach(btn => {
 
-    document.querySelectorAll(
-        '[data-cond]'
-    ).forEach(btn=>
-        btn.addEventListener(
-            'click',
-            ()=>setMode(btn.dataset.cond)
-        )
-    );
+        btn.addEventListener('click', () => {
+            setMode(btn.dataset.cond);
+        });
+    });
 
+    // ==========================================================
+    // GARAGEN- UND PARKPLATZZÄHLER
+    // ==========================================================
 
-    document.querySelectorAll(
-        '[data-count]'
-    ).forEach(btn=>
-        btn.addEventListener('click',()=>{
+    document.querySelectorAll('[data-count]').forEach(btn => {
 
-            const [k,v]=btn.dataset.count.split(':');
+        btn.addEventListener('click', () => {
 
-            S[k]=clamp(
-                S[k]+Number(v),
+            const [k, v] = btn.dataset.count.split(':');
+
+            S[k] = clamp(
+                S[k] + Number(v),
                 0,
                 8
             );
 
             calc();
-        })
-    );
+        });
+    });
 
+    // ==========================================================
+    // SCHÄTZEN-BUTTON
+    // ==========================================================
+
+    function showEstimate() {
+
+        if (!S.placeSelected) {
+
+            placeHint.textContent =
+                'Bitte zuerst eine Gemeinde auswählen.';
+
+            return;
+        }
+
+        // Erst jetzt wird der Verkehrswert freigegeben.
+        S.estimateRequested = true;
+
+        calc();
+
+        const resultShell = $('resultShell');
+
+        if (resultShell) {
+            resultShell.classList.add('has-estimate');
+        }
+
+        if (window.matchMedia('(max-width: 840px)').matches) {
+
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    }
+
+    // Beide Buttons unterstützen.
+    // Fehlende HTML-Elemente verursachen keinen Fehler.
+
+    ['estimateButtonDesktop', 'estimateButtonMobile'].forEach(id => {
+
+        const button = $(id);
+
+        if (button) {
+            button.addEventListener('click', showEstimate);
+        }
+    });
 
     // ==========================================================
     // ZURÜCKSETZEN
     // ==========================================================
 
-    $('reset').addEventListener('click',()=>{
+    $('reset').addEventListener('click', () => {
 
-        choose(
-            DATA['5400']
-                ?'5400'
-                :Object.keys(DATA)[0]
-        );
-
-        $('living').value=100;
-        $('land').value=12;
-        $('built').value=1995;
-        $('floor').value=2;
-        $('lift').value='yes';
+        $('living').value = 100;
+        $('land').value = 12;
+        $('built').value = 1995;
+        $('floor').value = 2;
+        $('lift').value = 'yes';
 
         document.querySelector(
             'input[name=apartmentType][value=standard]'
-        ).checked=true;
+        ).checked = true;
 
-        METRICS.forEach(s=>{
-            $(s.id).value=s.def;
+        METRICS.forEach(s => {
+            $(s.id).value = s.def;
         });
 
-        S.garage=1;
-        S.outside=0;
+        // Garagen und Parkplätze zurücksetzen.
+        S.garage = 0;
+        S.outside = 0;
+
+        // Interne PLZ zurücksetzen.
+        S.plz = DATA['5400']
+            ? '5400'
+            : Object.keys(DATA)[0];
+
+        // Schätzung zurücksetzen.
+        S.placeSelected = false;
+        S.estimateRequested = false;
 
         setMode('normal');
 
-        // Nach dem Zurücksetzen nur den Platzhalter zeigen.
-        placeInput.value='';
+        placeInput.value = '';
+        placeHint.textContent = '';
 
-        placeHint.textContent='';
+        const resultShell = $('resultShell');
+
+        if (resultShell) {
+            resultShell.classList.remove('has-estimate');
+        }
+
+        calc();
+
+        // Verkehrswert bleibt CHF 0.
+        $('estimate').textContent = 'CHF 0';
     });
-
 
     // ==========================================================
     // INITIALISIERUNG
     // ==========================================================
 
-    // Interne Standardgemeinde bleibt für die Berechnung
-    // vorhanden. Im Suchfeld erscheint sie nicht.
-
-    choose(S.plz);
-
     setMode('normal');
 
-    placeInput.value='';
+    S.placeSelected = false;
+    S.estimateRequested = false;
 
-    placeHint.textContent='';
+    placeInput.value = '';
+    placeHint.textContent = '';
+
+    calc();
+
+    $('estimate').textContent = 'CHF 0';
 }
 
-
 // ============================================================
-// FEHLERBEHANDLUNG – UNVERÄNDERT
+// FEHLERBEHANDLUNG
 // ============================================================
 
-starteWohnungswert().catch(error=>{
+starteWohnungswert().catch(error => {
 
     console.error(
         'Wohnungswert: Datenfehler',
         error
     );
 
-    const out=document.getElementById('estimate');
+    const out = document.getElementById('estimate');
 
-    if(out) {
-        out.textContent='Daten nicht verfügbar';
+    if (out) {
+        out.textContent = 'CHF 0';
     }
 
-    const hint=document.getElementById('placeHint');
+    const hint = document.getElementById('placeHint');
 
-    if(hint) {
-        hint.textContent=
-            'Wohnungspreise konnten nicht geladen werden. Bitte die Seite über einen Webserver öffnen.';
+    if (hint) {
+        hint.textContent =
+            'Wohnungspreise konnten nicht geladen werden. ' +
+            'Bitte die Seite über einen Webserver öffnen.';
     }
 });
