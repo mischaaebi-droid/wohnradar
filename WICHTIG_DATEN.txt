@@ -1,0 +1,7 @@
+Für die vollständige Funktion müssen aus deinem bisherigen Projekt diese ORIGINALDATEIEN in den Ordner daten kopiert werden:
+- wohnungspreise.json (Eigentumswohnung und Bauland)
+- mietmodell_plz_mit_nebenkosten.json (Miete)
+
+Die hochgeladenen Dateien enthalten diese beiden JSON-Dateien nicht. Die bestehenden Bewertungsformeln wurden deshalb nicht verändert.
+
+Start: index.html via VS Code Live Server. Das bisherige index.html ist neu haus.html.

@@ -1,0 +1,25 @@
+
+/* UX-Erweiterung: unveränderte Grundgestaltung der Rechner */
+.home-link{display:inline-flex;align-items:center;gap:7px;text-decoration:none;color:var(--ink);font-weight:750;padding:9px 13px;border:1px solid var(--line);border-radius:11px;background:var(--card);min-height:42px}
+.home-link:hover,.home-link:focus-visible{border-color:var(--accent);background:var(--card2)}
+header .reset[hidden]{display:none!important}
+.result-shell{min-width:0}.result-actions{margin-top:10px}
+.estimate-button{width:100%;min-height:52px;padding:12px 18px;border:0;border-radius:11px;background:var(--ink);color:white;font:inherit;font-weight:750;font-size:15px;cursor:pointer}
+.post-estimate-actions{display:none;grid-template-columns:1fr 1fr;gap:0}
+.post-estimate-actions button{min-height:48px;padding:10px 8px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.post-estimate-actions button:first-child{border-radius:0 0 0 11px}
+.post-estimate-actions button:last-child{border-radius:0 0 11px 0;border-left:0}
+.result-shell.has-estimate .post-estimate-actions{display:grid}
+.result-shell.has-estimate .result-actions{margin-top:0}
+.result-shell.has-estimate .result{border-radius:11px 11px 0 0}
+.result-shell.has-estimate .estimate-button{display:none}
+.mobile-estimate-action{display:none}
+@media(max-width:840px){
+ .result-shell{display:none}
+ .result-shell.has-estimate{display:block;margin:0 0 17px}
+ .result-shell .result{position:static}
+ .result-shell .result-actions{margin-top:0}
+ .mobile-estimate-action{display:block;margin:3px 0 14px}
+ header{margin-bottom:20px}
+ .home-link{font-size:13px;padding:7px 10px}
+}

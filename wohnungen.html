@@ -6,7 +6,23 @@
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
 <title>WOHNRADAR – Eigentumswohnung schätzen</title>
 <link href="styles.css" rel="stylesheet"/>
-</head>
+<style>
+/* Kompakte, responsive Rechnungsdarstellung */
+.result-invoice { padding: 18px 20px !important; }
+.result-invoice .invoice-title { font-size: 13px; font-weight: 700; letter-spacing: .02em; opacity: .75; margin-bottom: 10px; }
+.result-invoice .invoice-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 5px 0; font-size: 14px; line-height: 1.35; }
+.result-invoice .invoice-row strong { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
+.result-invoice .invoice-total { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 9px; padding-top: 12px; border-top: 2px solid var(--accent, #B0523B); font-weight: 750; line-height: 1.25; }
+.result-invoice .invoice-total strong { font-size: clamp(19px, 2.2vw, 27px); white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
+@media (max-width: 650px) {
+  .result-invoice { padding: 13px 15px !important; }
+  .result-invoice .invoice-title { margin-bottom: 6px; font-size: 12px; }
+  .result-invoice .invoice-row { padding: 3px 0; font-size: 13px; }
+  .result-invoice .invoice-total { margin-top: 7px; padding-top: 9px; font-size: 13px; }
+  .result-invoice .invoice-total strong { font-size: 20px; }
+}
+</style>
+<link href="wohnradar-ux.css" rel="stylesheet"/></head>
 <body>
 <div class="wrap">
 <header>
@@ -14,20 +30,10 @@
      WOHN<em>RADAR
      </em>
 </div>
-<button class="reset" id="reset">
+
+<button class="reset" hidden="" id="reset">
      Zurücksetzen
-    </button>
-</header>
-
-<nav aria-label="Immobilienrechner" class="tool-nav">
-  <a href="index.html" class="tool-nav__item"><span class="tool-nav__name">Einfamilienhaus</span></a>
-  <a href="wohnungen.html" class="tool-nav__item tool-nav__item--active" aria-current="page"><span class="tool-nav__name">Eigentumswohnung</span></a>
-  <a href="miete.html" class="tool-nav__item"><span class="tool-nav__name">Miete</span></a>
-  <a href="bauland.html" class="tool-nav__item"><span class="tool-nav__name">Bauland</span></a>
-</nav>
-
-
-
+    </button><a class="home-link" href="index.html">← Übersicht</a></header>
 
 <div class="layout">
 <main class="stack">
@@ -61,7 +67,7 @@
 <output id="livingv">
 </output>
 </div>
-<input id="living" max="300" min="25" step="5" type="range" value="100"/>
+<input id="living" max="300" min="25" step="5" type="range" value="25"/>
 </div>
 <div class="range">
 <div class="rangehead">
@@ -69,10 +75,10 @@
 <output id="landv">
 </output>
 </div>
-<input id="land" max="150" min="0" step="1" type="range" value="12"/>
+<input id="land" max="150" min="0" step="1" type="range" value="0"/>
 </div>
 </div>
-<div class="grid" style="margin-top:20px"><div class="range"><div class="rangehead"><label for="floor">Stockwerk</label><output id="floorv"></output></div><input id="floor" max="12" min="0" step="1" type="range" value="2"/></div><div class="field"><label for="lift">Lift vorhanden?</label><select id="lift"><option selected="" value="yes">Ja</option><option value="no">Nein</option></select></div></div></section>
+<div class="grid" style="margin-top:20px"><div class="range"><div class="rangehead"><label for="floor">Stockwerk</label><output id="floorv"></output></div><input id="floor" max="12" min="0" step="1" type="range" value="0"/></div><div class="field"><label for="lift">Lift vorhanden?</label><select id="lift"><option selected="" value="yes">Ja</option><option value="no">Nein</option></select></div></div></section>
 <section class="card">
 <h2>
        Alter und Renovationen
@@ -85,7 +91,7 @@
 <output id="builtv">
 </output>
 </div>
-<input id="built" max="2026" min="1850" step="1" type="range" value="1995"/>
+<input id="built" max="2026" min="1850" step="1" type="range" value="1850"/>
 </div>
 <div class="lbl" style="margin-top:20px">
        Renovationszustand
@@ -151,34 +157,53 @@
 </div>
 </div>
 </section>
-</main>
-<aside aria-live="polite" class="result">
-<div class="final-label">
-        Verkehrswert
-    </div>
-<div class="big" id="estimate">
-        —
-    </div>
-<div class="result-heading">
-        Berücksichtigt:
-    </div>
-<div class="detail">
-<span>Altersabzug</span>
-<strong id="ageout">—</strong>
-</div>
-<div class="detail">
-<span id="garageLabel">1 Garagenplatz</span>
-<strong id="garageout">—</strong>
-</div>
-<div class="detail">
-<span id="outsideLabel">1 Aussenparkplatz</span>
-<strong id="outsideout">—</strong>
-</div>
-</aside>
+<div class="mobile-estimate-action"><button class="estimate-button" id="estimateButtonMobile" type="button">Verkehrswert bestimmen</button></div></main>
+<div class="result-shell" id="resultShell"><aside aria-live="polite" class="result result-invoice">
+<div class="invoice-title">Verkehrswertberechnung</div>
+<div class="invoice-row"><span>Rohwert</span><strong id="rawout">—</strong></div>
+<div class="invoice-row"><span>Altersabzug</span><strong id="ageout">—</strong></div>
+<div class="invoice-row"><span id="garageLabel">1 Garagenplatz</span><strong id="garageout">—</strong></div>
+<div class="invoice-row"><span id="outsideLabel">1 Aussenparkplatz</span><strong id="outsideout">—</strong></div>
+<div class="invoice-total"><span>Total Verkehrswert</span><strong id="estimate">—</strong></div>
+</aside><div class="result-actions"><button class="estimate-button" id="estimateButtonDesktop" type="button">Verkehrswert bestimmen</button><div class="post-estimate-actions"><button id="adjustButton" type="button">Nachjustieren</button><button id="uxReset" type="button">Zurücksetzen</button></div></div></div>
 </div>
 <div class="foot">Modellbasierte Schätzung auf Grundlage von RealAdvisor-PLZ-Medianpreisen. Eigenschaften-Zuschläge sind Modellannahmen, keine empirisch geschätzten Koeffizienten.</div>
 </div>
 <script src="javascript_dateien/wohnungen.js"></script>
+<script>
+/* Beträge einheitlich mit CHF rechts anzeigen; Rohwert ohne Änderung des Bewertungsmodells rekonstruieren. */
+(() => {
+  const ids = ['estimate', 'ageout', 'garageout', 'outsideout'];
+  const els = ids.map(id => document.getElementById(id));
+  const raw = document.getElementById('rawout');
+  const parse = el => {
+    const t = el.textContent.trim();
+    if (!/\d/.test(t)) return null;
+    const cleaned = t.replace(/[’'\s\u00a0]/g, '').replace(/[^\d,.-]/g, '');
+    const n = Number(cleaned.replace(/,/g, '.'));
+    return Number.isFinite(n) ? n : null;
+  };
+  const formatCHF = (el) => {
+    const original = el.textContent.trim();
+    const value = parse(el);
+    if (value === null) return;
+    const sign = /^\s*[-−]/.test(original) ? '−' : /^\s*\+/.test(original) ? '+' : '';
+    const formatted = sign + Math.abs(value).toLocaleString('de-CH', { maximumFractionDigits: 0 }) + ' CHF';
+    if (original !== formatted) el.textContent = formatted;
+  };
+  const update = () => {
+    const [total, age, garage, outside] = els.map(parse);
+    els.forEach(formatCHF);
+    if ([total, age, garage, outside].some(n => n === null)) { raw.textContent = '—'; return; }
+    // Altersabzug wird abgezogen, Parkplätze werden addiert.
+    const amount = total + Math.abs(age) - Math.abs(garage) - Math.abs(outside);
+    const formattedRaw = Math.round(amount).toLocaleString('de-CH') + ' CHF';
+    if (raw.textContent !== formattedRaw) raw.textContent = formattedRaw;
+  };
+  const observer = new MutationObserver(update);
+  els.forEach(el => observer.observe(el, { childList: true, characterData: true, subtree: true }));
+  update();
+})();
 </script>
-</body>
+<script src="javascript_dateien/ux-flow.js"></script></body>
 </html>

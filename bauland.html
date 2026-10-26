@@ -1,25 +1,11 @@
 <!DOCTYPE html>
-<html lang="de-CH"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>WOHNRADAR – Bauland schätzen</title><link href="styles.css" rel="stylesheet"/></head>
-<body><div class="wrap"><header><div class="brand">WOHN<em>RADAR</em></div><button class="reset" id="reset" type="button">Zurücksetzen</button></header>
 
+<html lang="de-CH"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>WOHNRADAR – Bauland schätzen</title><link href="styles.css" rel="stylesheet"/><link href="wohnradar-ux.css" rel="stylesheet"/></head>
+<body><div class="wrap"><header><div class="brand">WOHN<em>RADAR</em></div><button class="reset" hidden="" id="reset" type="button">Zurücksetzen</button><a class="home-link" href="index.html">← Übersicht</a></header>
 
-<nav aria-label="Immobilienrechner" class="tool-nav">
-  <a href="index.html" class="tool-nav__item"><span class="tool-nav__name">Einfamilienhaus</span></a>
-  <a href="wohnungen.html" class="tool-nav__item"><span class="tool-nav__name">Eigentumswohnung</span></a>
-  <a href="miete.html" class="tool-nav__item"><span class="tool-nav__name">Miete</span></a>
-  <a href="bauland.html" class="tool-nav__item tool-nav__item--active" aria-current="page"><span class="tool-nav__name">Bauland</span></a>
-</nav>
-
-
-
-
-
-
-
-<div class="layout"><main class="stack"><section class="card"><h2>Bauland schätzen</h2><div class="grid"><div class="field"><label for="placeInput">PLZ, Ortschaft oder Gemeinde</label><div class="place-wrap"><input aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" aria-label="Ortschaft oder Postleitzahl suchen" autocomplete="off" id="placeInput" role="combobox" spellcheck="false" value="5400 Baden"/><button aria-label="Ortschaft löschen" class="clear-place" id="clearPlace" title="Eingabe löschen" type="button">×</button></div><div class="suggest hide" id="suggestions" role="listbox"></div><div class="hint" id="placeHint"></div></div></div><div class="lbl" style="margin-top:19px">Bebauung</div><div class="types" id="type"><label class="typechoice"><input checked name="landType" type="radio" value="multi"/>Mehrfamilienhaus</label><label class="typechoice"><input name="landType" type="radio" value="single"/>Einfamilienhaus</label></div></section>
-</main>
-<aside aria-live="polite" class="result"><div class="final-label">Baulandpreis pro m²</div><div class="big" id="estimate">—</div><div class="result-heading">Preisspanne nach Lage</div><div class="detail"><span>Schlechte Lage</span><strong id="low">—</strong></div><div class="detail"><span>Gute Lage</span><strong id="high">—</strong></div><div class="result-heading">Grundlage</div><div class="detail"><span>Bebauung</span><strong id="buildLabel">Mehrfamilienhaus</strong></div><span id="apartmentPrice" hidden></span></aside></div>
+<div class="layout"><main class="stack"><section class="card"><h2>Bauland schätzen</h2><div class="grid"><div class="field"><label for="placeInput">PLZ, Ortschaft oder Gemeinde</label><div class="place-wrap"><input aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" aria-label="Ortschaft oder Postleitzahl suchen" autocomplete="off" id="placeInput" role="combobox" spellcheck="false" value="5400 Baden"/><button aria-label="Ortschaft löschen" class="clear-place" id="clearPlace" title="Eingabe löschen" type="button">×</button></div><div class="suggest hide" id="suggestions" role="listbox"></div><div class="hint" id="placeHint"></div></div></div><div class="lbl" style="margin-top:19px">Bebauung</div><div class="types" id="type"><label class="typechoice"><input checked="" name="landType" type="radio" value="multi"/>Mehrfamilienhaus</label><label class="typechoice"><input name="landType" type="radio" value="single"/>Einfamilienhaus</label></div></section>
+<div class="mobile-estimate-action"><button class="estimate-button" id="estimateButtonMobile" type="button">Verkehrswert bestimmen</button></div></main>
+<div class="result-shell" id="resultShell"><aside aria-live="polite" class="result"><div class="final-label">Baulandpreis pro m²</div><div class="big" id="estimate">—</div><div class="result-heading">Preisspanne nach Lage</div><div class="detail"><span>Schlechte Lage</span><strong id="low">—</strong></div><div class="detail"><span>Gute Lage</span><strong id="high">—</strong></div><div class="result-heading">Grundlage</div><div class="detail"><span>Bebauung</span><strong id="buildLabel">Mehrfamilienhaus</strong></div><span hidden="" id="apartmentPrice"></span></aside><div class="result-actions"><button class="estimate-button" id="estimateButtonDesktop" type="button">Verkehrswert bestimmen</button><div class="post-estimate-actions"><button id="adjustButton" type="button">Nachjustieren</button><button id="uxReset" type="button">Zurücksetzen</button></div></div></div></div>
 <div class="foot">Modellbasierte Schätzung pro m² Grundstücksfläche. Die Umrechnung für Mehrfamilienhäuser und Einfamilienhäuser sowie die Lage-Spanne beruhen auf Annahmen. Baurecht, Erschliessung und Besonderheiten der Parzelle sind nicht berücksichtigt. Die Spanne ist kein statistisches Konfidenzintervall.</div></div>
-
 <script src="javascript_dateien/bauland.js"></script>
-</script></body></html>
+<script src="javascript_dateien/ux-flow.js"></script></body></html>

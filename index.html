@@ -1,212 +1,1166 @@
-<!-- GitHub Test 2026 -->
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="de-CH">
+
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>WOHNRADAR – Hauswert schätzen</title>
-<link href="styles.css" rel="stylesheet"/>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width,initial-scale=1"
+    >
+
+    <meta
+        name="theme-color"
+        content="#FAF6F2"
+    >
+
+    <title>WOHNRADAR – Verkehrswert und Mietwert</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+
+    <!-- ==================================================
+         CSS: STARTSEITE
+         ================================================== -->
+
+    <style>
+
+        /* ----------------------------------------------
+           GRUNDLAYOUT
+           ---------------------------------------------- */
+
+        .home-page {
+            min-height: 100vh;
+        }
+
+        .home-page .wrap {
+            max-width: 1080px;
+            padding-top: 25px;
+        }
+
+        .home-page header {
+            padding: 0 0 17px;
+            margin: 0;
+        }
+
+        .home-page .brand {
+            font-size: 23px;
+            letter-spacing: -.9px;
+        }
+
+        .home-tag {
+            font-size: 11px;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--muted);
+            font-weight: 700;
+        }
+
+
+        /* ----------------------------------------------
+           HERO: TITEL UND EINLEITUNG
+           ---------------------------------------------- */
+
+        .hero {
+            position: relative;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 390px;
+            align-items: center;
+            gap: 24px;
+            padding: 51px 0 35px;
+        }
+
+        .hero h1 {
+            position: relative;
+            z-index: 1;
+            font-size: clamp(32px, 4.6vw, 49px);
+            line-height: 1.1;
+            letter-spacing: -.055em;
+            font-weight: 800;
+            margin: 0 0 18px;
+            max-width: 700px;
+        }
+
+        .hero p {
+            position: relative;
+            z-index: 1;
+            color: var(--muted);
+            font-size: clamp(15px, 1.7vw, 17px);
+            line-height: 1.65;
+            max-width: 660px;
+            margin: 0;
+        }
+
+
+        /* ----------------------------------------------
+           DEKORATIVE SCHWEIZER GEMEINDEKARTE
+           ---------------------------------------------- */
+
+        .swiss-visual {
+            position: relative;
+            width: 100%;
+            min-width: 0;
+            pointer-events: none;
+            opacity: .96;
+        }
+
+        .swiss-map {
+            display: block;
+            width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+
+        .municipality {
+            stroke: #faf6f2;
+            stroke-width: .55;
+            stroke-linejoin: round;
+            transition: fill 1.2s ease, opacity 1.2s ease;
+        }
+
+        .municipality.is-lit {
+            fill: #a64b36 !important;
+        }
+
+        .swiss-outline {
+            fill: none;
+            stroke: rgba(110, 72, 61, .38);
+            stroke-width: 1.25;
+            stroke-linejoin: round;
+        }
+
+
+        /* ----------------------------------------------
+           SCHWEBENDE PREISSCHILDER
+           ---------------------------------------------- */
+
+        .map-price-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 3;
+            overflow: visible;
+            pointer-events: none;
+        }
+
+        .map-price-tag {
+            position: absolute;
+            left: var(--tag-x);
+            top: var(--tag-y);
+            min-width: 125px;
+            max-width: 185px;
+            padding: 11px 14px 12px;
+            border: 1px solid rgba(255,255,255,.72);
+            border-radius: 2px;
+            background: rgba(255,252,249,.96);
+            box-shadow: 0 10px 32px rgba(70,38,31,.16), 0 1px 4px rgba(70,38,31,.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: #3e302d;
+            transform: translate(-50%, -102%) scale(.55);
+            transform-origin: 50% 100%;
+            opacity: 0;
+            filter: blur(5px);
+            
+            transition:
+    transform 1.8s linear,
+    opacity 1.8s linear,
+    filter 1.8s linear;
+
+
+
+            will-change: transform, opacity;
+        }
+
+        .map-price-tag.is-visible {
+            transform: translate(-50%, -112%) scale(1);
+            opacity: 1;
+            filter: blur(0);
+        }
+
+        .map-price-tag.is-leaving {
+    transform: translate(-50%, -102%) scale(.55);
+    opacity: 0;
+    filter: blur(5px);
+}
+
+
+        .map-price-tag::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            bottom: -7px;
+            width: 12px;
+            height: 12px;
+            background: rgba(255,252,249,.96);
+            border-right: 1px solid rgba(255,255,255,.72);
+            border-bottom: 1px solid rgba(255,255,255,.72);
+            transform: translateX(-50%) rotate(45deg);
+        }
+
+        .map-tag-name {
+            display: block;
+            font-size: 12px;
+            font-weight: 750;
+            letter-spacing: -.025em;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+
+        .map-tag-price {
+            display: block;
+            margin-top: 5px;
+            color: #a4513e;
+            font-size: 14px;
+            font-weight: 800;
+            letter-spacing: -.045em;
+            white-space: nowrap;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .map-tag-unit {
+            font-size: 10px;
+            font-weight: 650;
+            letter-spacing: 0;
+        }
+
+        .map-tag-pin {
+            position: absolute;
+            left: var(--tag-x);
+            top: var(--tag-y);
+            width: 7px;
+            height: 7px;
+            border: 1.5px solid #fff;
+            border-radius: 50%;
+            background: #a4513e;
+            box-shadow: 0 0 0 5px rgba(164,81,62,.12);
+            transform: translate(-50%, -50%) scale(.5);
+            opacity: 0;
+            transition: opacity .4s ease, transform .55s ease;
+        }
+
+        .map-tag-pin.is-visible {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .map-tag-pin.is-leaving { opacity: 0; }
+
+        @media (max-width: 650px) {
+            .map-price-tag { min-width: 108px; max-width: 150px; padding: 9px 11px; }
+            .map-tag-name { font-size: 9px; }
+            .map-tag-price { font-size: 12px; }
+        }
+
+        /* ----------------------------------------------
+           ABSCHNITTSÜBERSCHRIFT
+           ---------------------------------------------- */
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--muted);
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            margin: 0 0 14px;
+        }
+
+
+        /* ----------------------------------------------
+           KACHELRASTER
+           ---------------------------------------------- */
+
+        .tiles {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+
+        /* ----------------------------------------------
+           EINZELNE KACHEL
+           ---------------------------------------------- */
+
+        .tile {
+            min-width: 0;
+            min-height: 132px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 17px;
+            padding: 23px 24px;
+            background: #fff;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            text-decoration: none;
+            color: var(--ink);
+            box-shadow: 0 4px 18px rgba(53, 42, 40, .025);
+            transition:
+                transform .18s ease,
+                border-color .18s ease,
+                box-shadow .18s ease;
+        }
+
+        .tile:hover,
+        .tile:focus-visible {
+            transform: translateY(-3px);
+            border-color: var(--accent);
+            box-shadow: 0 13px 32px rgba(53, 42, 40, .08);
+        }
+
+        .tile:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+
+        /* ----------------------------------------------
+           KACHEL: OBERER BEREICH
+           ---------------------------------------------- */
+
+        .tile-top {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            min-width: 0;
+        }
+
+        .tile-icon {
+            flex: 0 0 43px;
+            width: 43px;
+            height: 43px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            background: #f5eae3;
+            color: var(--accent-dark);
+        }
+
+        .tile-icon svg {
+            width: 25px;
+            height: 25px;
+        }
+
+        .tile-name {
+            font-size: clamp(17px, 2vw, 21px);
+            font-weight: 800;
+            letter-spacing: -.035em;
+            line-height: 1.2;
+        }
+
+        .tile-arrow {
+            margin-left: auto;
+            color: var(--accent);
+            font-size: 19px;
+            line-height: 1;
+        }
+
+
+        /* ----------------------------------------------
+           KACHEL: UNTERER BEREICH
+           ---------------------------------------------- */
+
+        .tile-action {
+            padding-left: 56px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+
+        /* ----------------------------------------------
+           KACHELN IN VORBEREITUNG
+           ---------------------------------------------- */
+
+        .tile-upcoming {
+            background: #f4ede7;
+            box-shadow: none;
+            cursor: default;
+        }
+
+        .tile-upcoming .tile-icon {
+            background: #e9d9cd;
+        }
+
+        .tile-upcoming .tile-action {
+            opacity: .8;
+        }
+
+        .tile-badge {
+            margin-left: auto;
+            font-size: 10px;
+            white-space: nowrap;
+            color: var(--muted);
+            border: 1px solid var(--line);
+            padding: 5px 8px;
+            border-radius: 30px;
+        }
+
+
+        /* ----------------------------------------------
+           HINWEIS UNTER DEN KACHELN
+           ---------------------------------------------- */
+
+        .home-note {
+            font-size: 11px;
+            color: var(--muted);
+            margin: 22px 0 0;
+            line-height: 1.6;
+        }
+
+
+        /* ==============================================
+           SMARTPHONE: MAXIMAL 650 PX
+           ============================================== */
+
+        @media (max-width: 650px) {
+
+            .home-page .wrap {
+                padding: 17px 15px 35px;
+            }
+
+            .home-page header {
+                padding-bottom: 13px;
+            }
+
+            .home-page .brand {
+                font-size: 21px;
+            }
+
+            .home-tag {
+                font-size: 9px;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                padding: 10px 0 15px;
+            }
+
+            .hero h1 {
+                font-size: 34px;
+                margin-bottom: 13px;
+            }
+
+            .hero p {
+                font-size: 14px;
+                line-height: 1.55;
+            }
+
+            .swiss-visual {
+                width: min(100%, 420px);
+                margin: 0 auto;
+            }
+
+            .section-label {
+                margin-bottom: 10px;
+            }
+
+            .tiles {
+                grid-template-columns: 1fr;
+                gap: 9px;
+            }
+
+            .tile {
+                min-height: 88px;
+                padding: 14px 16px;
+                gap: 8px;
+                border-radius: 12px;
+            }
+
+            .tile-top {
+                gap: 11px;
+            }
+
+            .tile-icon {
+                width: 36px;
+                height: 36px;
+                flex-basis: 36px;
+                border-radius: 9px;
+            }
+
+            .tile-icon svg {
+                width: 22px;
+                height: 22px;
+            }
+
+            .tile-name {
+                font-size: 17px;
+            }
+
+            .tile-action {
+                padding-left: 47px;
+                font-size: 12px;
+            }
+
+            .tile-badge {
+                font-size: 9px;
+                padding: 4px 6px;
+            }
+
+            .home-note {
+                margin-top: 18px;
+            }
+
+        }
+
+
+        /* ----------------------------------------------
+           REDUZIERTE ANIMATIONEN
+           ---------------------------------------------- */
+
+        @media (prefers-reduced-motion: reduce) {
+
+            .municipality {
+                transition: none;
+            }
+
+            .tile {
+                transition: none;
+            }
+
+            .map-price-tag,
+            .map-tag-pin {
+                transition: none;
+            }
+
+        }
+
+    </style>
+
 </head>
-<body>
-<div class="wrap">
-<header>
-<div class="brand">
-     WOHN<em>RADAR
-     </em>
-</div>
-<button class="reset" id="reset">
-     Zurücksetzen
-    </button>
-</header>
-
-<nav aria-label="Immobilienrechner" class="tool-nav">
-  <a href="index.html" class="tool-nav__item tool-nav__item--active" aria-current="page">
-    <span class="tool-nav__name">Einfamilienhaus</span>
-  </a>
-  <a href="wohnungen.html" class="tool-nav__item">
-    <span class="tool-nav__name">Eigentumswohnung</span>
-  </a>
-  <a href="miete.html" class="tool-nav__item">
-    <span class="tool-nav__name">Miete</span>
-  </a>
-  <a href="bauland.html" class="tool-nav__item">
-    <span class="tool-nav__name">Bauland</span>
-  </a>
-</nav>
 
 
+<body class="home-page">
 
-<div class="layout">
-<main class="stack">
-<section class="card house-overview">
-<h2>
-       Einfamilienhaus schätzen
-      </h2>
-<div class="grid">
-<div class="field">
-<label for="placeInput">
-         PLZ, Ortschaft oder Gemeinde
-        </label>
-<div class="place-wrap">
-<input aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" aria-label="Ortschaft oder Postleitzahl suchen" autocomplete="off" id="placeInput" role="combobox" spellcheck="false" value="5400 Baden"/>
-<button aria-label="Ortschaft löschen" class="clear-place" id="clearPlace" title="Eingabe löschen" type="button">
-          ×
-         </button>
-</div>
-<div class="suggest hide" id="suggestions" role="listbox">
-</div>
-<div class="hint" id="placeHint">
-</div>
-</div>
-<div class="parking-inputs"><div class="parking-field">
-<div class="lbl">
-         Garagenplätze
-        </div>
-<div class="count">
-<button aria-label="Garagenplätze verringern" data-count="garage:-1">
-          −
-         </button>
-<output id="garagev">
-          1
-         </output>
-<button aria-label="Garagenplätze erhöhen" data-count="garage:1">
-          +
-         </button>
-</div>
-</div><div class="parking-field">
-<div class="lbl">
-         Aussenparkplätze
-        </div>
-<div class="count">
-<button aria-label="Aussenparkplätze verringern" data-count="outside:-1">
-          −
-         </button>
-<output id="outsidev">
-          1
-         </output>
-<button aria-label="Aussenparkplätze erhöhen" data-count="outside:1">
-          +
-         </button>
-</div>
-</div></div></div>
-<div class="lbl" style="margin-top:19px">
-       Haustyp
-      </div>
-<div class="types" id="type">
-<label class="typechoice">
-<input checked="" name="houseType" type="radio" value="free"/>
-        Freistehendes EFH
-       </label>
-<label class="typechoice">
-<input name="houseType" type="radio" value="end"/>
-        Eckhaus / Doppelhaus
-       </label>
-<label class="typechoice">
-<input name="houseType" type="radio" value="mid"/>
-        Reihenmittelhaus
-       </label>
-</div>
-<div class="grid">
-<div class="range">
-<div class="rangehead">
-<label for="living">
-          Wohnfläche
-         </label>
-<output id="livingv">
-</output>
-</div>
-<input id="living" max="400" min="60" step="5" type="range" value="180"/>
-</div>
-<div class="range">
-<div class="rangehead">
-<label for="land">
-          Parzellenfläche
-         </label>
-<output id="landv">
-</output>
-</div>
-<input id="land" max="3000" min="100" step="25" type="range" value="650"/>
-</div>
-</div>
-</section>
-<section class="card">
-<h2>
-       Lage und Wohnkomfort
-      </h2>
-<div id="sliders">
-</div>
-</section><section class="card">
-<h2>
-       Alter und Renovationen
-      </h2>
-<div class="range">
-<div class="rangehead">
-<label for="built">
-         Baujahr
-        </label>
-<output id="builtv">
-</output>
-</div>
-<input id="built" max="2026" min="1850" step="1" type="range" value="1985"/>
-</div>
-<div class="lbl" style="margin-top:20px">
-       Renovationszustand
-      </div>
-<div class="seg" id="condition">
-<button data-cond="old">
-        Hoher Renovationsbedarf
-       </button>
-<button class="active" data-cond="normal">
-        Teilweise renoviert
-       </button>
-<button data-cond="new">
-        Umfassend renoviert
-       </button>
-</div>
-<details>
-<summary>
-        Einzelne Renovationen anpassen
-       </summary>
-<div class="hint">
-        Jahr der letzten Erneuerung wählen. Nie erneuert? Baujahr belassen.
-       </div>
-<div id="ageFields">
-</div>
-</details>
-</section>
+    <div class="wrap">
 
 
-</main>
-<aside aria-live="polite" class="result">
-<div class="final-label">
-        Verkehrswert
+        <!-- ==============================================
+             HEADER
+             ============================================== -->
+
+        <header>
+
+            <div class="brand">
+                WOHN<em>RADAR</em>
+            </div>
+
+            <span class="home-tag">
+                Schweiz
+            </span>
+
+        </header>
+
+
+        <!-- ==============================================
+             HAUPTINHALT
+             ============================================== -->
+
+        <main>
+
+
+            <!-- ==========================================
+                 HERO: TITEL UND EINLEITUNG
+                 ========================================== -->
+
+            <section class="hero">
+
+
+
+
+                <div class="hero-copy">
+                    <h1>
+                        Verkehrswert, Mietwert.
+                    </h1>
+
+                <p>
+                    Der Wohnradar verfügt neu über Daten aus
+                    sämtlichen Gemeinden der Schweiz.
+                    Sie können hier Verkehrs- und Mietewerte ohne Angabe von
+                    Telefonnummer oder E-Mail-Adresse einfach ermitteln.
+                    </p>
+                </div>
+
+                <!-- Echte Schweizer Gemeindegrenzen, rein dekorativ -->
+                <div class="swiss-visual" aria-hidden="true">
+                    <svg
+                        id="swissMap"
+                        class="swiss-map"
+                        viewBox="0 0 600 350"
+                        focusable="false"
+                    ></svg>
+                    <div class="map-price-layer" id="mapPriceLayer"></div>
+                </div>
+
+            </section>
+
+
+            <!-- ==========================================
+                 KACHELÜBERSICHT
+                 ========================================== -->
+
+            <section aria-label="Rechner auswählen">
+
+             
+
+
+                <div class="tiles">
+
+
+                    <!-- ==================================
+                         KACHEL 1: HAUS
+                         ================================== -->
+
+                    <a
+                        class="tile"
+                        href="haus.html"
+                    >
+
+                        <span class="tile-top">
+
+                            <span class="tile-icon">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.65"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M3 11.5 12 4l9 7.5V21H3z"/>
+                                    <path d="M9 21v-7h6v7"/>
+                                </svg>
+
+                            </span>
+
+                            <span class="tile-name">
+                                Haus
+                            </span>
+
+                            <span
+                                class="tile-arrow"
+                                aria-hidden="true"
+                            >
+                                ↗
+                            </span>
+
+                        </span>
+
+                        <span class="tile-action">
+                            Verkehrswert ermitteln
+                        </span>
+
+                    </a>
+
+
+                    <!-- ==================================
+                         KACHEL 2: EIGENTUMSWOHNUNG
+                         ================================== -->
+
+                    <a
+                        class="tile"
+                        href="wohnungen.html"
+                    >
+
+                        <span class="tile-top">
+
+                            <span class="tile-icon">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.65"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <rect
+                                        x="5"
+                                        y="3"
+                                        width="14"
+                                        height="18"
+                                        rx="1.5"
+                                    />
+                                    <path d="M9 7h2m3 0h2M9 11h2m3 0h2M9 15h2m3 0h2M11 21v-3h2v3"/>
+                                </svg>
+
+                            </span>
+
+                            <span class="tile-name">
+                                Eigentumswohnung
+                            </span>
+
+                            <span
+                                class="tile-arrow"
+                                aria-hidden="true"
+                            >
+                                ↗
+                            </span>
+
+                        </span>
+
+                        <span class="tile-action">
+                            Verkehrswert ermitteln
+                        </span>
+
+                    </a>
+
+
+                    <!-- ==================================
+                         KACHEL 3: MIETE
+                         ================================== -->
+
+                    <a
+                        class="tile"
+                        href="miete.html"
+                    >
+
+                        <span class="tile-top">
+
+                            <span class="tile-icon">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.65"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M4 11.5 12 5l8 6.5V21H4z"/>
+                                    <path d="M9 15h6m-3-3v6"/>
+                                    <path d="M7 4h10"/>
+                                </svg>
+
+                            </span>
+
+                            <span class="tile-name">
+                                Miete
+                            </span>
+
+                            <span
+                                class="tile-arrow"
+                                aria-hidden="true"
+                            >
+                                ↗
+                            </span>
+
+                        </span>
+
+                        <span class="tile-action">
+                            Mietwert ermitteln
+                        </span>
+
+                    </a>
+
+
+                    <!-- ==================================
+                         KACHEL 4: BAULAND
+                         ================================== -->
+
+                    <a
+                        class="tile"
+                        href="bauland.html"
+                    >
+
+                        <span class="tile-top">
+
+                            <span class="tile-icon">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.65"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="m3 9 8-5 10 5-8 5zM3 9v9l10 4 8-5V9M13 14v8"/>
+                                    <path d="m7 11 8-5"/>
+                                </svg>
+
+                            </span>
+
+                            <span class="tile-name">
+                                Bauland
+                            </span>
+
+                            <span
+                                class="tile-arrow"
+                                aria-hidden="true"
+                            >
+                                ↗
+                            </span>
+
+                        </span>
+
+                        <span class="tile-action">
+                            Verkehrswert ermitteln
+                        </span>
+
+                    </a>
+
+
+                    <!-- ==================================
+                         KACHEL 5: KENNZAHLEN
+                         ================================== -->
+
+                    <div
+                        class="tile tile-upcoming"
+                        aria-label="Kennzahlen, in Vorbereitung"
+                    >
+
+                        <span class="tile-top">
+
+                            <span class="tile-icon">
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.65"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <path d="M4 20V5m0 15h17"/>
+                                    <path d="m7 16 4-5 4 2 5-7"/>
+                                    <path d="M17 6h3v3"/>
+                                </svg>
+
+                            </span>
+
+                            <span class="tile-name">
+                                Kennzahlen
+                            </span>
+
+                            <span class="tile-badge">
+                                Bald verfügbar
+                            </span>
+
+                        </span>
+
+                        <span class="tile-action">
+                            Immobilienmarkt im Überblick
+                        </span>
+
+                    </div>
+
+
+                    <!-- ==================================
+                         KACHEL 6: SCHÄTZUNGSEXPERTEN
+                         NEU HINZUGEFÜGT
+                         ================================== -->
+
+                    <div
+                        class="tile tile-upcoming"
+                        aria-label="Schätzungsexperten vor Ort, in Vorbereitung"
+                    >
+
+                        <span class="tile-top">
+
+                            <span class="tile-icon">
+
+                                <!-- Symbol: Person mit Lupe -->
+
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="1.65"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    aria-hidden="true"
+                                >
+                                    <circle cx="9" cy="7" r="3"/>
+                                    <path d="M3 20v-2a6 6 0 0 1 9-5.2"/>
+                                    <circle cx="16" cy="16" r="4"/>
+                                    <path d="m19 19 3 3"/>
+                                </svg>
+
+                            </span>
+
+                            <span class="tile-name">
+                                Schätzungsexperten vor Ort
+                            </span>
+
+                            <span class="tile-badge">
+                                Bald verfügbar
+                            </span>
+
+                        </span>
+
+                        <span class="tile-action">
+                            Immobilienbewertung durch Fachleute
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+
+            <!-- ==========================================
+                 RECHTLICHER / METHODISCHER HINWEIS
+                 ========================================== -->
+
+            <p class="home-note">
+                Die Ergebnisse sind modellbasierte Schätzungen
+                und ersetzen keine individuelle Fachbewertung.
+            </p>
+
+
+        </main>
+
     </div>
-<div class="big" id="estimate">
-        —
-    </div>
-<div class="result-heading">
-        Berücksichtigt:
-    </div>
-<div class="detail">
-<span>Altersabzug</span>
-<strong id="ageout">—</strong>
-</div>
-<div class="detail">
-<span id="garageLabel">1 Garagenplatz</span>
-<strong id="garageout">—</strong>
-</div>
-<div class="detail">
-<span id="outsideLabel">1 Aussenparkplatz</span>
-<strong id="outsideout">—</strong>
-</div>
-</aside>
-</div>
-<div class="foot">
-    Modellbasierte Schätzung.
-   </div>
-</div>
-<script src="javascript_dateien/haeuser.js"></script>
-</script>
+
+
+    <!-- ==================================================
+         GEMEINDEKARTE: BFS-GRENZEN 2025
+
+         Lokal bevorzugt: daten/gemeinden.geojson
+         Alternativ: öffentliches GeoJSON mit BFS-Geometrien.
+         Die Preisdaten sind optional für die Einfärbung.
+         ================================================== -->
+
+    <script>
+        (() => {
+            "use strict";
+
+            const svg = document.getElementById("swissMap");
+            const NS = "http://www.w3.org/2000/svg";
+            const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+            const colors = ["#f0dfd3", "#e6c8b5", "#d9aa91", "#cb8a70", "#ba7158", "#a95b44"];
+            const boundarySources = [
+                "daten/gemeinden.geojson",
+                "https://raw.githubusercontent.com/samkhavandi/Swiss_Geography_Look_Ups/main/geometries/municipality_2025.geojson"
+            ];
+
+            const create = (name, attributes = {}) => {
+                const el = document.createElementNS(NS, name);
+                Object.entries(attributes).forEach(([key, value]) => el.setAttribute(key, value));
+                return el;
+            };
+
+            const normalize = value => String(value ?? "")
+                .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase().replace(/[^a-z0-9]/g, "");
+
+            function nameOf(feature) {
+                const p = feature.properties || {};
+                return p.name || p.NAME || p.NAME_DE || p.gemeinde ||
+                    p.GEMEINDE || p.GMDNAME || p.gmdname ||
+                    p.municipality || p.Municipality || p.label || "";
+            }
+
+            function polygonRings(geometry) {
+                if (!geometry) return [];
+                if (geometry.type === "Polygon") return geometry.coordinates;
+                if (geometry.type === "MultiPolygon") return geometry.coordinates.flat();
+                return [];
+            }
+
+            async function loadBoundaries() {
+                for (const url of boundarySources) {
+                    try {
+                        const response = await fetch(url);
+                        if (!response.ok) continue;
+                        const geo = await response.json();
+                        if (geo.type === "FeatureCollection" && geo.features?.length > 1000) {
+                            return geo;
+                        }
+                    } catch (error) {
+                        console.debug("Gemeindegrenzen nicht von", url, error);
+                    }
+                }
+                throw new Error("Keine Gemeindegrenzen verfügbar");
+            }
+
+            async function loadPrices() {
+                try {
+                    const response = await fetch("daten/immobilienpreise.json");
+                    if (!response.ok) return new Map();
+                    const data = await response.json();
+                    const groups = new Map();
+                    for (const item of Object.values(data)) {
+                        const name = normalize(item?.ort);
+                        const price = Number(item?.median);
+                        if (!name || !Number.isFinite(price) || price <= 0) continue;
+                        if (!groups.has(name)) groups.set(name, []);
+                        groups.get(name).push(price);
+                    }
+                    return new Map([...groups].map(([name, prices]) => [
+                        name, prices.reduce((sum, price) => sum + price, 0) / prices.length
+                    ]));
+                } catch {
+                    return new Map();
+                }
+            }
+
+            function render(geo, prices) {
+                const features = geo.features.filter(feature => polygonRings(feature.geometry).length);
+                const bounds = [Infinity, Infinity, -Infinity, -Infinity];
+                const cosLat = Math.cos(46.8 * Math.PI / 180);
+
+                for (const feature of features) {
+                    for (const ring of polygonRings(feature.geometry)) {
+                        for (const [lon, lat] of ring) {
+                            const x = lon * cosLat;
+                            bounds[0] = Math.min(bounds[0], x);
+                            bounds[1] = Math.min(bounds[1], lat);
+                            bounds[2] = Math.max(bounds[2], x);
+                            bounds[3] = Math.max(bounds[3], lat);
+                        }
+                    }
+                }
+
+                const [minX, minY, maxX, maxY] = bounds;
+                const scale = Math.min(560 / (maxX - minX), 310 / (maxY - minY));
+                const dx = (600 - (maxX - minX) * scale) / 2;
+                const dy = (350 - (maxY - minY) * scale) / 2;
+                const project = ([lon, lat]) => [
+                    dx + (lon * cosLat - minX) * scale,
+                    dy + (maxY - lat) * scale
+                ];
+
+                const fragment = document.createDocumentFragment();
+                const candidates = [];
+
+                features.forEach((feature, index) => {
+                    const rings = polygonRings(feature.geometry);
+                    const d = rings.map(ring => {
+                        if (!ring.length) return "";
+                        return ring.map((point, i) => {
+                            const [x, y] = project(point);
+                            return `${i ? "L" : "M"}${x.toFixed(2)},${y.toFixed(2)}`;
+                        }).join(" ") + " Z";
+                    }).join(" ");
+                    if (!d) return;
+
+                    const municipalityName = nameOf(feature);
+                    const price = prices.get(normalize(municipalityName));
+                    const indexColor = Number.isFinite(price)
+                        ? (price < 5000 ? 0 : price < 7000 ? 1 : price < 9000 ? 2 :
+                           price < 11000 ? 3 : price < 14000 ? 4 : 5)
+                        : ((index * 37 + 11) % colors.length);
+
+                    const path = create("path", {
+                        d,
+                        class: "municipality",
+                        fill: colors[indexColor],
+                        "fill-rule": "evenodd"
+                    });
+                    fragment.appendChild(path);
+
+                    // Nur Gemeinden mit tatsächlich vorhandenen Preisen anzeigen.
+                    if (Number.isFinite(price) && price > 0 && municipalityName) {
+                        candidates.push({ path, name: municipalityName, price });
+                    }
+                });
+
+                svg.replaceChildren(fragment);
+                if (!candidates.length) return;
+
+                // getBBox() bestimmt die sichtbare Position jeder Gemeinde.
+                // Für unregelmässige Flächen wird ein Punkt innerhalb des
+                // Pfads gesucht, statt blind die Mitte der Bounding-Box zu nehmen.
+                for (const candidate of candidates) {
+                    const box = candidate.path.getBBox();
+                    const center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
+                    let point = center;
+                    if (typeof candidate.path.isPointInFill === "function" &&
+                        !candidate.path.isPointInFill(new DOMPoint(center.x, center.y))) {
+                        outer: for (let step = 1; step <= 5; step++) {
+                            for (let a = 0; a < 12; a++) {
+                                const angle = a * Math.PI / 6;
+                                const test = new DOMPoint(
+                                    center.x + Math.cos(angle) * box.width * step / 12,
+                                    center.y + Math.sin(angle) * box.height * step / 12
+                                );
+                                if (candidate.path.isPointInFill(test)) {
+                                    point = { x: test.x, y: test.y };
+                                    break outer;
+                                }
+                            }
+                        }
+                    }
+                    candidate.point = point;
+                }
+
+                const layer = document.getElementById("mapPriceLayer");
+                const money = new Intl.NumberFormat("de-CH", { maximumFractionDigits: 0 });
+                let previous = -1;
+                let current = null;
+
+                function showNext() {
+                    let index;
+                    do {
+                        index = Math.floor(Math.random() * candidates.length);
+                    } while (candidates.length > 1 && index === previous);
+                    previous = index;
+                    const item = candidates[index];
+
+                    if (current) {
+                        current.path.classList.remove("is-lit");
+                        current.tag.classList.remove("is-visible");
+                        current.tag.classList.add("is-leaving");
+                        current.pin.classList.remove("is-visible");
+                        current.pin.classList.add("is-leaving");
+                        const old = current;
+                        setTimeout(() => { old.tag.remove(); old.pin.remove(); }, 1850);
+                    }
+
+                    const x = Math.max(19, Math.min(81, item.point.x / 600 * 100));
+                    const y = Math.max(24, Math.min(95, item.point.y / 350 * 100));
+                    const style = `--tag-x:${x}%;--tag-y:${y}%`;
+
+                    const pin = document.createElement("span");
+                    pin.className = "map-tag-pin";
+                    pin.setAttribute("style", style);
+
+                    const tag = document.createElement("div");
+                    tag.className = "map-price-tag";
+                    tag.setAttribute("style", style);
+
+                    const name = document.createElement("span");
+                    name.className = "map-tag-name";
+                    name.textContent = item.name;
+
+                    const price = document.createElement("span");
+                    price.className = "map-tag-price";
+                    price.append(`CHF ${money.format(item.price)} `);
+                    const unit = document.createElement("span");
+                    unit.className = "map-tag-unit";
+                    unit.textContent = "/m²";
+                    price.appendChild(unit);
+                    tag.append(name, price);
+                    layer.append(pin, tag);
+                    item.path.classList.add("is-lit");
+                    current = { path: item.path, tag, pin };
+
+                    requestAnimationFrame(() => requestAnimationFrame(() => {
+                        tag.classList.add("is-visible");
+                        pin.classList.add("is-visible");
+                    }));
+                }
+
+                showNext();
+                if (!reduceMotion) setInterval(showNext, 5000);
+            }
+
+            Promise.all([loadBoundaries(), loadPrices()])
+                .then(([boundaries, prices]) => render(boundaries, prices))
+                .catch(error => console.warn("Schweizer Gemeindevisualisierung:", error));
+        })();
+    </script>
+
 </body>
+
 </html>
