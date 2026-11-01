@@ -1,0 +1,13 @@
+KONTAKTSEITE – EINBAU UND GRENZEN
+
+kontakt.html, kontakt.css und kontakt.js neben die vorhandenen Seiten legen. Die vier Rechner-/Startseiten und footer.html wurden aktualisiert: Kontakt ist jetzt aktiv. Die bisherigen Projektdateien bleiben erforderlich.
+
+Schutz: Die E-Mail-Adresse und Telefonnummer stehen weder im HTML noch im JavaScript im Klartext; sie werden nach einem bewussten Klick aus verschleierten Zeichenwerten zusammengesetzt. Kein externer Dienst, kein Tracking und kein Formularversand. Nach der Freigabe öffnet der Link das E-Mail- bzw. Telefonprogramm.
+
+Das reduziert einfaches automatisches Einsammeln, ist aber keine Sicherheitsgrenze. Ein gezielter Bot kann JavaScript ausführen, die Werte entschlüsseln oder den Button anklicken. Zwei Hürden sind keine doppelte Sicherheitsgarantie. Bereits anderweitig veröffentlichte Adressen bleiben auffindbar. Für stärkeren Schutz wäre z. B. ein Kontaktformular mit serverseitig geprüftem CAPTCHA und Versandbegrenzung über einen zusätzlichen Dienst nötig. Ein CAPTCHA nur im Browser wäre umgehbar.
+
+SEO: Aussagekräftiger Titel, Beschreibung, eine H1, Firmenname, Tätigkeit, vollständige Adresse und strukturierte Organization-Daten sind eingebaut. Telefon und E-Mail fehlen bewusst in den strukturierten Daten. Damit sind sie dort nicht ungeschützt veröffentlicht. Keine Ranking- oder Rich-Result-Garantie. Die Firma wird nicht zusätzlich als zweiter lokaler Standort von Wohnradar ausgezeichnet.
+
+Vor Veröffentlichung nach Bedarf ergänzen: bestätigte Öffnungs-/Telefonzeiten, Ansprechperson und Funktion, Terminregelung, zutreffende Anreise-/Zugangshinweise. Keine Angaben hierzu wurden erfunden. Sobald die endgültige Wohnradar-Domain bekannt ist, kann eine absolute kanonische URL ergänzt werden. Ein vorhandenes Google-Unternehmensprofil sollte mit Firmenname und Adresse übereinstimmen; die öffentliche Telefonnummer dort wäre unabhängig von dieser Verschleierung auffindbar.
+
+Die Original-Stylesheets und Rechnerdateien wurden nicht mitgeliefert. kontakt.css enthält deshalb eine eigenständige Gestaltung mit denselben Designvariablen und passenden Ersatzfarben. Ein vollständiger visueller Abgleich mit der Live-Website steht aus.

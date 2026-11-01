@@ -1,0 +1,31 @@
+/* Eigene Seitennamen vermeiden Auswirkungen auf bestehende Rechner. */
+.wr-contact-page { margin:0; background:var(--bg,#faf6f2); color:var(--ink,#302b28); font-family:system-ui,-apple-system,"Segoe UI",sans-serif; line-height:1.65; }
+.wr-contact-page * { box-sizing:border-box; }
+.wr-contact-wrap { max-width:1080px; margin:auto; padding:25px 24px 0; }
+.wr-contact-header { display:flex; justify-content:space-between; align-items:center; gap:20px; padding:0 0 20px; border-bottom:1px solid var(--line,#dfd5cd); }
+.wr-contact-brand { color:inherit; font-size:23px; font-weight:800; letter-spacing:-.9px; text-decoration:none; }
+.wr-contact-brand em { color:var(--accent,#b0523b); font-style:normal; }
+.wr-contact-home { color:inherit; font-size:14px; padding:10px 0; }
+.wr-contact-heading { padding:58px 0 32px; max-width:720px; }
+.wr-contact-eyebrow { margin:0 0 14px; color:var(--accent,#b0523b); font-size:11px; letter-spacing:.1em; font-weight:750; }
+.wr-contact-heading h1 { font-size:clamp(32px,5vw,50px); line-height:1.12; letter-spacing:-.045em; margin:0 0 22px; }
+.wr-contact-heading > p:last-child { color:var(--muted,#70645e); font-size:17px; margin:0; }
+.wr-contact-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
+.wr-contact-card { min-width:0; padding:30px; border:1px solid var(--line,#dfd5cd); border-radius:16px; background:var(--card,#fffdfb); }
+.wr-contact-card h2 { font-size:21px; line-height:1.4; letter-spacing:-.02em; margin:0 0 8px; }
+.wr-contact-service { color:var(--muted,#70645e); margin:0 0 28px; }
+.wr-contact-card address { font-style:normal; font-size:18px; line-height:1.8; margin-bottom:28px; }
+.wr-contact-map { color:var(--accent,#b0523b); display:inline-block; padding:10px 0; }
+.wr-contact-small { font-size:12px; color:var(--muted,#70645e); margin:12px 0 0; }
+.wr-contact-channel { margin-top:24px; }
+.wr-contact-channel h3 { font-size:13px; margin:0 0 8px; }
+.wr-contact-button { min-height:46px; border:1px solid var(--ink,#302b28); border-radius:8px; padding:10px 16px; background:var(--ink,#302b28); color:#fff; font:inherit; font-size:14px; font-weight:650; cursor:pointer; text-align:left; }
+.wr-contact-button--light { color:var(--ink,#302b28); background:transparent; border-color:var(--line,#dfd5cd); }
+.wr-contact-page [hidden] { display:none !important; }
+.wr-contact-result a { display:inline-block; color:var(--accent,#b0523b); font-size:18px; padding:8px 0; min-height:44px; overflow-wrap:anywhere; }
+.wr-contact-note { margin-top:24px; padding:25px 0 0; max-width:760px; }
+.wr-contact-note h2 { font-size:17px; margin:0 0 8px; }
+.wr-contact-note p { color:var(--muted,#70645e); margin:0; font-size:14px; }
+.wr-contact-page a:focus-visible,.wr-contact-page button:focus-visible { outline:2px solid var(--accent,#b0523b); outline-offset:4px; }
+@media(max-width:700px) { .wr-contact-grid { grid-template-columns:1fr; } .wr-contact-heading { padding-top:36px; } .wr-contact-card { padding:24px; } }
+@media(max-width:400px) { .wr-contact-wrap { padding-inline:20px; } .wr-contact-card { padding:20px; } .wr-contact-home { font-size:12px; } }

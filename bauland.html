@@ -1,8 +1,12 @@
 
 <!DOCTYPE html>
 
-<html lang="de-CH"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>WOHNRADAR – Bauland schätzen</title><link href="styles.css" rel="stylesheet"/><link href="wohnradar-ux.css" rel="stylesheet"/></head>
-<body><div class="wrap">
+<html lang="de-CH"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>WOHNRADAR – Bauland schätzen</title><link href="styles.css" rel="stylesheet"/><link href="wohnradar-ux.css" rel="stylesheet"/>
+<link rel="stylesheet" href="footer.css">
+<script src="footer.js" defer></script>
+</head>
+<body>
+<span id="wohnradar-top" aria-hidden="true"></span><div class="wrap">
 
 <header>
   <div class="brand">WOHN<em>RADAR</em></div>
@@ -32,4 +36,7 @@
 <div class="result-shell" id="resultShell"><aside aria-live="polite" class="result"><div class="final-label">Mittlerer Baulandpreis pro m²</div><div class="big" id="estimate">—</div><div class="result-heading">Preisspanne nach Lage</div><div class="detail"><span>Schlechte Lage</span><strong id="low">—</strong></div><div class="detail"><span>Gute Lage</span><strong id="high">—</strong></div><div class="detail"><span>Erlaubte Ausnutzung</span><strong id="buildLabel">Hoch (Mehrfamilienhaus)</strong></div><span hidden="" id="apartmentPrice"></span></aside><div class="result-actions"><button class="estimate-button" id="estimateButtonDesktop" type="button">Verkehrswert bestimmen</button><div class="post-estimate-actions"><button id="adjustButton" type="button">Nachjustieren</button><button id="uxReset" type="button">Zurücksetzen</button></div></div></div></div>
 <div class="foot">Modellbasierte Schätzung pro m² Grundstücksfläche. Die Umrechnung für Mehrfamilienhäuser und Einfamilienhäuser sowie die Lage-Spanne beruhen auf Annahmen. Baurecht, Erschliessung und Besonderheiten der Parzelle sind nicht berücksichtigt. Die Spanne ist kein statistisches Konfidenzintervall.</div></div>
 <script src="javascript_dateien/bauland.js"></script>
-<script src="javascript_dateien/ux-flow.js"></script></body></html>
+<script src="javascript_dateien/ux-flow.js"></script>
+<!-- Footer-Inhalt wird ausschliesslich aus footer.html geladen. -->
+<div id="wohnradar-footer"></div>
+</body></html>

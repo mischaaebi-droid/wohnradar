@@ -1,0 +1,29 @@
+WOHNRADAR – FOOTER, KONTAKT UND IMPRESSUM
+
+Einbau
+Die mitgelieferten HTML-Dateien ersetzen die gleichnamigen Seiten im bestehenden Projekt. Alle Dateien dieses Pakets liegen im selben Verzeichnis. Vorhandene CSS-, JavaScript-, Bild- und Datendateien unbedingt behalten: Sie wurden nicht mitgeliefert und sind nicht Teil dieses Pakets. Alle internen Pfade sind relativ und für GitHub Pages auch unter einer Projektadresse geeignet.
+
+Enthaltene Seiten
+index.html, haus.html, wohnungen.html, bauland.html, kontakt.html, impressum.html
+
+Gemeinsame Dateien
+footer.html: zentraler Footer
+footer.css: Footer-Gestaltung
+footer.js: lädt den zentralen Footer, markiert die aktuelle Seite und aktualisiert das Jahr
+kontakt.css: gemeinsame Gestaltung von Kontakt und Impressum
+kontakt.js: verschleierte Kontaktdaten mit Freigabe per Klick auf beiden Seiten
+
+Footer pflegen
+Der Footer-Inhalt steht ausschliesslich in footer.html. Alle sechs Seiten enthalten nur einen leeren Einfügebereich und laden die zentrale Datei mit footer.js. Künftige Inhaltsänderungen ausschliesslich in footer.html vornehmen. Es gibt keine eingebetteten Footer-Kopien. Ohne JavaScript oder bei Ladefehlern bleibt der Footer leer. GitHub Pages wird unterstützt. Für lokale Vorschauen einen HTTP-Webserver verwenden; direktes Öffnen per Doppelklick (file://) lädt keinen Footer.
+
+Linkstatus
+Haus, Eigentumswohnung, Miete, Bauland, Kontakt und Impressum sind aktiv. miete.html wurde nicht mitgeliefert und muss im bestehenden Projekt vorhanden sein. Über Wohnradar und Datenschutz sind sichtbar als «in Vorbereitung» deaktiviert.
+
+Impressum
+Betreiberin: Immo Glauser & Aebi AG. Inhaltlich verantwortlich: Mischa Aebi. Adresse, Sitz, Rechtsform, UID und Handelsregisternummer wurden aus den Nutzerangaben übernommen. Kein MWST-Zusatz wurde ergänzt, da eine UID allein keinen bestätigten MWST-Status belegt. Kapital, Alter, Gründungsdatum und Verzeichniswerbung wurden weggelassen. Keine Methodik-Seite und kein allgemeiner Haftungssatz wurden hinzugefügt. Bestehende individuelle Hinweise bleiben unverändert.
+
+Kontakt-Schutz
+Adresse und Telefonnummer stehen nicht im Klartext im ausgelieferten HTML/JavaScript. Nach Klick werden die verschleierten Werte im Browser zusammengesetzt und als mailto-/tel-Link angezeigt. Diese Hürden erschweren einfaches Auslesen; ein gezielter Bot kann sie umgehen. Es gibt kein CAPTCHA und keinen externen Prüfdienst. Die ausschliessliche Anzeige mit JavaScript wurde wie gewünscht übernommen; eine rechtliche Konformitätsgarantie ist damit nicht verbunden.
+
+Prüfung und Grenzen
+Freigabe, Linkziele und Fokuswechsel sind funktional geprüft; alle Footer verlinken Kontakt und Impressum. Die vollständige visuelle Prüfung mit den Original-Stylesheets ist ohne die fehlenden Projektdateien nicht möglich.
