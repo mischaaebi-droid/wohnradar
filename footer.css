@@ -1,9 +1,11 @@
-/* Gemeinsamer Wohnradar-Footer. Alle Regeln sind auf den Footer begrenzt. */
+/* Wohnradar – gemeinsamer Footer in dunklem Schokoladenbraun.
+   Ausschliesslich Footer-Styling; HTML, JavaScript und Rechner bleiben unverändert. */
 .wr-footer {
   margin-top: clamp(40px, 6vw, 80px);
-  border-top: 1px solid var(--line, #dfd5cd);
-  background: var(--bg, #faf6f2);
-  color: var(--ink, #302b28);
+  width: 100%;
+  border-top: 1px solid #352A28;
+  background: #352A28;
+  color: #FFF8F2;
   font-family: inherit;
   font-size: 14px;
   line-height: 1.6;
@@ -14,19 +16,21 @@
 .wr-footer .wr-footer__grid { display: grid; grid-template-columns: 1.3fr 1fr 1.2fr; gap: 32px; }
 .wr-footer .wr-footer__grid > * { min-width: 0; }
 .wr-footer a { color: inherit; text-decoration: none; }
-.wr-footer a:hover { color: var(--accent, #b0523b); text-decoration: underline; text-underline-offset: 4px; }
-.wr-footer a:focus-visible { outline: 2px solid var(--accent, #b0523b); outline-offset: 4px; border-radius: 2px; }
+.wr-footer a:hover { color: #FFE0CF; text-decoration: underline; text-underline-offset: 4px; }
+.wr-footer a:focus-visible { outline: 2px solid #FFD5B7; outline-offset: 4px; border-radius: 2px; }
 .wr-footer a.wr-footer__brand { display: inline-block; font-size: 23px; font-weight: 800; letter-spacing: -.9px; line-height: 1.4; }
-.wr-footer .wr-footer__brand em { color: var(--accent, #b0523b); font-style: normal; }
-.wr-footer .wr-footer__intro p { margin: 10px 0 0; color: var(--muted, #70645e); }
-.wr-footer .wr-footer__nav h2 { margin: 0 0 12px; font-size: 13px; line-height: 1.6; font-weight: 750; letter-spacing: .025em; }
+.wr-footer .wr-footer__brand em { color: #E8A58E; font-style: normal; }
+.wr-footer .wr-footer__intro p { margin: 10px 0 0; color: #D7CDC8; }
+.wr-footer .wr-footer__nav h2 { margin: 0 0 12px; color: #FFF8F2; font-size: 13px; line-height: 1.6; font-weight: 750; letter-spacing: .025em; }
 .wr-footer .wr-footer__nav ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 2px; }
 .wr-footer .wr-footer__nav li { margin: 0; padding: 0; }
 .wr-footer .wr-footer__nav a, .wr-footer .wr-footer__pending { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 8px; padding-block: 8px; min-height: 44px; overflow-wrap: anywhere; }
-.wr-footer .wr-footer__pending { color: var(--muted, #70645e); cursor: default; }
+.wr-footer .wr-footer__nav a { color: #F2E9E4; }
+.wr-footer .wr-footer__nav a:hover { color: #FFE0CF; }
+.wr-footer .wr-footer__pending { color: #BDB1AC; cursor: default; }
 .wr-footer .wr-footer__pending small { font-size: 11px; }
-.wr-footer a[aria-current="page"] { color: var(--accent, #b0523b); font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
-.wr-footer .wr-footer__bottom { border-top: 1px solid var(--line, #dfd5cd); margin-top: 28px; padding-top: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; color: var(--muted, #70645e); font-size: 12px; }
+.wr-footer a[aria-current="page"] { color: #F2B8A4; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.wr-footer .wr-footer__bottom { border-top: 1px solid rgba(255, 248, 242, .22); margin-top: 28px; padding-top: 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px 24px; color: #D7CDC8; font-size: 12px; }
 .wr-footer .wr-footer__bottom p { margin: 0; }
 .wr-footer .wr-footer__bottom a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; }
 @media (max-width: 760px) {
