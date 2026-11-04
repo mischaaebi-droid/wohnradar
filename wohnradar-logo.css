@@ -1,0 +1,29 @@
+/* Wohnradar: Original-Logo in der Kopfzeile aller Seiten. */
+.brand,
+.wr-contact-brand,
+.wr-about-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  white-space: nowrap;
+}
+.wr-brand-mark {
+  display: block;
+  flex: 0 0 auto;
+  width: 46px;
+  height: auto;
+  object-fit: contain;
+}
+.wr-brand-name {
+  display: inline-block;
+  white-space: nowrap;
+}
+@media (max-width: 420px) {
+  .brand,
+  .wr-contact-brand,
+  .wr-about-brand { gap: 7px; }
+  .wr-brand-mark { width: 37px; }
+  .wr-contact-header { gap: 8px; }
+  .wr-contact-brand { font-size: 19px; }
+  .wr-contact-home { font-size: 12px; }
+}
