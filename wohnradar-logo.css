@@ -27,3 +27,8 @@
   .wr-contact-brand { font-size: 19px; }
   .wr-contact-home { font-size: 12px; }
 }
+
+img[src*="wohnradar-logo"] {
+    position: relative;
+    top: -5px;
+}
