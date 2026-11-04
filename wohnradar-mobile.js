@@ -1,3 +1,4 @@
+
 /* Wohnradar – Fixbutton und einmaliger Scroll-Hinweis auf kleinen Displays.
    Verwendet ausschliesslich die vorhandenen Rechner-Buttons und Ergebnis-Klassen.
    Es werden keine Bewertungsmodelle oder Berechnungseingaben verändert. */
@@ -27,7 +28,7 @@
 
     const syncEstimateState = () => {
       const estimated = resultShell.classList.contains('has-estimate');
-      document.body.classList.toggle('wr-mobile-has-estimate', estimated);
+      // Der fixierte Bewertungsbutton bleibt auch nach einer Schätzung sichtbar.
       if (estimated) {
         cue.classList.add('is-hidden');
         scrolled = true;
@@ -37,10 +38,13 @@
 
     // Diese Klasse wird von der bestehenden Ergebnissteuerung gesetzt/entfernt.
     const observer = new MutationObserver(syncEstimateState);
-    observer.observe(resultShell, { attributes: true, attributeFilter: ['class'] });
+    observer.observe(resultShell, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
     syncEstimateState();
 
-    // Sicherheitsabgleich auch beim Klick, falls die Klasse unmittelbar danach wechselt.
+    // Sicherheitsabgleich auch beim Klick.
     mobileButton.addEventListener('click', () => {
       requestAnimationFrame(syncEstimateState);
     });
