@@ -125,7 +125,7 @@ async function starteHauswert() {
                 'Sehr schön',
                 'Herausragend'
             ],
-            values: [-6, -3, 0, 4, 8, 16],
+            values: [-4, -2, 0, 3, 5, 8],
             def: 2
         },
         {
@@ -138,7 +138,7 @@ async function starteHauswert() {
                 'Gut',
                 'Sehr gut'
             ],
-            values: [-6, -3, 0, 2, 5],
+            values: [-4, -3, 0, 2, 4],
             def: 2
         },
         {
@@ -152,7 +152,7 @@ async function starteHauswert() {
                 'Ruhig',
                 'Sehr ruhig'
             ],
-            values: [-8, -5.6, -2.3, 0, 2, 4],
+            values: [-4, -2.5, -1.5, 0, 2, 4],
             def: 3
         },
         {
@@ -165,7 +165,7 @@ async function starteHauswert() {
                 'Gehoben',
                 'Sehr hochwertig'
             ],
-            values: [-8, -4, 0, 4, 8],
+            values: [-4, -2, 0, 2, 4],
             def: 2
         }
     ];
@@ -639,9 +639,9 @@ async function starteHauswert() {
         // ----------------------------------------------
 
         const typePct = {
-            free: 3.5,
-            end: 0,
-            mid: -3
+            free: 2.5,
+            end: -2,
+            mid: -6
         }[
             document.querySelector(
                 'input[name=houseType]:checked'
