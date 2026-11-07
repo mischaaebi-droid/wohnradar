@@ -1,0 +1,18 @@
+/* Wohnradar: Der Kopf bleibt beim Scrollen sichtbar (alle Seiten). */
+.wrap > header,
+.wr-about-wrap > .wr-about-header,
+.wr-contact-wrap > .wr-contact-header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 2000 !important;
+  background: #FAF6F2 !important;
+  isolation: isolate;
+}
+/* Dezente Trennlinie, ohne das bestehende Layout zu verändern. */
+.wrap > header,
+.wr-about-wrap > .wr-about-header,
+.wr-contact-wrap > .wr-contact-header {
+  box-shadow: 0 1px 0 rgba(75, 54, 46, .07);
+}
+/* Beim automatischen Scrollen nicht unter dem Kopf landen. */
+html { scroll-padding-top: 90px; }
