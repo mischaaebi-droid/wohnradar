@@ -758,6 +758,7 @@ details[open] summary { margin-bottom: 14px; }
     font-size: 14px;
   }
 }
+<<<<<<< HEAD
 
 
 
@@ -888,3 +889,5 @@ html { scroll-padding-top: 90px; }
 }
 /* Beim automatischen Scrollen nicht unter dem Kopf landen. */
 html { scroll-padding-top: 90px; }
+=======
+>>>>>>> 1360b2823333d4a58fa38f88dc26d8fae6aca9b1
