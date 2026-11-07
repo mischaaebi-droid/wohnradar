@@ -1,0 +1,89 @@
+/* Wohnradar – einheitliche Ergebnisboxen und Aktionsbuttons (Version 2026-11-06). */
+/* Bewusst nach styles.css und wohnradar-ux.css einbinden. */
+#resultShell .result {
+  border-top-left-radius: 2px !important;
+  border-top-right-radius: 2px !important;
+}
+.estimate-button,
+#estimateButtonMobile,
+#estimateButtonDesktop {
+  border-radius: 4px !important;
+  background: var(--ink, #332b29);
+  color: #fff;
+  border: 0;
+  min-height: 52px;
+  width: 100%;
+  padding: 12px 18px;
+  font: inherit;
+  font-size: 15px;
+  font-weight: 750;
+  cursor: pointer;
+}
+#resultShell .post-estimate-actions {
+  grid-template-columns: repeat(2, minmax(0,1fr));
+  gap: 0;
+}
+#resultShell .post-estimate-actions button {
+  min-height: 48px;
+  padding: 10px 8px;
+  border: 1px solid var(--line, #d8d0c9);
+  background: var(--card, #fff);
+  color: var(--ink, #332b29);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+#resultShell .post-estimate-actions button:first-child { border-radius: 0 0 0 4px !important; }
+#resultShell .post-estimate-actions button:last-child {
+  border-radius: 0 0 4px 0 !important;
+  border-left: 0;
+}
+/* Die Baulandseite nutzt nun dieselben Zustands- und Buttonregeln. */
+#resultShell.has-estimate .post-estimate-actions { display: grid; }
+#resultShell.has-estimate .result-actions { margin-top: 0; }
+#resultShell.has-estimate .estimate-button { display: none; }
+@media (max-width: 840px) {
+  /* Nach der ersten Schätzung bleibt das Ergebnis am oberen Bildschirmrand. */
+  body.wr-result-pinned #resultShell {
+    display: block !important;
+    position: fixed !important;
+    top: var(--wr-header-bottom, 70px) !important;
+    left: 7px !important;
+    right: 7px !important;
+    bottom: auto !important;
+    width: auto !important;
+    max-width: none !important;
+    max-height: min(72dvh, calc(100dvh - var(--wr-header-bottom, 70px) - 10px));
+    overflow-y: auto;
+    box-sizing: border-box;
+    margin: 0 !important;
+    z-index: 1100;
+    border-radius: 0;
+    background: var(--card, #fff);
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
+    overscroll-behavior: contain;
+  }
+  body.wr-result-pinned #resultShell .result {
+    position: static !important;
+    top: auto !important;
+    border-top-left-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+  }
+  /* Mit dieser Freifläche bleiben auch die ersten Eingabefelder unterhalb
+     der fixierten Ergebnisbox erreichbar. Beim Scrollen laufen sie darunter. */
+  body.wr-result-pinned .wrap > .layout {
+    margin-top: calc(var(--wr-result-height, 200px) + 14px) !important;
+  }
+  /* Nachjustieren darf die Ergebnisbox nicht erneut ausblenden. */
+  body.wr-result-pinned #resultShell .post-estimate-actions {
+    display: grid !important;
+  }
+  body.wr-result-pinned #resultShell .estimate-button {
+    display: none !important;
+  }
+  /* Der ursprüngliche mobile Schätzbutton darf weiter für eine neue
+     Berechnung verwendet werden, aber nicht über dem Ergebnis liegen. */
+  body.wr-result-pinned .mobile-estimate-action {
+    z-index: 10;
+  }
+}
