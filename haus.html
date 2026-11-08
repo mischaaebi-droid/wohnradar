@@ -8,8 +8,8 @@
 
 
 
-<title>Haus schätzen – Einfamilienhaus online bewerten | Wohnradar</title>
-<meta name="description" content="Einfamilienhaus kostenlos online schätzen. Immobilienbewertung und Verkehrswert sofort berechnen – ohne Registrierung, E-Mail oder Telefonnummer.">
+<title>Haus Wert schätzen – ohne persönliche Daten | Wohnradar</title>
+<meta name="description" content="Liegenschaft kostenlos online schätzen ohne Registrierung, E-Mail oder Telefonnummer.">
 
 
 <link href="styles.css" rel="stylesheet"/>
@@ -96,6 +96,14 @@
 <div class="layout">
 <main class="stack">
 <h1 class="wr-page-title">Einfamilienhaus schätzen</h1>
+
+ <p>
+                    
+             Wie viel ist Ihr Haus wert? Berechnen Sie den Verkehrswert Ihres Einfamilienhauses mit wenigen Klicks. Kostenlos, ohne E-Mail-Adresse und ohne Telefonnummer. Letzte Aktualisierung: Oktober 2026.
+                    </p>
+
+
+
 <section class="card house-overview">
 <div class="grid">
 <div class="field">
@@ -147,19 +155,19 @@
 <div class="lbl" style="margin-top:19px">
        Haustyp
       </div>
-<div class="types" id="type">
-<label class="typechoice">
-<input checked="" name="houseType" type="radio" value="free"/>
-        Freistehendes EFH
-       </label>
-<label class="typechoice">
-<input name="houseType" type="radio" value="end"/>
-        Eckhaus / Doppelhaus
-       </label>
-<label class="typechoice">
-<input name="houseType" type="radio" value="mid"/>
-        Reihenmittelhaus
-       </label>
+<div class="types" id="type" role="radiogroup" aria-label="Haustyp">
+<label class="typechoice" title="Freistehendes Einfamilienhaus">
+<input checked="" name="houseType" type="radio" value="free" aria-label="Freistehendes Einfamilienhaus"/>
+<span>Freistehend</span>
+</label>
+<label class="typechoice" title="Eckhaus oder Doppelhaus">
+<input name="houseType" type="radio" value="end" aria-label="Eckhaus oder Doppelhaus"/>
+<span>Doppel-/Eckhaus</span>
+</label>
+<label class="typechoice" title="Reihenmittelhaus">
+<input name="houseType" type="radio" value="mid" aria-label="Reihenmittelhaus"/>
+<span>Reihenhaus</span>
+</label>
 </div>
 <div class="grid">
 <div class="range">
