@@ -59,6 +59,8 @@
 <link rel="stylesheet" href="wohnradar-logo.css">
 <link rel="stylesheet" href="wohnradar-resultate.css">
 <link rel="stylesheet" href="wohnradar-header-fix.css">
+
+<link rel="stylesheet" href="wohnradar-methodik.css">
 </head>
 <body>
 <span id="wohnradar-top" aria-hidden="true"></span>
@@ -236,6 +238,125 @@
 <div id="ageFields">
 </div>
 </details>
+</section>
+
+<!-- Methodik: transparenter, aufklappbarer Erläuterungstext direkt nach den Eingaben -->
+<section class="card wr-methodik-card" aria-label="Methodik der Hausbewertung">
+  <details class="wr-methodik" id="methodik">
+    <summary class="wr-methodik-summary">Methodik<span class="wr-methodik-chevron" aria-hidden="true"></span></summary>
+    <div class="wr-methodik-content">
+      <h2>So berechnet Wohnradar den Wert Ihres Hauses</h2>
+      <p>Wohnradar schätzt den Verkehrswert eines Einfamilienhauses anhand der lokalen Immobilienpreise und der Eigenschaften des Gebäudes. Berücksichtigt werden unter anderem das allgemeine Immobilienpreisniveau in der jeweiligen Gemeinde oder im jeweiligen Stadtteil, die Wohnfläche, die Grundstücksgrösse, das Alter und der Zustand. Die Berechnung erfolgt in mehreren Schritten.</p>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-1">
+        <h3 id="methodik-1">1. Lokales Immobilienpreisniveau</h3>
+        <p>Die Immobilienpreise unterscheiden sich in der Schweiz von Ort zu Ort. Ein Haus in Zürich kostet in der Regel deutlich mehr als ein vergleichbares Haus in einer ländlichen Gemeinde. Wohnradar berücksichtigt diese Unterschiede anhand von lokalen Immobilienpreisdaten. Für die erfassten Postleitzahlen sind durchschnittliche Preisniveaus in Form von Medianpreisen pro Quadratmeter hinterlegt.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-2">
+        <h3 id="methodik-2">2. Die Wohnfläche</h3>
+        <p>Die Wohnfläche ist ein wichtiger Faktor für den Hauswert. Allerdings ist ein Haus mit 300 m² Wohnfläche in der Regel nicht doppelt so viel wert wie ein vergleichbares Haus mit 150 m². <strong>Denn je grösser ein Haus ist, desto tiefer liegt gewöhnlich der Preis pro Quadratmeter Wohnfläche.</strong> Wohnradar berücksichtigt diesen Zusammenhang mit einer mathematischen Formel, die den Quadratmeterpreis abhängig von der Wohnfläche anpasst.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-3">
+        <h3 id="methodik-3">3. Die Grundstücksfläche</h3>
+        <p>Neben der Wohnfläche beeinflusst auch die Grundstücksgrösse den Hauswert. Allerdings ist ihr Einfluss deutlich geringer als jener der Wohnfläche. Ein Haus auf einer Parzelle von 800 m² ist deshalb in der Regel nicht annähernd doppelt so viel wert wie ein vergleichbares Haus auf 400 m². Wohnradar berücksichtigt diese Zusammenhänge mit einer mathematischen Formel, deren Faktoren mithilfe multipler Regressionsrechnung ermittelt wurden.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-4">
+        <h3 id="methodik-4">4. Lage, Haustyp und Wohnkomfort</h3>
+        <p>Im nächsten Schritt berücksichtigt Wohnradar die individuellen Eigenschaften der Liegenschaft.</p>
+        <p>Dazu werden auf den bereits um die altersbedingten Abzüge verminderten Hauswert prozentuale Zu- oder Abschläge angewendet.</p>
+        <div class="wr-methodik-table-scroll" role="region" aria-label="Zu- und Abschläge für Lage, Haustyp und Wohnkomfort" tabindex="0">
+          <table class="wr-methodik-table">
+            <thead><tr><th scope="col">Einflussfaktor</th><th scope="col">Zu- oder Abschlag</th></tr></thead>
+            <tbody>
+              <tr><td>Freistehendes Einfamilienhaus</td><td>+2,5 %</td></tr>
+              <tr><td>Reiheneckhaus</td><td>−2 %</td></tr>
+              <tr><td>Reihenmittelhaus</td><td>−6 %</td></tr>
+              <tr><td>Aussicht</td><td>−4 % bis +8 %</td></tr>
+              <tr><td>Erreichbarkeit von Geschäften, Schulen und öffentlichem Verkehr</td><td>−4 % bis +4 %</td></tr>
+              <tr><td>Ruhe und Lärmbelastung</td><td>−4 % bis +4 %</td></tr>
+              <tr><td>Bauqualität und Wohnkomfort</td><td>−4 % bis +4 %</td></tr>
+              <tr><td>Gebäudealter (zusätzliche Korrektur)</td><td>0 % bis −3,5 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-5">
+        <h3 id="methodik-5">5. Alter und Renovationen</h3>
+        <p>Ein älteres Haus ist nicht zwangsläufig weniger wert als ein jüngeres. Entscheidend ist auch, wann wichtige Gebäudeteile zuletzt erneuert wurden.</p>
+        <p>Wohnradar unterscheidet deshalb neun Bauteilgruppen. Eine Bauteilgruppe ist etwa die Küche. Eine andere Bauteilgruppe ist das Dach. Für jede Bauteilgruppe werden die ungefähren Erneuerungskosten und eine typische Nutzungsdauer angenommen. Daraus berechnet Wohnradar einen altersabhängigen Wertabzug. Das Prinzip ist einfach: Ein gerade erneuertes Bauteil führt zu keinem Altersabzug. Mit zunehmendem Alter einer Bauteilgruppe (also zum Beispiel der Küche) steigt der Abzug schrittweise bis zu einem Maximalwert. Dieser entspricht den Kosten, die für die totale Erneuerung der Bauteilgruppe anfallen.</p>
+        <h4>Beispiel: Ein Einfamilienhaus mit 180 m² Wohnfläche</h4>
+        <p>Die folgende Tabelle zeigt, wie Wohnradar die Altersabzüge berechnet.</p>
+        <p>Angenommen wird ein Haus mit 180 m² Wohnfläche in einer Gemeinde mit einem lokalen Immobilienpreisniveau von 10'000 Franken pro m².</p>
+        <p>Alle aufgeführten Bauteile wurden vor 15 Jahren zuletzt erneuert.</p>
+        <div class="wr-methodik-table-scroll" role="region" aria-label="Beispieltabelle der Altersabzüge" tabindex="0">
+          <table class="wr-methodik-table wr-methodik-table--renovations">
+            <thead><tr><th scope="col">Bauteil</th><th scope="col">Angenommene Erneuerungskosten</th><th scope="col">Nutzungsdauer</th><th scope="col">Altersabzug nach 15 Jahren</th></tr></thead>
+            <tbody>
+              <tr><td>Küche</td><td>30'000 Fr.</td><td>30 Jahre</td><td>15'000 Fr.</td></tr>
+              <tr><td>Bäder und WC</td><td>40'000 Fr.</td><td>30 Jahre</td><td>20'000 Fr.</td></tr>
+              <tr><td>Innenausbau</td><td>65'000 Fr.</td><td>30 Jahre</td><td>32'500 Fr.</td></tr>
+              <tr><td>Fenster</td><td>35'000 Fr.</td><td>35 Jahre</td><td>15'000 Fr.</td></tr>
+              <tr><td>Heizung</td><td>35'000 Fr.</td><td>25 Jahre</td><td>21'000 Fr.</td></tr>
+              <tr><td>Wasser- und Abwasserleitungen</td><td>30'000 Fr.</td><td>50 Jahre</td><td>9'000 Fr.</td></tr>
+              <tr><td>Elektroinstallationen</td><td>25'000 Fr.</td><td>40 Jahre</td><td>9'400 Fr.</td></tr>
+              <tr><td>Dach</td><td>50'000 Fr.</td><td>50 Jahre</td><td>15'000 Fr.</td></tr>
+              <tr><td>Fassade</td><td>35'000 Fr.</td><td>40 Jahre</td><td>13'100 Fr.</td></tr>
+            </tbody>
+            <tfoot><tr><th scope="row">Total</th><td>345'000 Fr.</td><td></td><td>150'000 Fr.</td></tr></tfoot>
+          </table>
+        </div>
+        <p>In diesem Beispiel beträgt der gesamte altersbedingte Wertabzug rund 150'000 Franken.</p>
+        <p><strong>Wichtig:</strong> Die angenommenen Erneuerungskosten sind keine festen Beträge für jedes Haus. Wohnradar passt sie an die Wohnfläche und das örtliche Immobilienpreisniveau an. Bei grösseren Häusern und an teureren Standorten wird zum Beispiel angenommen, dass eine teurere Küche eingebaut ist als bei einem kleinen Haus an einem Standort mit tiefem Immobilienpreisniveau. Die Tabelle zeigt somit ein konkretes Rechenbeispiel und keine allgemein gültigen Renovationskosten.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-6">
+        <h3 id="methodik-6">6. Garagen und Parkplätze</h3>
+        <p>Wohnradar berücksichtigt auch hier das lokale Preisniveau. An teuren Standorten wird für einen Garagen- oder Aussenparkplatz grundsätzlich ein höherer Wert angesetzt als an günstigeren Standorten.</p>
+        <div class="wr-methodik-table-scroll" role="region" aria-label="Werte für Garagen und Aussenparkplätze" tabindex="0">
+          <table class="wr-methodik-table">
+            <thead><tr><th scope="col">Parkierung</th><th scope="col">Angesetzter Wert pro Platz</th></tr></thead>
+            <tbody>
+              <tr><td>Garagenplatz</td><td>28'000 bis 38'000 Fr.</td></tr>
+              <tr><td>Aussenparkplatz</td><td>8'000 bis 18'000 Fr.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Die berechneten Einzelwerte werden mit der Anzahl der vorhandenen Plätze multipliziert und zum Hauswert addiert.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-7">
+        <h3 id="methodik-7">7. Wie zuverlässig ist die Schätzung?</h3>
+        <p>Wohnradar liefert eine modellbasierte Schätzung des Verkehrswerts. Sie beruht auf aktuellen lokalen Immobilienpreisen, den Angaben zum Gebäude und festgelegten Bewertungsregeln.</p>
+        <p>Das Verfahren ermöglicht eine rasche und nachvollziehbare Einschätzung, ohne dass eine Besichtigung notwendig ist.</p>
+        <p>Allerdings kann ein automatisiertes Modell nicht alle Besonderheiten einer Liegenschaft berücksichtigen. Dazu gehören beispielsweise aussergewöhnliche Grundrisse, rechtliche Einschränkungen, zusätzliche Ausnützungsreserven oder spezielle bauliche Mängel.</p>
+        <p>Der berechnete Wert ist deshalb als Orientierung und nicht als verbindliches Verkehrswertgutachten zu verstehen. Der tatsächlich erzielbare Verkaufspreis kann davon abweichen.</p>
+      </section>
+
+      <section class="wr-methodik-appendix" aria-labelledby="methodik-anhang">
+        <h3 id="methodik-anhang">Mathematischer Anhang: Berechnung des Grundwerts</h3>
+        <p>Für Interessierte und Fachpersonen legen wir hier die mathematische Grundlage der Flächenbewertung offen.</p>
+        <p class="wr-methodik-formula-label">Grundformel:</p>
+        <div class="wr-methodik-formula" role="math" aria-label="Grundwert gleich m mal w mal (w durch 180) hoch minus 0 Komma 426 mal (g durch 590) hoch 0 Komma 145 mal 1 Komma 18">
+          <span class="wr-methodik-mathpart">Grundwert = <var>m</var> × <var>w</var> ×</span>
+          <span class="wr-methodik-mathpart">(<var>w</var> / 180)<sup>−0,426</sup> ×</span>
+          <span class="wr-methodik-mathpart">(<var>g</var> / 590)<sup>0,145</sup> × 1,18</span>
+        </div>
+        <p>Dabei gilt:</p>
+        <ul class="wr-methodik-legend">
+          <li><strong>m:</strong> Lokaler Medianpreis pro Quadratmeter in Franken</li>
+          <li><strong>w:</strong> Wohnfläche in Quadratmetern</li>
+          <li><strong>g:</strong> Grundstücksfläche in Quadratmetern (rechnerisch mindestens 40 m²)</li>
+          <li><strong>−0,426:</strong> Korrekturfaktor für die abnehmenden Quadratmeterpreise bei zunehmender Wohnfläche</li>
+          <li><strong>0,145:</strong> Korrekturfaktor für den abnehmenden Wertzuwachs zusätzlicher Grundstücksfläche</li>
+          <li><strong>1,18:</strong> Kalibrierungsfaktor des Bewertungsmodells</li>
+        </ul>
+      </section>
+    </div>
+  </details>
 </section>
 <div class="mobile-estimate-action"><button class="estimate-button" id="estimateButtonMobile" type="button">Verkehrswert bestimmen</button></div>
 </main>
