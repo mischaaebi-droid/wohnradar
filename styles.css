@@ -934,3 +934,14 @@ html { scroll-padding-top: 90px; }
 @media (max-width: 700px) {
     .house-overview .types .typechoice { font-size: 12px; }
 }
+
+
+/* Abstand zwischen Seitentitel und Einleitung */
+
+.stack > h1.wr-page-title {
+  margin: 0;
+}
+
+.stack > h1.wr-page-title + p {
+  margin: -9px 0 0;
+}
