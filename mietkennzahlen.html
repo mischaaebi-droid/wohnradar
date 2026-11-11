@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mietpreise pro m² nach PLZ berechnen | Wohnradar</title>
+  <meta name="description" content="Wie hoch ist die Miete pro Quadratmeter? Wohnradar zeigt Mietkennzahlen für Schweizer Postleitzahlen nach Wohnfläche: unteres Preisniveau, Median und oberes Preisniveau. Kostenlos und ohne Anmeldung.">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="wohnradar-ux.css">
+  <link rel="stylesheet" href="footer.css">
+  <link rel="stylesheet" href="wohnradar-logo.css">
+  <link rel="stylesheet" href="wohnradar-resultate.css">
+  <link rel="stylesheet" href="wohnradar-header-fix.css">
+  <script src="footer.js" defer></script>
+  <script src="javascript_dateien/mietkennzahlen.js" defer></script>
+  <style>
+    /* Nur die spezifischen Ergebniszeilen dieses Rechners; Grunddesign aus Wohnradar-CSS. */
+    .stack > h1.wr-page-title { margin: 0; }
+    .stack > h1.wr-page-title + p { margin: -9px 0 0; }
+    .wr-miet-area { font: inherit; font-size: 16px; font-variant-numeric: tabular-nums; }
+    .wr-miet-area-hint { margin-top: 7px; }
+    .wr-miet-button { width: 100%; min-height: 52px; padding: 12px 18px;
+      border: 0; border-radius: 4px; background: var(--ink); color: white;
+      font: inherit; font-size: 15px; font-weight: 750; cursor: pointer; }
+    .wr-miet-button:disabled { opacity:.5; cursor: not-allowed; }
+    .wr-miet-form-actions { margin-top: 19px; }
+    .wr-miet-desktop-action { margin-top: 10px; }
+    .wr-miet-status { margin-top: 13px; min-height: 1.2em; color: var(--muted); font-size: 12px; }
+    .wr-miet-status.is-error { color: #9d3027; }
+    .wr-miet-result { padding: 18px 20px !important; }
+    .wr-miet-result .invoice-title { font-size: 13px; font-weight: 700; letter-spacing: .02em;
+      opacity: .78; margin-bottom: 10px; }
+    .wr-miet-result .invoice-row { display: flex; align-items: baseline; justify-content: space-between;
+      gap: 12px; padding: 8px 0; font-size: 14px; }
+    .wr-miet-result .invoice-row strong { white-space: nowrap; font-weight: 700;
+      font-variant-numeric: tabular-nums; }
+    .wr-miet-result .invoice-row--median { font-weight: 700; }
+    .wr-miet-result .invoice-row--median strong { font-size: 20px; }
+    .wr-miet-result .invoice-unit { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .wr-miet-result .invoice-separator { border: 0; border-top: 1px solid var(--line); margin: 18px 0 14px; }
+    .wr-miet-result .invoice-month { margin-top: 6px; }
+    .wr-miet-result .invoice-month .invoice-row { padding: 5px 0; font-size: 13px; }
+    .wr-miet-result .invoice-month .invoice-row strong { font-size: 13px; }
+    .wr-miet-result .invoice-explainer { color: var(--muted); font-size: 12px; line-height: 1.5; margin-top: 15px; }
+    .wr-miet-result .invoice-place { color: var(--muted); font-size: 12px; margin: -3px 0 13px; }
+    .wr-miet-result .invoice-placeholder { font-size: 13px; color: var(--muted); }
+    .wr-miet-result[aria-busy="true"] { opacity: .7; }
+    .wr-miet-actions { display: none; grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .wr-miet-actions button { min-height: 48px; padding: 10px 8px; border: 1px solid var(--line);
+      background: var(--card); color: var(--ink); font: inherit; font-weight: 700; cursor: pointer; }
+    .wr-miet-actions button:first-child { border-radius: 0 0 0 4px; }
+    .wr-miet-actions button:last-child { border-left: 0; border-radius: 0 0 4px 0; }
+    .wr-miet-result-shell.has-estimate .wr-miet-actions { display: grid; }
+    .wr-miet-result-shell.has-estimate .wr-miet-desktop-action { display: none; }
+    .wr-miet-result-shell.has-estimate .wr-miet-result { border-radius: 2px 2px 0 0; }
+    .wr-miet-mobile-action { display: none; }
+    @media(max-width: 840px) {
+      .wr-miet-result-shell { display: none; }
+      .wr-miet-result-shell.has-estimate { display: block; margin: 0 0 17px; }
+      .wr-miet-result-shell .wr-miet-result { position: static; }
+      .wr-miet-mobile-action { display: block; margin: 0 0 13px; }
+      .wr-miet-result-shell .wr-miet-desktop-action { display: none; }
+    }
+    @media(max-width:530px) {
+      .wr-miet-result { padding: 14px 16px !important; }
+      .wr-miet-result .invoice-row { padding: 6px 0; font-size: 13px; }
+      .wr-miet-result .invoice-row--median strong { font-size: 18px; }
+      .wr-miet-area { font-size: 17px; }
+    }
+  </style>
+</head>
+<body>
+  <span id="wohnradar-top" aria-hidden="true"></span>
+  <div class="wrap">
+    <header>
+      <div class="brand"><img class="wr-brand-mark" src="wohnradar-logo.png" alt="" aria-hidden="true" width="46" height="30" decoding="async"><span class="wr-brand-name">WOHN<em>RADAR</em></span></div>
+      <p class="header-description">Mietkennzahlen <span class="separator">●</span> Mietwohnungen</p>
+      <a class="home-link" href="index.html" aria-label="Zur Startseite">
+        <svg class="home-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9"/><path d="M9 21v-7h6v7"/>
+        </svg>
+        <span class="home-text">Alle Rechner</span>
+      </a>
+    </header>
+
+    <div class="layout">
+      <main class="stack">
+        <h1 class="wr-page-title">Mietpreise pro Quadratmeter</h1>
+        <p>Wie hoch ist die Miete pro Quadratmeter für eine Wohnung? Wohnradar berechnet für Schweizer Postleitzahlen drei Mietkennzahlen anhand der Wohnfläche. Kostenlos und ohne E-Mail-Adresse.</p>
+
+        <section class="card" aria-label="Mietkennzahlen berechnen">
+          <h2>Ort und Wohnfläche</h2>
+          <div class="grid">
+            <div class="field">
+              <label for="placeInput">PLZ, Ortschaft oder Gemeinde</label>
+              <div class="place-wrap">
+                <input id="placeInput" role="combobox" aria-label="Ortschaft oder Postleitzahl suchen" aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" autocomplete="off" spellcheck="false" placeholder="Ort oder PLZ eingeben">
+                <button id="clearPlace" class="clear-place" type="button" aria-label="Ortschaft löschen" title="Eingabe löschen">×</button>
+              </div>
+              <div class="suggest hide" id="suggestions" role="listbox"></div>
+              <div class="hint" id="placeHint"></div>
+            </div>
+            <div class="field">
+              <label for="area">Wohnfläche (m²)</label>
+              <input class="wr-miet-area" id="area" name="area" type="number" inputmode="decimal" min="30" max="180" step="0.1" placeholder="z. B. 80" autocomplete="off">
+              <div class="hint wr-miet-area-hint">30 bis 180 m²</div>
+            </div>
+          </div>
+          <div id="status" class="wr-miet-status" aria-live="polite">Lade Mietpreisdaten …</div>
+        </section>
+        <div class="wr-miet-mobile-action"><button class="wr-miet-button" id="estimateButtonMobile" type="button" disabled>Mietkennzahlen berechnen</button></div>
+      </main>
+
+      <div class="result-shell wr-miet-result-shell" id="resultShell">
+        <aside class="result wr-miet-result" aria-live="polite" aria-atomic="false" id="resultCard">
+          <div class="invoice-title">Mietpreise nach Wohnfläche</div>
+          <div id="resultPlace" class="invoice-place"></div>
+          <div id="resultPlaceholder" class="invoice-placeholder">Ort und Wohnfläche auswählen, dann berechnen.</div>
+          <div id="resultValues" hidden>
+            <div class="invoice-row"><span>Unteres Preisniveau (Q20)</span><strong id="q20sqm">—</strong></div>
+            <div class="invoice-row invoice-row--median"><span>Median (Q50)</span><strong id="q50sqm">—</strong></div>
+            <div class="invoice-row"><span>Oberes Preisniveau (Q80)</span><strong id="q80sqm">—</strong></div>
+            <div class="invoice-unit">Alle Quadratmeterpreise in CHF/m²/Jahr</div>
+            <hr class="invoice-separator">
+            <div class="invoice-title">Entspricht folgender Monatsmiete</div>
+            <div class="invoice-month">
+              <div class="invoice-row"><span>Unteres Preisniveau</span><strong id="q20rent">—</strong></div>
+              <div class="invoice-row invoice-row--median"><span>Median</span><strong id="q50rent">—</strong></div>
+              <div class="invoice-row"><span>Oberes Preisniveau</span><strong id="q80rent">—</strong></div>
+            </div>
+            <p class="invoice-explainer">Q20, Median und Q80 zeigen unterschiedliche Preisniveaus von vergleichbaren Mietangeboten. Die Werte sind Modellschätzungen, keine garantierten Vertragsmieten.</p>
+          </div>
+        </aside>
+        <div class="wr-miet-desktop-action"><button class="wr-miet-button" id="estimateButtonDesktop" type="button" disabled>Mietkennzahlen berechnen</button></div>
+        <div class="wr-miet-actions"><button id="adjustButton" type="button">Nachjustieren</button><button id="reset" type="button">Zurücksetzen</button></div>
+      </div>
+    </div>
+
+    <div class="foot">Modellbasierte Mietkennzahlen für Wohnungen mit 30 bis 180 m² Wohnfläche; Ergebnisse hängen ausschliesslich von der Postleitzahl und Wohnfläche ab.</div>
+  </div>
+  <div id="wohnradar-footer"></div>
+</body>
+</html>

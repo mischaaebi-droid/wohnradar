@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#FAF6F2">
-  <title>Über Wohnradar – Immobilien in der Schweiz kostenlos schätzen</title>
-  <meta name="description" content="Einfamilienhaus, Eigentumswohnung, Wohnungsmiete und Bauland kostenlos online schätzen. Mit Wohnradar ohne Registrierung, E-Mail oder Handynummer – Ergebnis sofort.">
+  <title>Über Wohnradar und Mischa Aebi – kostenlose Immobilienschätzung</title>
+  <meta name="description" content="Mischa Aebi, diplomierter Immobilienbewerter aus Bern, erklärt, warum er Wohnradar entwickelt hat: Immobilien kostenlos und ohne persönliche Daten schätzen.">
   <link rel="canonical" href="https://wohnradar.ch/ueber-wohnradar.html">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="de_CH">
-  <meta property="og:title" content="Über Wohnradar – Immobilien in der Schweiz kostenlos schätzen">
-  <meta property="og:description" content="Verkehrswert und Mietwert direkt online schätzen – ohne persönliche Kontaktdaten.">
+  <meta property="og:title" content="Über Wohnradar und Mischa Aebi">
+  <meta property="og:description" content="Die Geschichte hinter Wohnradar: Immobilien kostenlos und ohne E-Mail-Adresse oder Telefonnummer schätzen.">
   <meta property="og:url" content="https://wohnradar.ch/ueber-wohnradar.html">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="ueber-wohnradar.css">
@@ -18,6 +18,24 @@
   <script src="footer.js" defer></script>
 <link rel="stylesheet" href="wohnradar-logo.css">
 <link rel="stylesheet" href="wohnradar-header-fix.css">
+
+  <style>
+    /* Nur die persönliche Über-Wohnradar-Seite */
+    .wr-personal-about .wr-about-intro { margin-bottom: 2.15rem; }
+    .wr-personal-about .wr-about-personal-intro { display: flow-root; }
+    .wr-personal-about .wr-about-portrait { float: right; width: min(35%, 290px); margin: 0 0 1rem 2rem; }
+    .wr-personal-about .wr-about-portrait img { display: block; width: 100%; height: auto; aspect-ratio: 680 / 517; object-fit: cover; border-radius: 8px; }
+    .wr-personal-about .wr-about-portrait figcaption { font-size: .78rem; line-height: 1.4; color: #666; margin-top: .5rem; }
+    .wr-personal-about .wr-about-salutation { font-weight: 650; }
+    .wr-personal-about .wr-about-story { max-width: 780px; }
+    .wr-personal-about .wr-about-story h2 { margin-top: 0; }
+    .wr-personal-about p { line-height: 1.68; }
+    .wr-personal-about .wr-about-intro > p { max-width: 780px; }
+    @media (max-width: 640px) {
+      .wr-personal-about .wr-about-portrait { float: none; width: min(100%, 360px); margin: .5rem 0 1.35rem; }
+      .wr-personal-about .wr-about-portrait img { border-radius: 7px; }
+    }
+  </style>
 </head>
 <body class="wr-about-page">
   <span id="wohnradar-top" aria-hidden="true"></span>
@@ -30,52 +48,35 @@
       </a>
     </header>
 
-    <main id="inhalt">
+    <main id="inhalt" class="wr-personal-about">
       <section class="wr-about-intro" aria-labelledby="about-heading">
         <h1 id="about-heading">Über Wohnradar</h1>
-        <p class="wr-about-lead">Immobilien in der Schweiz kostenlos online schätzen – ohne persönliche Kontaktdaten wie E-Mail-Adresse oder Handynummer angeben zu müssen.</p>
-        <p>Wie viel ist mein Einfamilienhaus wert? Für wie viel kann ich meine Eigentumswohnung verkaufen? Wie hoch ist eine angemessene Miete?</p>
-        <p>Der Wohnradar liefert für jede Ortschaft in der Schweiz Antworten auf solche Fragen – einfach, kostenlos und direkt online. Der geschätzte Immobilienwert wird unmittelbar nach der Berechnung angezeigt.</p>
-      </section>
-
-      <section class="wr-about-calculators" aria-label="Die vier Wohnradar-Rechner">
-        <article class="wr-about-calculator">
-          <h2><a href="haus.html">Einfamilienhaus schätzen</a></h2>
-          <p>Mit dem <a href="haus.html">Hausrechner</a> ermitteln Sie den geschätzten Verkehrswert eines Einfamilienhauses. Berücksichtigt werden unter anderem Haustyp, Standortgemeinde, Wohn- und Grundstücksfläche, Alter und Zustand.</p>
-        </article>
-        <article class="wr-about-calculator">
-          <h2><a href="wohnungen.html">Eigentumswohnung schätzen</a></h2>
-          <p>Der <a href="wohnungen.html">Wohnungsrechner</a> berechnet den geschätzten Verkehrswert einer Eigentumswohnung. Entscheidend sind Standort, Wohnfläche, Wohnungstyp, Stockwerk, Zustand und Ausstattung.</p>
-        </article>
-        <article class="wr-about-calculator">
-          <h2><a href="miete.html">Wohnungsmiete berechnen</a></h2>
-          <p>Der <a href="miete.html">Mietrechner</a> schätzt die monatliche Marktmiete einer Wohnung anhand von Standort, Grösse, Lage, Zustand und weiteren Eigenschaften.</p>
-        </article>
-        <article class="wr-about-calculator">
-          <h2><a href="bauland.html">Baulandpreise ermitteln</a></h2>
-          <p>Der <a href="bauland.html">Baulandrechner</a> zeigt den geschätzten Quadratmeterpreis von Bauland in Schweizer Gemeinden, unterschieden nach hoher und tiefer baulicher Ausnutzung.</p>
-        </article>
-      </section>
-
-      <div class="wr-about-explain">
-        <section class="wr-about-section">
-          <h2>Wie funktioniert der Wohnradar?</h2>
-          <p>Der Wohnradar verwendet mathematische Bewertungsmodelle, die ortsabhängige Immobilienpreise mit den individuellen Eigenschaften eines Objekts verknüpfen. Je nach Rechner fliessen unterschiedliche Faktoren in die Schätzung ein.</p>
-          <p>Durch das Verändern einzelner Angaben lässt sich unmittelbar erkennen, wie sich beispielsweise Wohnfläche, Lage oder Renovationszustand auf den geschätzten Immobilienwert auswirken.</p>
-        </section>
-        <section class="wr-about-section">
-          <h2>Wie zuverlässig sind die Schätzungen?</h2>
-          <p>Die Ergebnisse bieten eine gute Orientierung zum möglichen Marktwert einer Immobilie. Besondere bauliche, rechtliche oder örtliche Gegebenheiten lassen sich jedoch nicht vollständig berücksichtigen.</p>
-          <p>Die Online-Schätzungen ersetzen deshalb kein individuelles Verkehrswertgutachten. Für wichtige Entscheidungen, etwa einen Immobilienverkauf, eine Erbteilung oder eine Finanzierung, kann eine professionelle Bewertung sinnvoll sein.</p>
-        </section>
-      </div>
-
-      <section class="wr-about-final">
-        <div>
-          <h2>Für wen eignet sich Wohnradar?</h2>
-          <p>Für Eigentümer, Kaufinteressierte, Vermieter und alle, die sich für Immobilienpreise in der Schweiz interessieren. Die Rechner ermöglichen eine schnelle, unverbindliche Einschätzung – <strong>ohne Registrierung, ohne Kontaktdaten und ohne Wartezeit.</strong></p>
+        <div class="wr-about-personal-intro">
+          <figure class="wr-about-portrait">
+            <img src="mischa-aebi.jpg" alt="Mischa Aebi, diplomierter Immobilienbewerter und Entwickler von Wohnradar" width="680" height="517" fetchpriority="high" decoding="async">
+            <figcaption>Mischa Aebi, Immobilienbewerter aus Bern</figcaption>
+          </figure>
+          <div class="wr-about-opening">
+            <p class="wr-about-salutation">Liebe Nutzerinnen und Nutzer von Wohnradar</p>
+            <p>Ich bin Mischa Aebi, diplomierter Immobilienbewerter aus Bern. Hier kurz die Gründe, weshalb ich Wohnradar entwickelt habe.</p>
+            <p>Ich habe mich immer wieder über die zahlreichen Werbefallen im Immobiliengeschäft geärgert: Wer im Internet kostenlos den Wert seines Hauses oder seiner Eigentumswohnung schätzen möchte, landet schnell bei einem Immobilienmakler. Viele dieser vermeintlichen Gratisschätzungen dienen bloss dazu, neue Kunden zu gewinnen. Man gibt mühsam die Eckdaten seiner Immobilie ein, muss am Schluss aber auch noch seine E-Mail-Adresse und Telefonnummer hinterlassen, um ein Ergebnis zu erhalten. Kurz darauf wird man mit unerwünschten Anrufen von Maklern und Telefonverkäufern behelligt. Mühsam!</p>
+          </div>
         </div>
-        <a class="wr-about-cta" href="index.html">Jetzt Immobilie kostenlos schätzen <span aria-hidden="true">→</span></a>
+        <p>Ich fand, das müsste auch anders gehen. <strong>Warum sollte man persönliche Daten preisgeben müssen, nur um zu erfahren, wie viel die eigene Immobilie ungefähr wert ist?</strong></p>
+        <p>Aus diesem Gedanken ist Wohnradar entstanden: ein unabhängiges Online-Tool, mit dem jeder den Wert seiner Immobilie kostenlos schätzen kann. Ohne Registrierung, ohne E-Mail-Adresse und ohne Telefonnummer.</p>
+      </section>
+      <section class="wr-about-section wr-about-story" aria-labelledby="about-statistik">
+        <h2 id="about-statistik">Immobilienbewertung trifft Statistik</h2>
+        <p>Als Immobilienschätzer befasse ich mich seit über zehn Jahren mit der Bewertung von Häusern, Eigentumswohnungen und Grundstücken. Ich erstelle umfassende Schätzungsgutachten für Gerichte sowie bei Erbschaften und Scheidungen. Zudem bin ich Mitglied der Güterschätzungskommission des Kantons Bern, die sich ebenfalls mit Verkehrswertschätzungen befasst.</p>
+        <p>Meine Ausbildung zum Immobilienschätzer absolvierte ich an der Fachhochschule in Burgdorf. Zudem habe ich mich an der Columbia University in New York im Bereich der datenbasierten Recherche weitergebildet. Daneben war ich auch als Mathematiklehrer an Berufsschulen und als Journalist tätig.</p>
+        <p>Mit meiner Firma <strong>Immo Glauser &amp; Aebi AG</strong> erstelle ich professionelle Immobilienschätzungen und Bewertungsgutachten.</p>
+        <p>Für Wohnradar wollte ich aber mehr als einen gewöhnlichen Online-Rechner entwickeln. Ich habe lange daran getüftelt, verschiedene Berechnungsmodelle getestet, verworfen und verbessert. Dabei habe ich meine mathematisch-statistischen Kenntnisse mit meinem Fachwissen aus der Immobilienbewertung und meiner langjährigen Erfahrung als Schätzer kombiniert.</p>
+        <p>Denn der Wert einer Immobilie hängt nicht nur von der Wohnfläche und der Postleitzahl ab. Auch der Zustand von Küche, Bad und Heizung, die Aussicht, die Mikrolage oder die Grösse des Grundstücks können einen erheblichen Unterschied machen. Wie stark sich einzelne Eigenschaften auf den Immobilienwert auswirken, lässt sich zum Teil mithilfe statistischer Verfahren untersuchen, beispielsweise mit der sogenannten multiplen Regression. Andere Berechnungsformeln habe ich auf der Grundlage meiner praktischen Erfahrung selbst entwickelt. Diese unterschiedlichen Ansätze fliessen in die Berechnungen von Wohnradar ein, damit die Eigenschaften einer Immobilie möglichst differenziert berücksichtigt werden.</p>
+        <p><strong>Mein Ziel ist einfach:</strong> Eine kostenlose Immobilienschätzung anzubieten, die nachvollziehbar und möglichst realitätsnah ist – und bei der niemand seine persönlichen Daten hinterlassen muss.</p>
+      </section>
+      <section class="wr-about-final">
+        <div><h2>Immobilie kostenlos schätzen</h2><p>Probieren Sie Wohnradar selbst aus – kostenlos, ohne Registrierung und ohne persönliche Kontaktdaten.</p></div>
+        <a class="wr-about-cta" href="index.html">Zu den Rechnern <span aria-hidden="true">→</span></a>
       </section>
     </main>
   </div>
