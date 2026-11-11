@@ -573,7 +573,7 @@ async function starteHauswert() {
         // Eingabewerte anzeigen
         $('livingv').textContent = fmt(w) + ' m²';
         $('landv').textContent = fmt(g) + ' m²';
-        $('builtv').textContent = b;
+        $('builtv').textContent = b === 1910 ? '1910 oder älter' : b;
 
         $('garagev').textContent = S.garage;
         $('outsidev').textContent = S.outside;

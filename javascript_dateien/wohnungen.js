@@ -438,7 +438,7 @@ async function starteWohnungswert() {
 
         $('livingv').textContent = fmt(w) + ' m²';
         $('landv').textContent = fmt(balcony) + ' m²';
-        $('builtv').textContent = b;
+		$('builtv').textContent = b === 1920 ? '1920 oder älter' : b;
 
         $('floorv').textContent =
             floor === 0 ? 'Erdgeschoss' : floor + '. Stock';
