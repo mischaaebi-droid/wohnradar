@@ -67,43 +67,39 @@ header .reset[hidden]{display:none!important}
   }
 
   /* Originalform, Originalgrösse und Bewegung aus der freigegebenen Vorschau. */
-  body.wr-mobile-valuation .wr-scrollcue {
-    pointer-events: none;
-    position: fixed;
-    left: 50%;
-    bottom: calc(105px + env(safe-area-inset-bottom, 0px));
-    z-index: 949;
-    transform: translateX(-50%);
-    width: 246px;
-    height: 130px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: wr-scrollcue-float 2.1s ease-in-out infinite;
-    transition: opacity .35s ease, visibility .35s ease;
-  }
 
-  body.wr-mobile-valuation .wr-scrollcue::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: rgba(113, 166, 108, .64);
-    clip-path: polygon(15% 2%, 85% 2%, 85% 43%, 100% 43%, 50% 100%, 0 43%, 15% 43%);
-    filter: drop-shadow(0 4px 10px rgba(93, 57, 47, .06));
-  }
 
-  body.wr-mobile-valuation .wr-scrollcue-text {
-    position: relative;
-    top: -14px;
-    color: #214c2a;
-    font-size: 14px;
-    font-weight: 800;
-    line-height: 1.15;
-    text-align: center;
-    white-space: nowrap;
-    letter-spacing: .025em;
-    text-shadow: 0 1px 1px rgba(255, 255, 255, .3);
-  }
+/* Runder Scroll-Hinweis für die Mobilansicht */
+
+body.wr-mobile-valuation .wr-scrollcue {
+  pointer-events: none;
+  position: fixed;
+  left: 50%;
+  bottom: calc(105px + env(safe-area-inset-bottom, 0px));
+  z-index: 949;
+
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: #ffffff;
+  color: #352A28;
+  border: 1px solid #D9D3CF;
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, .10);
+
+  animation: wr-scrollcue-float 2.1s ease-in-out infinite;
+  transition: opacity .35s ease, visibility .35s ease;
+}
+
+
+
+
+
 
   body.wr-mobile-valuation .wr-scrollcue.is-hidden {
     opacity: 0;
@@ -125,7 +121,7 @@ header .reset[hidden]{display:none!important}
 
 @keyframes wr-scrollcue-float {
   0%, 100% { transform: translate(-50%, 0); }
-  50% { transform: translate(-50%, 10px); }
+  50% { transform: translate(-50%, 6px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
