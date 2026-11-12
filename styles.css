@@ -936,12 +936,32 @@ html { scroll-padding-top: 90px; }
 }
 
 
-/* Abstand zwischen Seitentitel und Einleitung */
+
+
+/* Seitentitel und Einleitung: Abstand und Einrückung */
 
 .stack > h1.wr-page-title {
-  margin: 0;
+  margin: 0 8px;
 }
 
 .stack > h1.wr-page-title + p {
-  margin: -9px 0 0;
+  margin: -9px 8px 0;
+}
+
+
+/* Hausrechner: dezente Pflichtfeld-Warnung für die Ortsauswahl. */
+.house-overview #placeInput.wr-place-invalid {
+    border: 2px solid #b53b37;
+    background: #fff;
+}
+.house-overview #placeInput.wr-place-invalid:focus {
+    outline: 2px solid #b53b37;
+    outline-offset: 2px;
+}
+.house-overview #placeHint.wr-place-error {
+    color: #a33333;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-top: 8px;
 }

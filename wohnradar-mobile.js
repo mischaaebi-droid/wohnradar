@@ -10,18 +10,40 @@
     if (!shell) return;
     document.body.classList.add('wr-mobile-valuation');
 
-    let scrolled = window.scrollY > 8;
-    const hideCue = () => {
-      if (!cue || scrolled) return;
-      scrolled = true;
-      cue.classList.add('is-hidden');
-      window.removeEventListener('scroll', onScroll);
-    };
-    const onScroll = () => { if (Math.abs(window.scrollY) > 8) hideCue(); };
-    if (cue) {
-      if (scrolled) cue.classList.add('is-hidden');
-      else window.addEventListener('scroll', onScroll, { passive: true });
-    }
+
+
+const hideCue = () => {
+  if (cue) cue.classList.add('is-hidden');
+};
+
+const onScroll = () => {
+  if (!cue) return;
+
+  const atTop = window.scrollY <= 100;
+  
+  
+  
+  
+  
+  
+  const alreadyEstimated =
+    document.body.classList.contains('wr-result-pinned') ||
+    shell.classList.contains('has-estimate');
+
+  cue.classList.toggle(
+    'is-hidden',
+    !atTop || alreadyEstimated
+  );
+};
+
+if (cue) {
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+}
+
+	
+	
+	
 
     let hasBeenEstimated = false;
     let resetting = false;

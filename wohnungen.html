@@ -4,16 +4,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-
-
-
 <title>Wohnung kostenlos schätzen – ohne E-Mail &amp; Handynummer | Schweiz</title>
-<meta name="description" content="Wie viel ist Ihre Wohnung wert? Ermitteln Sie den Verkehrswert anonym und mit wenigen Klicks – anhand lokaler Immobilienpreise, Lage und Zustand. Ergebnis sofort online sichtbar.">
-
-
-
-
-
+<meta content="Wie viel ist Ihre Wohnung wert? Ermitteln Sie den Verkehrswert anonym und mit wenigen Klicks – anhand lokaler Immobilienpreise, Lage und Zustand. Ergebnis sofort online sichtbar." name="description"/>
 <link href="styles.css" rel="stylesheet"/>
 <style>
 /* Kompakte, responsive Rechnungsdarstellung */
@@ -32,186 +24,171 @@
 }
 </style>
 <link href="wohnradar-ux.css" rel="stylesheet"/>
+<link href="footer.css" rel="stylesheet"/>
+<script defer="" src="footer.js"></script>
+<link href="wohnradar-logo.css" rel="stylesheet"/>
+<link href="wohnradar-resultate.css" rel="stylesheet"/>
+<link href="wohnradar-header-fix.css" rel="stylesheet"/>
+<link href="wohnradar-methodik.css" rel="stylesheet"/>
+<style>
+/* Eigentumswohnungen: Header analog Hausrechner */
+.wrap > header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.wrap > header .wr-header-lockup { display:flex; align-items:center; gap:11px; min-width:0; }
+.wrap > header .wr-header-lockup .wr-brand-mark { display:block; width:52px !important; height:52px !important; max-width:none; object-fit:contain; flex:0 0 52px; }
+.wrap > header .wr-header-copy { display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:0; }
+.wrap > header .wr-header-copy .wr-brand-name { display:block; line-height:1.15; white-space:nowrap; }
+.wrap > header .wr-header-copy .header-description { display:block; margin:0; padding:0; min-width:0; font-size:13px; font-weight:500; line-height:1.25; white-space:nowrap; }
+.wrap > header .home-link { flex-shrink:0; }
+@media (max-width:700px) {
+ .wrap > header .wr-header-lockup { gap:8px; }
+ .wrap > header .wr-header-lockup .wr-brand-mark {width:48px !important; height:48px !important; flex-basis:48px;}
+ .wrap > header .wr-header-copy .header-description { font-size:12px; }
+}
+/* Pflichtangaben: dezent, direkt am jeweiligen Regler */
+.apartment-overview #placeInput.wr-place-invalid {border:2px solid #b53b37; background:#fff;}
+.apartment-overview #placeHint.wr-place-error {color:#a33333; font-size:13px; font-weight:600; line-height:1.4; margin-top:8px;}
+.apartment-overview .range:has(.wr-range-invalid) {border-color:#b33f39;}
+.apartment-overview input.wr-range-invalid {outline:2px solid #b33f39; outline-offset:5px; border-radius:5px;}
+.apartment-overview .wr-required-hint {margin-top:7px; color:#a8312e; font-size:12px; line-height:1.4;}
+.apartment-overview .wr-required-hint[hidden] {display:none !important;}
+.apartment-overview .rangehead output.wr-not-selected {color:var(--muted,#786761);font-size:13px;font-weight:500;}
+/* Flächenkarte: Parkierung unterhalb der Lift-Auswahl */
+.apartment-overview .parking-inputs {margin-top:18px;}
+/* Weisser runder Scrollhinweis auf Mobilgeräten (statt grossem Pfeil) */
+@media(max-width:840px) {
+ body.wr-mobile-valuation .wr-scrollcue {
+  width:54px !important; height:54px !important;
+  border-radius:50%; border:1px solid var(--line,#DFCFC7);
+  background:#fff; box-shadow:0 4px 14px rgba(0,0,0,.12);
+  bottom:calc(105px + env(safe-area-inset-bottom,0px));
+  color:var(--ink,#352A28); display:flex; align-items:center; justify-content:center;
+  animation:wr-circle-float 2.1s ease-in-out infinite;
+ }
+ body.wr-mobile-valuation .wr-scrollcue::before {content:none !important;display:none !important;}
+ body.wr-mobile-valuation .wr-scrollcue.is-hidden {opacity:0;visibility:hidden;animation:none;}
+}
+@keyframes wr-circle-float {0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,6px)}}
+@media(prefers-reduced-motion:reduce){body.wr-mobile-valuation .wr-scrollcue{animation:none;}}
 
-<link rel="stylesheet" href="footer.css">
-<script src="footer.js" defer></script>
-<link rel="stylesheet" href="wohnradar-logo.css">
-<link rel="stylesheet" href="wohnradar-resultate.css">
-<link rel="stylesheet" href="wohnradar-header-fix.css">
-<link rel="stylesheet" href="wohnradar-methodik.css">
-</head>
-
+/* Wohnungstyp: drei kompakte Buttons, auch auf Smartphones nebeneinander */
+.apartment-overview #type.types {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+}
+.apartment-overview #type .typechoice {
+  min-width:0;
+  min-height:44px;
+  padding:8px 4px;
+  justify-content:center;
+  text-align:center;
+  font-size:12px;
+  line-height:1.2;
+  white-space:normal;
+}
+.apartment-overview #type .typechoice input[type="radio"] {
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip-path:inset(50%);
+  white-space:nowrap;
+  border:0;
+}
+.apartment-overview #type .typechoice:has(input:focus-visible) {
+  outline:2px solid var(--accent-dark);
+  outline-offset:2px;
+}
+</style></head>
 <body>
-<span id="wohnradar-top" aria-hidden="true"></span>
+<span aria-hidden="true" id="wohnradar-top"></span>
 <div class="wrap">
-
 <header>
-  <div class="brand"><img class="wr-brand-mark" src="wohnradar-logo.png" alt="" aria-hidden="true" width="46" height="30" decoding="async"><span class="wr-brand-name">WOHN<em>RADAR</em></span></div>
+<div class="brand wr-header-lockup">
+<img alt="" aria-hidden="true" class="wr-brand-mark" decoding="async" height="52" src="wohnradar-logo.png" width="52"/>
+<div class="wr-header-copy">
+<span class="wr-brand-name">WOHN<em>RADAR</em></span>
+<p class="header-description">Immobilienbewertung</p>
+</div>
+</div>
 
-  <p class="header-description">
-    Eigentumswohnung <span class="separator">●</span> Immobilienbewertung
-  </p>
-
-  <a class="home-link" href="index.html" aria-label="Zur Startseite">
-    <svg class="home-icon" viewBox="0 0 24 24"
-         width="20" height="20" fill="none"
-         stroke="currentColor" stroke-width="1.8"
-         stroke-linecap="round" stroke-linejoin="round"
-         aria-hidden="true">
-      <path d="m3 10 9-7 9 7"/>
-      <path d="M5 9v12h14V9"/>
-      <path d="M9 21v-7h6v7"/>
-    </svg>
-    <span class="home-text">Alle Rechner</span>
-  </a>
+<a aria-label="Zur Startseite" class="home-link" href="index.html">
+<svg aria-hidden="true" class="home-icon" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="20">
+<path d="m3 10 9-7 9 7"></path>
+<path d="M5 9v12h14V9"></path>
+<path d="M9 21v-7h6v7"></path>
+</svg>
+<span class="home-text">Alle Rechner</span>
+</a>
 </header>
-
-
-
-
-
-
 <div class="layout">
 <main class="stack">
 <h1 class="wr-page-title">Wohnung kostenlos schätzen</h1>
 <p>Wie viel ist Ihre Eigentumswohnung wert? Wohnradar berechnet den Verkehrswert anhand lokaler Immobilienpreise und individueller Eigenschaften. Das Ergebnis sehen Sie sofort online – ohne E-Mail-Adresse.</p>
-<section class="card">
-
-<div class="grid">
-
+<section class="card apartment-overview">
+<div class="grid" style="grid-template-columns:1fr">
 <div class="field">
 <label for="placeInput">
          PLZ, Ortschaft oder Gemeinde
 </label>
-
 <div class="place-wrap">
-<input
-    aria-autocomplete="list"
-    aria-controls="suggestions"
-    aria-expanded="false"
-    aria-label="Ortschaft oder Postleitzahl suchen"
-    autocomplete="off"
-    id="placeInput"
-    role="combobox"
-    spellcheck="false"
-    value="5400 Baden"
-/>
-
-<button
-    aria-label="Ortschaft löschen"
-    class="clear-place"
-    id="clearPlace"
-    title="Eingabe löschen"
-    type="button"
->
+<input aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" aria-label="Ortschaft oder Postleitzahl suchen" autocomplete="off" id="placeInput" role="combobox" spellcheck="false" value="5400 Baden"/>
+<button aria-label="Ortschaft löschen" class="clear-place" id="clearPlace" title="Eingabe löschen" type="button">
     ×
 </button>
 </div>
-
 <div class="suggest hide" id="suggestions" role="listbox">
 </div>
-
 <div class="hint" id="placeHint">
 </div>
 </div>
-
 <!-- Garagen und Parkplätze direkt neben der PLZ-Suche -->
-<div class="parking-inputs">
 
-<div class="parking-field">
-<div class="lbl">
-    Garagenplätze
-</div>
-
-<div class="count">
-<button aria-label="Garagenplätze verringern" data-count="garage:-1">
-    −
-</button>
-
-<output id="garagev">1</output>
-
-<button aria-label="Garagenplätze erhöhen" data-count="garage:1">
-    +
-</button>
-</div>
-</div>
-
-<div class="parking-field">
-<div class="lbl">
-    Aussenparkplätze
-</div>
-
-<div class="count">
-<button aria-label="Aussenparkplätze verringern" data-count="outside:-1">
-    −
-</button>
-
-<output id="outsidev">0</output>
-
-<button aria-label="Aussenparkplätze erhöhen" data-count="outside:1">
-    +
-</button>
-</div>
-</div>
-
-</div>
 <!-- Ende Parkplatz-Eingaben -->
-
 </div>
-
 <div class="lbl" style="margin-top:19px">Wohnungstyp</div>
-
 <div class="types" id="type">
 <label class="typechoice">
 <input checked="" name="apartmentType" type="radio" value="standard"/>
-Etagenwohnung
+<span>Standard</span>
 </label>
-
 <label class="typechoice">
 <input name="apartmentType" type="radio" value="attic"/>
-Attikawohnung
+<span>Attika</span>
 </label>
-
 <label class="typechoice">
 <input name="apartmentType" type="radio" value="garden"/>
-Gartenwohnung
+<span>Mit Garten</span>
 </label>
 </div>
-
 <div class="grid">
-
 <div class="range">
 <div class="rangehead">
 <label for="living">
     Wohnfläche
 </label>
-<output id="livingv"></output>
+<output class="wr-not-selected" id="livingv">Bitte einstellen</output>
 </div>
-
-<input id="living" max="270" min="25" step="5" type="range" value="25"/>
+<input aria-describedby="livingHint" id="living" max="270" min="25" step="5" type="range" value="25"/><div class="wr-required-hint" hidden="" id="livingHint" role="alert"></div>
 </div>
-
 <div class="range">
 <div class="rangehead">
 <label for="land">Balkon- / Terrassenfläche</label>
-<output id="landv"></output>
+<output class="wr-not-selected" id="landv">Bitte einstellen</output>
 </div>
-
-<input id="land" max="130" min="0" step="1" type="range" value="0"/>
+<input aria-describedby="landHint" id="land" max="130" min="0" step="1" type="range" value="0"/><div class="wr-required-hint" hidden="" id="landHint" role="alert"></div>
 </div>
-
 </div>
-
 <div class="grid" style="margin-top:20px">
-
 <div class="range">
 <div class="rangehead">
 <label for="floor">Stockwerk</label>
-<output id="floorv"></output>
+<output class="wr-not-selected" id="floorv">Bitte einstellen</output>
 </div>
-<input id="floor" max="12" min="0" step="1" type="range" value="0"/>
+<input aria-describedby="floorHint" id="floor" max="12" min="0" step="1" type="range" value="0"/><div class="wr-required-hint" hidden="" id="floorHint" role="alert"></div>
 </div>
-
 <div class="field">
 <label for="lift">Lift vorhanden?</label>
 <select id="lift">
@@ -219,15 +196,41 @@ Gartenwohnung
 <option value="no">Nein</option>
 </select>
 </div>
-
+</div><div class="parking-inputs" style="margin-top:18px">
+<div class="parking-field">
+<div class="lbl">
+    Garagenplätze
+</div>
+<div class="count">
+<button aria-label="Garagenplätze verringern" data-count="garage:-1">
+    −
+</button>
+<output id="garagev">1</output>
+<button aria-label="Garagenplätze erhöhen" data-count="garage:1">
+    +
+</button>
+</div>
+</div>
+<div class="parking-field">
+<div class="lbl">
+    Aussenparkplätze
+</div>
+<div class="count">
+<button aria-label="Aussenparkplätze verringern" data-count="outside:-1">
+    −
+</button>
+<output id="outsidev">0</output>
+<button aria-label="Aussenparkplätze erhöhen" data-count="outside:1">
+    +
+</button>
+</div>
+</div>
 </div>
 </section>
-
 <section class="card">
 <h2>
     Alter und Renovationen
 </h2>
-
 <div class="range">
 <div class="rangehead">
 <label for="built">
@@ -235,262 +238,199 @@ Gartenwohnung
 </label>
 <output id="builtv"></output>
 </div>
-
 <input id="built" max="2026" min="1850" step="1" type="range" value="1920"/>
 </div>
 
-<div class="lbl" style="margin-top:20px">
-    Renovationszustand
-</div>
-
-<div class="seg" id="condition">
-<button data-cond="old">
-    Hoher Renovationsbedarf
-</button>
-
-<button class="active" data-cond="normal">
-    Teilweise renoviert
-</button>
-
-<button data-cond="new">
-    Umfassend renoviert
-</button>
-</div>
-
+<div class="range wr-condition-range"><div class="rangehead"><label for="condition">Zustand</label><output id="conditionv">Mittel</output></div><input aria-label="Zustand der Wohnung" id="condition" max="5" min="0" step="1" type="range" value="2"/></div>
 <details>
 <summary>
     Einzelne Renovationen anpassen
 </summary>
-
 <div class="hint">
     Jahr der letzten Erneuerung wählen. Nie erneuert? Baujahr belassen.
 </div>
-
 <div id="ageFields">
 </div>
 </details>
-
 </section>
-
 <section class="card">
 <h2>
     Lage und Wohnkomfort
 </h2>
-
 <div id="sliders">
 </div>
 </section>
-
 <!-- Methodik: analog zum Hausrechner, mit den Berechnungsansätzen aus wohnungen.js -->
-<section class="card wr-methodik-card" aria-label="Methodik der Wohnungsbewertung">
-  <details class="wr-methodik" id="methodik">
-    
-	
-<summary class="wr-methodik-summary">
-  <span class="wr-methodik-summary-text">
-    <span class="wr-methodik-summary-title">Methodik</span>
-    <span class="wr-methodik-summary-subtitle">– so berechnet Wohnradar den Wert</span>
-  </span>
-  <span class="wr-methodik-chevron" aria-hidden="true"></span>
-</summary>
-    
-	
-	
-	
-	<div class="wr-methodik-content">
-      <h2>So berechnet Wohnradar den Wert Ihrer Eigentumswohnung</h2>
-      <p>Wohnradar schätzt den Verkehrswert einer Eigentumswohnung anhand der lokalen Immobilienpreise und der Eigenschaften der Wohnung. Berücksichtigt werden unter anderem das Preisniveau am Standort, die Wohnfläche, die Grösse von Balkon oder Terrasse, der Wohnungstyp, das Stockwerk, die Lage sowie Alter und Zustand. Die Berechnung erfolgt in mehreren Schritten.</p>
-
-      <section class="wr-methodik-chapter" aria-labelledby="methodik-1">
-        <h3 id="methodik-1">1. Lokales Immobilienpreisniveau</h3>
-        <p>Die Wohnungspreise unterscheiden sich in der Schweiz erheblich von Ort zu Ort. Eine Eigentumswohnung in Zürich kostet in der Regel deutlich mehr als eine vergleichbare Wohnung in einer ländlichen Gemeinde. Wohnradar berücksichtigt diese Unterschiede anhand lokaler Immobilienpreisdaten. Für die erfassten Postleitzahlen sind Medianpreise pro Quadratmeter Wohnfläche hinterlegt.</p>
-        <p>Die verwendeten lokalen Quadratmeterpreise wurden für Wohnradar zusammengestellt. Sie beschreiben das statistische Preisniveau am jeweiligen Standort, nicht den Verkaufspreis einer bestimmten Wohnung.</p>
-      </section>
-
-      <section class="wr-methodik-chapter" aria-labelledby="methodik-2">
-        <h3 id="methodik-2">2. Die Wohnfläche</h3>
-        <p>Die Wohnfläche ist der wichtigste Ausgangspunkt für den Wohnungswert. Allerdings ist eine Wohnung mit 200 m² Wohnfläche bei sonst gleichen Eigenschaften in der Regel nicht ganz doppelt so viel wert wie eine Wohnung mit 100 m². <strong>Denn bei grösseren Wohnungen liegt der Preis pro Quadratmeter gewöhnlich etwas tiefer.</strong> Wohnradar berücksichtigt diesen Zusammenhang mit einer mathematischen Formel. Die Korrektur fällt bei Wohnungen deutlich schwächer aus als bei Einfamilienhäusern.</p>
-      </section>
-
-      <section class="wr-methodik-chapter" aria-labelledby="methodik-3">
-        <h3 id="methodik-3">3. Balkon und Terrasse</h3>
-        <p>Ein Balkon oder eine Terrasse erhöht den Wert einer Eigentumswohnung. Allerdings ist ein Quadratmeter Aussenfläche weniger wert als ein Quadratmeter Wohnfläche. Wohnradar rechnet deshalb für die ersten 40 m² Balkon oder Terrasse mit <strong>22 Prozent des lokalen Wohnflächen-Quadratmeterpreises</strong>. Für jeden weiteren Quadratmeter werden nur noch 35 Prozent dieses Ansatzes berücksichtigt.</p>
-        <p>Ein Beispiel: Bei einem lokalen Wohnungspreis von 10'000 Franken pro m² bringt ein Balkon- oder Terrassenquadratmeter bis 40 m² rechnerisch 2'200 Franken. Für jeden zusätzlichen Quadratmeter sind es noch 770 Franken. So erhöht eine grosse Terrasse den Wert, aber mit abnehmendem Zusatznutzen.</p>
-      </section>
-
-      <section class="wr-methodik-chapter" aria-labelledby="methodik-4">
-        <h3 id="methodik-4">4. Wohnungstyp, Stockwerk, Lage und Wohnkomfort</h3>
-        <p>Im nächsten Schritt berücksichtigt Wohnradar die individuellen Eigenschaften der Wohnung. Auf den um die altersbedingten Abzüge bereinigten Wert werden prozentuale Zu- und Abschläge angewendet.</p>
-        <div class="wr-methodik-table-scroll" role="region" aria-label="Zu- und Abschläge für Wohnungstyp, Stockwerk, Lage und Wohnkomfort" tabindex="0">
-          <table class="wr-methodik-table">
-            <thead><tr><th scope="col">Einflussfaktor</th><th scope="col">Zu- oder Abschlag</th></tr></thead>
-            <tbody>
-              <tr><td>Gewöhnliche Etagenwohnung</td><td>0 %</td></tr>
-              <tr><td>Attikawohnung</td><td>+8 %</td></tr>
-              <tr><td>Gartenwohnung</td><td>+2 %</td></tr>
-              <tr><td>Stockwerk bei vorhandenem Lift</td><td>−1,4 % bis +4 %</td></tr>
-              <tr><td>Stockwerk ohne Lift</td><td>−7 % bis 0 %</td></tr>
-              <tr><td>Fehlender Lift ab dem 2. Stock (zusätzlich)</td><td>−1,5 %</td></tr>
-              <tr><td>Aussicht</td><td>−6 % bis +10 %</td></tr>
-              <tr><td>Erreichbarkeit von Geschäften, Schulen und öffentlichem Verkehr</td><td>−6 % bis +4 %</td></tr>
-              <tr><td>Ruhe und Lärmbelastung</td><td>−8 % bis +4 %</td></tr>
-              <tr><td>Besonnung und Tageslicht</td><td>−5 % bis +4 %</td></tr>
-              <tr><td>Bauqualität und Wohnkomfort</td><td>−7 % bis +8 %</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p>Bei einer durchschnittlichen Aussicht, Erreichbarkeit, Lärmbelastung, Besonnung und Bauqualität beträgt die jeweilige Korrektur 0 Prozent. Die Lagekorrekturen werden zusammengezählt und insgesamt auf −20 bis +20 Prozent begrenzt; der Einfluss der Bauqualität wird separat berücksichtigt.</p>
-        <p><strong>Wichtig:</strong> Der Zuschlag für eine Attikawohnung wird unabhängig von der Terrassengrösse berechnet. Eine grosse Terrasse erhöht den Wert zusätzlich über die oben erklärte Flächenberechnung. Bei Gartenwohnungen berücksichtigt das Modell einen pauschalen Zuschlag, aber keine separat eingegebene Gartenfläche.</p>
-      </section>
-
-      <section class="wr-methodik-chapter" aria-labelledby="methodik-5">
-        <h3 id="methodik-5">5. Alter und Renovationen</h3>
-        <p>Eine ältere Wohnung ist nicht zwangsläufig weniger wert als eine jüngere. Entscheidend ist auch, wann wichtige Bauteile zuletzt erneuert wurden.</p>
-        <p>Wohnradar unterscheidet sieben Bauteilgruppen, darunter Küche, Badezimmer, Innenausbau und Fenster. Für jede Gruppe werden die ungefähren Erneuerungskosten und eine typische Nutzungsdauer angenommen. Daraus ergibt sich ein altersabhängiger Wertabzug: Unmittelbar nach einer Erneuerung beträgt er null. Mit zunehmendem Alter steigt er bis zu den angesetzten Erneuerungskosten.</p>
-        <h4>Beispiel: Eine Eigentumswohnung mit 100 m² Wohnfläche</h4>
-        <p>Angenommen wird eine Wohnung mit 100 m² Wohnfläche in einer Gemeinde mit einem lokalen Preisniveau von 10'000 Franken pro m². Alle aufgeführten Bauteile wurden vor 15 Jahren zuletzt erneuert.</p>
-        <div class="wr-methodik-table-scroll" role="region" aria-label="Beispieltabelle der Altersabzüge bei einer Eigentumswohnung" tabindex="0">
-          <table class="wr-methodik-table wr-methodik-table--renovations">
-            <thead><tr><th scope="col">Bauteil</th><th scope="col">Angenommene Erneuerungskosten</th><th scope="col">Nutzungsdauer</th><th scope="col">Altersabzug nach 15 Jahren</th></tr></thead>
-            <tbody>
-              <tr><td>Küche</td><td>26'000 Fr.</td><td>30 Jahre</td><td>13'000 Fr.</td></tr>
-              <tr><td>Bad und WC</td><td>29'000 Fr.</td><td>30 Jahre</td><td>14'500 Fr.</td></tr>
-              <tr><td>Innenausbau</td><td>34'000 Fr.</td><td>30 Jahre</td><td>17'000 Fr.</td></tr>
-              <tr><td>Fenster</td><td>18'000 Fr.</td><td>35 Jahre</td><td>7'700 Fr.</td></tr>
-              <tr><td>Heizung / Haustechnik (Wohnungsanteil)</td><td>11'500 Fr.</td><td>25 Jahre</td><td>6'900 Fr.</td></tr>
-              <tr><td>Sanitärleitungen (Wohnungsanteil)</td><td>11'000 Fr.</td><td>50 Jahre</td><td>3'300 Fr.</td></tr>
-              <tr><td>Elektroinstallationen</td><td>14'000 Fr.</td><td>40 Jahre</td><td>5'250 Fr.</td></tr>
-            </tbody>
-            <tfoot><tr><th scope="row">Total</th><td>143'500 Fr.</td><td></td><td>rund 67'700 Fr.</td></tr></tfoot>
-          </table>
-        </div>
-        <p>In diesem Beispiel beträgt der gesamte altersbedingte Wertabzug rund 67'700 Franken.</p>
-        <p><strong>Wichtig:</strong> Die angenommenen Erneuerungskosten sind keine festen Beträge für jede Wohnung. Wohnradar passt sie an die Wohnfläche und das lokale Immobilienpreisniveau an. Bei grösseren Wohnungen und an teureren Standorten werden höhere rechnerische Erneuerungskosten angesetzt. Die Tabelle zeigt deshalb ein Rechenbeispiel und keine allgemein gültigen Renovationskosten.</p>
-        <p>Der lokale Quadratmeterpreis wird im Modell mit einem typischen Renovationszustand verknüpft. Deshalb wird der berechnete Altersabzug mit einem rechnerischen Referenzzustand verglichen. Massgeblich ist, ob die Wohnung besser oder schlechter erhalten ist als dieser Referenzzustand. Zusätzlich berücksichtigt das Modell das Baujahr und den gewählten Renovationszustand mit Kalibrierungsfaktoren.</p>
-      </section>
-
-      <section class="wr-methodik-chapter" aria-labelledby="methodik-6">
-        <h3 id="methodik-6">6. Garagen und Parkplätze</h3>
-        <p>Wohnradar berücksichtigt auch bei Garagen und Aussenparkplätzen das lokale Preisniveau. An teureren Standorten wird grundsätzlich ein höherer Wert angesetzt als an günstigeren.</p>
-        <div class="wr-methodik-table-scroll" role="region" aria-label="Werte für Garagen und Aussenparkplätze bei Eigentumswohnungen" tabindex="0">
-          <table class="wr-methodik-table">
-            <thead><tr><th scope="col">Parkierung</th><th scope="col">Angesetzter Wert pro Platz</th></tr></thead>
-            <tbody>
-              <tr><td>Garagenplatz</td><td>25'000 bis 42'000 Fr.</td></tr>
-              <tr><td>Aussenparkplatz</td><td>7'000 bis 19'000 Fr.</td></tr>
-            </tbody>
-          </table>
-        </div>
-        <p>Der Einzelwert wird mit der Anzahl der vorhandenen Plätze multipliziert und in die Gesamtbewertung einbezogen.</p>
-      </section>
-
-      <section class="wr-methodik-chapter" aria-labelledby="methodik-7">
-        <h3 id="methodik-7">7. Wie zuverlässig ist die Schätzung?</h3>
-        <p>Wohnradar liefert eine modellbasierte Schätzung des Verkehrswerts. Sie beruht auf lokalen Immobilienpreisen, den Angaben zur Wohnung und festgelegten Bewertungsregeln. Das ermöglicht eine rasche und nachvollziehbare Einschätzung ohne Besichtigung.</p>
-        <p>Allerdings kann ein automatisiertes Modell nicht alle Besonderheiten einer Eigentumswohnung berücksichtigen. Dazu gehören etwa der Zustand gemeinschaftlicher Gebäudeteile, anstehende Sanierungen, die finanzielle Situation der Stockwerkeigentümergemeinschaft, besondere Nutzungsrechte oder aussergewöhnliche Grundrisse.</p>
-        <p>Der berechnete Wert ist deshalb als Orientierung und nicht als verbindliches Verkehrswertgutachten zu verstehen. Der tatsächlich erzielbare Verkaufspreis kann davon abweichen.</p>
-      </section>
-
-      <section class="wr-methodik-appendix" aria-labelledby="methodik-anhang">
-        <h3 id="methodik-anhang">Mathematischer Anhang: Berechnung des Grundwerts</h3>
-        <p>Für Interessierte und Fachpersonen legen wir hier die mathematischen Grundlagen der Wohnflächen- und Terrassenbewertung offen.</p>
-        <p class="wr-methodik-formula-label">Grundwert der Wohnfläche:</p>
-        <div class="wr-methodik-formula" role="math" aria-label="Grundwert der Wohnfläche gleich m mal w mal (w durch 100) hoch minus 0 Komma 035">
-          <span class="wr-methodik-mathpart">Grundwert = <var>m</var> × <var>w</var> ×</span>
-          <span class="wr-methodik-mathpart">(<var>w</var> / 100)<sup>−0,035</sup></span>
-        </div>
-        <p class="wr-methodik-formula-label">Angerechnete Balkon- oder Terrassenfläche:</p>
-        <div class="wr-methodik-formula" role="math" aria-label="Angerechnete Aussenfläche gleich Minimum von t und 40 plus 0 Komma 35 mal Maximum von 0 und t minus 40">
-          <span class="wr-methodik-mathpart">Aussenfläche = min(<var>t</var>, 40) +</span>
-          <span class="wr-methodik-mathpart">0,35 × max(0, <var>t</var> − 40)</span>
-        </div>
-        <p class="wr-methodik-formula-label">Wertzuschlag für Balkon oder Terrasse:</p>
-        <div class="wr-methodik-formula" role="math" aria-label="Wertzuschlag gleich m mal 0 Komma 22 mal angerechnete Aussenfläche">
-          <span class="wr-methodik-mathpart">Zuschlag = <var>m</var> × 0,22 ×</span>
-          <span class="wr-methodik-mathpart">Aussenfläche</span>
-        </div>
-        <p>Dabei gilt:</p>
-        <ul class="wr-methodik-legend">
-          <li><strong>m:</strong> Lokaler Medianpreis pro Quadratmeter Wohnfläche in Franken</li>
-          <li><strong>w:</strong> Wohnfläche der Eigentumswohnung in Quadratmetern</li>
-          <li><strong>t:</strong> Fläche von Balkon oder Terrasse in Quadratmetern</li>
-          <li><strong>−0,035:</strong> Korrekturfaktor für den leicht sinkenden Quadratmeterpreis bei zunehmender Wohnfläche</li>
-          <li><strong>0,22:</strong> Wertansatz der Aussenfläche im Verhältnis zur Wohnfläche</li>
-          <li><strong>0,35:</strong> Verminderter Wertansatz für Aussenflächen über 40 m²</li>
-        </ul>
-        <p>Zum Grundwert und zum Balkon- oder Terrassenzuschlag rechnet das Modell zunächst einen Referenzwert für den üblichen Renovationszustand hinzu und zieht den objektspezifischen Altersabzug ab. Danach folgen die prozentualen Korrekturen sowie weitere Kalibrierungsfaktoren für Baujahr und Wohnungsgrösse. Abschliessend werden die Parkierungswerte in die Berechnung einbezogen.</p>
-      </section>
-    </div>
-  </details>
+<section aria-label="Methodik der Wohnungsbewertung" class="card wr-methodik-card">
+<details class="wr-methodik" id="methodik">
+<summary class="wr-methodik-summary">Methodik - so berechnet Wohnradar den Wert<span aria-hidden="true" class="wr-methodik-chevron"></span></summary>
+<div class="wr-methodik-content">
+<h2>So berechnet Wohnradar den Wert Ihrer Eigentumswohnung</h2>
+<p>Wohnradar schätzt den Verkehrswert einer Eigentumswohnung anhand der lokalen Immobilienpreise und der Eigenschaften der Wohnung. Berücksichtigt werden unter anderem das Preisniveau am Standort, die Wohnfläche, die Grösse von Balkon oder Terrasse, der Wohnungstyp, das Stockwerk, die Lage sowie Alter und Zustand. Die Berechnung erfolgt in mehreren Schritten.</p>
+<section aria-labelledby="methodik-1" class="wr-methodik-chapter">
+<h3 id="methodik-1">1. Lokales Immobilienpreisniveau</h3>
+<p>Die Wohnungspreise unterscheiden sich in der Schweiz erheblich von Ort zu Ort. Eine Eigentumswohnung in Zürich kostet in der Regel deutlich mehr als eine vergleichbare Wohnung in einer ländlichen Gemeinde. Wohnradar berücksichtigt diese Unterschiede anhand lokaler Immobilienpreisdaten. Für die erfassten Postleitzahlen sind Medianpreise pro Quadratmeter Wohnfläche hinterlegt.</p>
+<p>Die verwendeten lokalen Quadratmeterpreise wurden für Wohnradar zusammengestellt. Sie beschreiben das statistische Preisniveau am jeweiligen Standort, nicht den Verkaufspreis einer bestimmten Wohnung.</p>
 </section>
-
+<section aria-labelledby="methodik-2" class="wr-methodik-chapter">
+<h3 id="methodik-2">2. Die Wohnfläche</h3>
+<p>Die Wohnfläche ist der wichtigste Ausgangspunkt für den Wohnungswert. Allerdings ist eine Wohnung mit 200 m² Wohnfläche bei sonst gleichen Eigenschaften in der Regel nicht ganz doppelt so viel wert wie eine Wohnung mit 100 m². <strong>Denn bei grösseren Wohnungen liegt der Preis pro Quadratmeter gewöhnlich etwas tiefer.</strong> Wohnradar berücksichtigt diesen Zusammenhang mit einer mathematischen Formel. Die Korrektur fällt bei Wohnungen deutlich schwächer aus als bei Einfamilienhäusern.</p>
+</section>
+<section aria-labelledby="methodik-3" class="wr-methodik-chapter">
+<h3 id="methodik-3">3. Balkon und Terrasse</h3>
+<p>Ein Balkon oder eine Terrasse erhöht den Wert einer Eigentumswohnung. Allerdings ist ein Quadratmeter Aussenfläche weniger wert als ein Quadratmeter Wohnfläche. Wohnradar rechnet deshalb für die ersten 40 m² Balkon oder Terrasse mit <strong>22 Prozent des lokalen Wohnflächen-Quadratmeterpreises</strong>. Für jeden weiteren Quadratmeter werden nur noch 35 Prozent dieses Ansatzes berücksichtigt.</p>
+<p>Ein Beispiel: Bei einem lokalen Wohnungspreis von 10'000 Franken pro m² bringt ein Balkon- oder Terrassenquadratmeter bis 40 m² rechnerisch 2'200 Franken. Für jeden zusätzlichen Quadratmeter sind es noch 770 Franken. So erhöht eine grosse Terrasse den Wert, aber mit abnehmendem Zusatznutzen.</p>
+</section>
+<section aria-labelledby="methodik-4" class="wr-methodik-chapter">
+<h3 id="methodik-4">4. Wohnungstyp, Stockwerk, Lage und Wohnkomfort</h3>
+<p>Im nächsten Schritt berücksichtigt Wohnradar die individuellen Eigenschaften der Wohnung. Auf den um die altersbedingten Abzüge bereinigten Wert werden prozentuale Zu- und Abschläge angewendet.</p>
+<div aria-label="Zu- und Abschläge für Wohnungstyp, Stockwerk, Lage und Wohnkomfort" class="wr-methodik-table-scroll" role="region" tabindex="0">
+<table class="wr-methodik-table">
+<thead><tr><th scope="col">Einflussfaktor</th><th scope="col">Zu- oder Abschlag</th></tr></thead>
+<tbody>
+<tr><td>Gewöhnliche Etagenwohnung</td><td>0 %</td></tr>
+<tr><td>Attikawohnung</td><td>+8 %</td></tr>
+<tr><td>Gartenwohnung</td><td>+2 %</td></tr>
+<tr><td>Stockwerk bei vorhandenem Lift</td><td>−1,4 % bis +4 %</td></tr>
+<tr><td>Stockwerk ohne Lift</td><td>−7 % bis 0 %</td></tr>
+<tr><td>Fehlender Lift ab dem 2. Stock (zusätzlich)</td><td>−1,5 %</td></tr>
+<tr><td>Aussicht</td><td>−6 % bis +10 %</td></tr>
+<tr><td>Erreichbarkeit von Geschäften, Schulen und öffentlichem Verkehr</td><td>−6 % bis +4 %</td></tr>
+<tr><td>Ruhe und Lärmbelastung</td><td>−8 % bis +4 %</td></tr>
+<tr><td>Besonnung und Tageslicht</td><td>−5 % bis +4 %</td></tr>
+<tr><td>Bauqualität und Wohnkomfort</td><td>−7 % bis +8 %</td></tr>
+</tbody>
+</table>
+</div>
+<p>Bei einer durchschnittlichen Aussicht, Erreichbarkeit, Lärmbelastung, Besonnung und Bauqualität beträgt die jeweilige Korrektur 0 Prozent. Die Lagekorrekturen werden zusammengezählt und insgesamt auf −20 bis +20 Prozent begrenzt; der Einfluss der Bauqualität wird separat berücksichtigt.</p>
+<p><strong>Wichtig:</strong> Der Zuschlag für eine Attikawohnung wird unabhängig von der Terrassengrösse berechnet. Eine grosse Terrasse erhöht den Wert zusätzlich über die oben erklärte Flächenberechnung. Bei Gartenwohnungen berücksichtigt das Modell einen pauschalen Zuschlag, aber keine separat eingegebene Gartenfläche.</p>
+</section>
+<section aria-labelledby="methodik-5" class="wr-methodik-chapter">
+<h3 id="methodik-5">5. Alter und Renovationen</h3>
+<p>Eine ältere Wohnung ist nicht zwangsläufig weniger wert als eine jüngere. Entscheidend ist auch, wann wichtige Bauteile zuletzt erneuert wurden.</p>
+<p>Wohnradar unterscheidet sieben Bauteilgruppen, darunter Küche, Badezimmer, Innenausbau und Fenster. Für jede Gruppe werden die ungefähren Erneuerungskosten und eine typische Nutzungsdauer angenommen. Daraus ergibt sich ein altersabhängiger Wertabzug: Unmittelbar nach einer Erneuerung beträgt er null. Mit zunehmendem Alter steigt er bis zu den angesetzten Erneuerungskosten.</p>
+<h4>Beispiel: Eine Eigentumswohnung mit 100 m² Wohnfläche</h4>
+<p>Angenommen wird eine Wohnung mit 100 m² Wohnfläche in einer Gemeinde mit einem lokalen Preisniveau von 10'000 Franken pro m². Alle aufgeführten Bauteile wurden vor 15 Jahren zuletzt erneuert.</p>
+<div aria-label="Beispieltabelle der Altersabzüge bei einer Eigentumswohnung" class="wr-methodik-table-scroll" role="region" tabindex="0">
+<table class="wr-methodik-table wr-methodik-table--renovations">
+<thead><tr><th scope="col">Bauteil</th><th scope="col">Angenommene Erneuerungskosten</th><th scope="col">Nutzungsdauer</th><th scope="col">Altersabzug nach 15 Jahren</th></tr></thead>
+<tbody>
+<tr><td>Küche</td><td>26'000 Fr.</td><td>30 Jahre</td><td>13'000 Fr.</td></tr>
+<tr><td>Bad und WC</td><td>29'000 Fr.</td><td>30 Jahre</td><td>14'500 Fr.</td></tr>
+<tr><td>Innenausbau</td><td>34'000 Fr.</td><td>30 Jahre</td><td>17'000 Fr.</td></tr>
+<tr><td>Fenster</td><td>18'000 Fr.</td><td>35 Jahre</td><td>7'700 Fr.</td></tr>
+<tr><td>Heizung / Haustechnik (Wohnungsanteil)</td><td>11'500 Fr.</td><td>25 Jahre</td><td>6'900 Fr.</td></tr>
+<tr><td>Sanitärleitungen (Wohnungsanteil)</td><td>11'000 Fr.</td><td>50 Jahre</td><td>3'300 Fr.</td></tr>
+<tr><td>Elektroinstallationen</td><td>14'000 Fr.</td><td>40 Jahre</td><td>5'250 Fr.</td></tr>
+</tbody>
+<tfoot><tr><th scope="row">Total</th><td>143'500 Fr.</td><td></td><td>rund 67'700 Fr.</td></tr></tfoot>
+</table>
+</div>
+<p>In diesem Beispiel beträgt der gesamte altersbedingte Wertabzug rund 67'700 Franken.</p>
+<p><strong>Wichtig:</strong> Die angenommenen Erneuerungskosten sind keine festen Beträge für jede Wohnung. Wohnradar passt sie an die Wohnfläche und das lokale Immobilienpreisniveau an. Bei grösseren Wohnungen und an teureren Standorten werden höhere rechnerische Erneuerungskosten angesetzt. Die Tabelle zeigt deshalb ein Rechenbeispiel und keine allgemein gültigen Renovationskosten.</p>
+<p>Der lokale Quadratmeterpreis wird im Modell mit einem typischen Renovationszustand verknüpft. Deshalb wird der berechnete Altersabzug mit einem rechnerischen Referenzzustand verglichen. Massgeblich ist, ob die Wohnung besser oder schlechter erhalten ist als dieser Referenzzustand. Zusätzlich berücksichtigt das Modell das Baujahr und den gewählten Renovationszustand mit Kalibrierungsfaktoren.</p>
+</section>
+<section aria-labelledby="methodik-6" class="wr-methodik-chapter">
+<h3 id="methodik-6">6. Garagen und Parkplätze</h3>
+<p>Wohnradar berücksichtigt auch bei Garagen und Aussenparkplätzen das lokale Preisniveau. An teureren Standorten wird grundsätzlich ein höherer Wert angesetzt als an günstigeren.</p>
+<div aria-label="Werte für Garagen und Aussenparkplätze bei Eigentumswohnungen" class="wr-methodik-table-scroll" role="region" tabindex="0">
+<table class="wr-methodik-table">
+<thead><tr><th scope="col">Parkierung</th><th scope="col">Angesetzter Wert pro Platz</th></tr></thead>
+<tbody>
+<tr><td>Garagenplatz</td><td>25'000 bis 42'000 Fr.</td></tr>
+<tr><td>Aussenparkplatz</td><td>7'000 bis 19'000 Fr.</td></tr>
+</tbody>
+</table>
+</div>
+<p>Der Einzelwert wird mit der Anzahl der vorhandenen Plätze multipliziert und in die Gesamtbewertung einbezogen.</p>
+</section>
+<section aria-labelledby="methodik-7" class="wr-methodik-chapter">
+<h3 id="methodik-7">7. Wie zuverlässig ist die Schätzung?</h3>
+<p>Wohnradar liefert eine modellbasierte Schätzung des Verkehrswerts. Sie beruht auf lokalen Immobilienpreisen, den Angaben zur Wohnung und festgelegten Bewertungsregeln. Das ermöglicht eine rasche und nachvollziehbare Einschätzung ohne Besichtigung.</p>
+<p>Allerdings kann ein automatisiertes Modell nicht alle Besonderheiten einer Eigentumswohnung berücksichtigen. Dazu gehören etwa der Zustand gemeinschaftlicher Gebäudeteile, anstehende Sanierungen, die finanzielle Situation der Stockwerkeigentümergemeinschaft, besondere Nutzungsrechte oder aussergewöhnliche Grundrisse.</p>
+<p>Der berechnete Wert ist deshalb als Orientierung und nicht als verbindliches Verkehrswertgutachten zu verstehen. Der tatsächlich erzielbare Verkaufspreis kann davon abweichen.</p>
+</section>
+<section aria-labelledby="methodik-anhang" class="wr-methodik-appendix">
+<h3 id="methodik-anhang">Mathematischer Anhang: Berechnung des Grundwerts</h3>
+<p>Für Interessierte und Fachpersonen legen wir hier die mathematischen Grundlagen der Wohnflächen- und Terrassenbewertung offen.</p>
+<p class="wr-methodik-formula-label">Grundwert der Wohnfläche:</p>
+<div aria-label="Grundwert der Wohnfläche gleich m mal w mal (w durch 100) hoch minus 0 Komma 035" class="wr-methodik-formula" role="math">
+<span class="wr-methodik-mathpart">Grundwert = <var>m</var> × <var>w</var> ×</span>
+<span class="wr-methodik-mathpart">(<var>w</var> / 100)<sup>−0,035</sup></span>
+</div>
+<p class="wr-methodik-formula-label">Angerechnete Balkon- oder Terrassenfläche:</p>
+<div aria-label="Angerechnete Aussenfläche gleich Minimum von t und 40 plus 0 Komma 35 mal Maximum von 0 und t minus 40" class="wr-methodik-formula" role="math">
+<span class="wr-methodik-mathpart">Aussenfläche = min(<var>t</var>, 40) +</span>
+<span class="wr-methodik-mathpart">0,35 × max(0, <var>t</var> − 40)</span>
+</div>
+<p class="wr-methodik-formula-label">Wertzuschlag für Balkon oder Terrasse:</p>
+<div aria-label="Wertzuschlag gleich m mal 0 Komma 22 mal angerechnete Aussenfläche" class="wr-methodik-formula" role="math">
+<span class="wr-methodik-mathpart">Zuschlag = <var>m</var> × 0,22 ×</span>
+<span class="wr-methodik-mathpart">Aussenfläche</span>
+</div>
+<p>Dabei gilt:</p>
+<ul class="wr-methodik-legend">
+<li><strong>m:</strong> Lokaler Medianpreis pro Quadratmeter Wohnfläche in Franken</li>
+<li><strong>w:</strong> Wohnfläche der Eigentumswohnung in Quadratmetern</li>
+<li><strong>t:</strong> Fläche von Balkon oder Terrasse in Quadratmetern</li>
+<li><strong>−0,035:</strong> Korrekturfaktor für den leicht sinkenden Quadratmeterpreis bei zunehmender Wohnfläche</li>
+<li><strong>0,22:</strong> Wertansatz der Aussenfläche im Verhältnis zur Wohnfläche</li>
+<li><strong>0,35:</strong> Verminderter Wertansatz für Aussenflächen über 40 m²</li>
+</ul>
+<p>Zum Grundwert und zum Balkon- oder Terrassenzuschlag rechnet das Modell zunächst einen Referenzwert für den üblichen Renovationszustand hinzu und zieht den objektspezifischen Altersabzug ab. Danach folgen die prozentualen Korrekturen sowie weitere Kalibrierungsfaktoren für Baujahr und Wohnungsgrösse. Abschliessend werden die Parkierungswerte in die Berechnung einbezogen.</p>
+</section>
+</div>
+</details>
+</section>
 <div class="mobile-estimate-action">
 <button class="estimate-button" id="estimateButtonMobile" type="button">
     Verkehrswert bestimmen
 </button>
 </div>
-
 </main>
-
 <div class="result-shell" id="resultShell">
 <aside aria-live="polite" class="result result-invoice">
-
 <div class="invoice-title">
     Verkehrswertberechnung
 </div>
-
 <div class="invoice-row">
 <span>Rohwert</span>
 <strong id="rawout">—</strong>
 </div>
-
 <div class="invoice-row">
 <span>Altersabzug</span>
 <strong id="ageout">—</strong>
 </div>
-
 <div class="invoice-row">
 <span id="garageLabel">1 Garagenplatz</span>
 <strong id="garageout">—</strong>
 </div>
-
 <div class="invoice-row">
 <span id="outsideLabel">1 Aussenparkplatz</span>
 <strong id="outsideout">—</strong>
 </div>
-
 <div class="invoice-total">
 <span>Total Verkehrswert</span>
 <strong id="estimate">—</strong>
 </div>
-
 </aside>
-
 <div class="result-actions">
-
 <button class="estimate-button" id="estimateButtonDesktop" type="button">
     Verkehrswert bestimmen
 </button>
-
 <div class="post-estimate-actions">
 <button id="adjustButton" type="button">Nachjustieren</button>
 <button id="uxReset" type="button">Zurücksetzen</button>
 </div>
-
 </div>
 </div>
-
 </div>
-
 <div class="foot">
 Modellbasierte Schätzung auf Grundlage von RealAdvisor-PLZ-Medianpreisen.
 Eigenschaften-Zuschläge sind Modellannahmen, keine empirisch geschätzten Koeffizienten.
 </div>
-
 </div>
-
-<script src="javascript_dateien/wohnungen.js"></script>
-
+<script src="javascript_dateien/wohnungen.js?v=pflicht1"></script>
 <script>
 /* Beträge einheitlich mit CHF rechts anzeigen;
    Rohwert ohne Änderung des Bewertungsmodells rekonstruieren. */
@@ -545,14 +485,11 @@ Eigenschaften-Zuschläge sind Modellannahmen, keine empirisch geschätzten Koeff
   update();
 })();
 </script>
-
 <script src="javascript_dateien/ux-flow.js"></script>
-
-
 <!-- Footer-Inhalt wird ausschliesslich aus footer.html geladen. -->
 <div id="wohnradar-footer"></div>
 <!-- Mobiler Scroll-Hinweis: verschwindet nach der ersten Scrollbewegung. -->
-<div class="wr-scrollcue" id="wrScrollCue" aria-hidden="true"><span class="wr-scrollcue-text">Für weitere Angaben<br>scrollen</span></div>
-<script src="wohnradar-mobile.js" defer></script>
+<div aria-hidden="true" class="wr-scrollcue" id="wrScrollCue"><svg fill="none" height="25" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24" width="25"><path d="M12 4v16"></path><path d="m5 13 7 7 7-7"></path></svg></div>
+<script defer="" src="wohnradar-mobile.js"></script>
 </body>
 </html>

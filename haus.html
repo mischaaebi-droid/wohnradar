@@ -61,6 +61,84 @@
 <link rel="stylesheet" href="wohnradar-header-fix.css">
 
 <link rel="stylesheet" href="wohnradar-methodik.css">
+
+<style>
+/* Kopfbereich: Logo links, Markenname und Unterzeile exakt linksbündig. */
+.wrap > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.wrap > header .wr-header-lockup {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+.wrap > header .wr-header-lockup .wr-brand-mark {
+  display: block;
+  width: 52px !important;
+  height: 52px !important;
+  max-width: none;
+  object-fit: contain;
+  flex: 0 0 52px;
+}
+.wrap > header .wr-header-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+.wrap > header .wr-header-copy .wr-brand-name {
+  display: block;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.wrap > header .wr-header-copy .header-description {
+  display: block;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.wrap > header .home-link { flex-shrink: 0; }
+@media (max-width: 700px) {
+  .wrap > header .wr-header-lockup { gap: 8px; }
+  .wrap > header .wr-header-lockup .wr-brand-mark {
+    width: 48px !important;
+    height: 48px !important;
+    flex-basis: 48px;
+  }
+  .wrap > header .wr-header-copy .header-description { font-size: 12px; }
+}
+
+/* Hausrechner: dezente Pflichtfeld-Warnung bei nicht bestätigten Flächen. */
+.house-overview input.wr-range-invalid {
+  outline: 2px solid #b33f39;
+  outline-offset: 5px;
+  border-radius: 5px;
+}
+.house-overview .wr-required-hint {
+  margin-top: 7px;
+  color: #a8312e;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.house-overview .wr-required-hint[hidden] { display: none !important; }
+.house-overview .range:has(.wr-range-invalid) {
+  border-color: #b33f39;
+}
+.house-overview .rangehead output.wr-not-selected {
+  color: var(--muted, #786761);
+  font-size: 13px;
+  font-weight: 500;
+}
+</style>
 </head>
 <body>
 <span id="wohnradar-top" aria-hidden="true"></span>
@@ -69,11 +147,13 @@
 
 
 <header>
-  <div class="brand"><img class="wr-brand-mark" src="wohnradar-logo.png" alt="" aria-hidden="true" width="46" height="30" decoding="async"><span class="wr-brand-name">WOHN<em>RADAR</em></span></div>
-
-  <p class="header-description">
-    Einfamilienhaus <span class="separator">●</span> Immobilienbewertung
-  </p>
+  <div class="brand wr-header-lockup">
+    <img class="wr-brand-mark" src="wohnradar-logo.png" alt="" aria-hidden="true" width="52" height="52" decoding="async">
+    <div class="wr-header-copy">
+      <span class="wr-brand-name">WOHN<em>RADAR</em></span>
+      <p class="header-description">Immobilienbewertung</p>
+    </div>
+  </div>
 
   <a class="home-link" href="index.html" aria-label="Zur Startseite">
     <svg class="home-icon" viewBox="0 0 24 24"
@@ -85,7 +165,7 @@
       <path d="M5 9v12h14V9"/>
       <path d="M9 21v-7h6v7"/>
     </svg>
-    <span class="home-text">Alle Rechner</span>
+    <span class="home-text">Home</span>
   </a>
 </header>
 
@@ -107,7 +187,7 @@
 
 
 <section class="card house-overview">
-<div class="grid">
+<div class="grid" style="grid-template-columns:1fr">
 <div class="field">
 <label for="placeInput">
          PLZ, Ortschaft oder Gemeinde
@@ -123,7 +203,49 @@
 <div class="hint" id="placeHint">
 </div>
 </div>
-<div class="parking-inputs"><div class="parking-field">
+</div>
+<div class="lbl" style="margin-top:19px">
+       Haustyp
+      </div>
+<div class="types" id="type" role="radiogroup" aria-label="Haustyp">
+<label class="typechoice" title="Freistehendes Einfamilienhaus">
+<input checked="" name="houseType" type="radio" value="free" aria-label="Freistehendes Einfamilienhaus"/>
+<span>Freistehend</span>
+</label>
+<label class="typechoice" title="Eckhaus oder Doppelhaus">
+<input name="houseType" type="radio" value="end" aria-label="Eckhaus oder Doppelhaus"/>
+<span>Doppel-/Eckhaus</span>
+</label>
+<label class="typechoice" title="Reihenmittelhaus">
+<input name="houseType" type="radio" value="mid" aria-label="Reihenmittelhaus"/>
+<span>Reihenhaus</span>
+</label>
+</div>
+<div class="grid">
+<div class="range">
+<div class="rangehead">
+<label for="living">
+          Wohnfläche
+         </label>
+<output id="livingv">
+</output>
+</div>
+<input id="living" max="290" min="60" step="5" type="range" value="60"/>
+<div class="wr-required-hint" id="livingHint" role="alert" hidden></div>
+</div>
+<div class="range">
+<div class="rangehead">
+<label for="land">
+          Parzellenfläche
+         </label>
+<output id="landv">
+</output>
+</div>
+<input id="land" max="1900" min="100" step="25" type="range" value="100"/>
+<div class="wr-required-hint" id="landHint" role="alert" hidden></div>
+</div>
+</div>
+<div class="parking-inputs" style="margin-top:18px"><div class="parking-field">
 <div class="lbl">
          Garagenplätze
         </div>
@@ -153,46 +275,7 @@
           +
          </button>
 </div>
-</div></div></div>
-<div class="lbl" style="margin-top:19px">
-       Haustyp
-      </div>
-<div class="types" id="type" role="radiogroup" aria-label="Haustyp">
-<label class="typechoice" title="Freistehendes Einfamilienhaus">
-<input checked="" name="houseType" type="radio" value="free" aria-label="Freistehendes Einfamilienhaus"/>
-<span>Freistehend</span>
-</label>
-<label class="typechoice" title="Eckhaus oder Doppelhaus">
-<input name="houseType" type="radio" value="end" aria-label="Eckhaus oder Doppelhaus"/>
-<span>Doppel-/Eckhaus</span>
-</label>
-<label class="typechoice" title="Reihenmittelhaus">
-<input name="houseType" type="radio" value="mid" aria-label="Reihenmittelhaus"/>
-<span>Reihenhaus</span>
-</label>
-</div>
-<div class="grid">
-<div class="range">
-<div class="rangehead">
-<label for="living">
-          Wohnfläche
-         </label>
-<output id="livingv">
-</output>
-</div>
-<input id="living" max="290" min="60" step="5" type="range" value="60"/>
-</div>
-<div class="range">
-<div class="rangehead">
-<label for="land">
-          Parzellenfläche
-         </label>
-<output id="landv">
-</output>
-</div>
-<input id="land" max="1900" min="100" step="25" type="range" value="100"/>
-</div>
-</div>
+</div></div>
 </section>
 <section class="card">
 <h2>
@@ -214,23 +297,16 @@
 </div>
 <input id="built" max="2026" min="1910" step="1" type="range" value="1850"/>
 </div>
-<div class="lbl" style="margin-top:20px">
-       Renovationszustand
-      </div>
-<div class="seg" id="condition">
-<button data-cond="old">
-        Hoher Renovationsbedarf
-       </button>
-<button class="active" data-cond="normal">
-        Teilweise renoviert
-       </button>
-<button data-cond="new">
-        Umfassend renoviert
-       </button>
+<div class="range">
+  <div class="rangehead">
+    <label for="condition">Zustand</label>
+    <output id="conditionv">Mittel</output>
+  </div>
+  <input id="condition" type="range" min="0" max="5" step="1" value="2" aria-label="Zustand der Liegenschaft"/>
 </div>
 <details>
 <summary>
-        Einzelne Renovationen anpassen
+        Optional: Zustand detailliert
        </summary>
 <div class="hint">
         Jahr der letzten Erneuerung wählen. Nie erneuert? Baujahr belassen.
