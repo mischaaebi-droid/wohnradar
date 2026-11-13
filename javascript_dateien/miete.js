@@ -100,6 +100,11 @@ async function starteMietrechner() {
   let selection = defaultZip;
 
   let mietwertFreigegeben = false;
+  // Nur bewusst gewählte Angaben sind gültig; null ist kein Rechenwert.
+  let placeChosen = false;
+  const requiredTouched = {living:false, balconyArea:false, outdoorArea:false};
+  const CONDITION_LABELS = ["Sehr schlecht", "Schlecht", "Mittel", "Gut", "Sehr gut", "Neuwertig"];
+  const CONDITION_FACTORS = [0.92, 0.96, 1, 1.03, 1.06, 1.08];
 
   let parking = {
     garage: 0,
@@ -232,17 +237,19 @@ async function starteMietrechner() {
     const outdoorArea =
       Number($("outdoorArea").value);
 
-    text("livingv", area + " m²");
+    updateRequiredLabel("living", area + " m²");
 
     text(
       "balconyAreav",
-      balconyArea + " m²"
+      requiredTouched.balconyArea ? balconyArea + " m²" : "Bitte einstellen"
     );
+    $("balconyAreav").classList.toggle("wr-not-selected", !requiredTouched.balconyArea);
 
     text(
       "outdoorAreav",
-      outdoorArea + " m²"
+      requiredTouched.outdoorArea ? outdoorArea + " m²" : "Bitte einstellen"
     );
+    $("outdoorAreav").classList.toggle("wr-not-selected", !requiredTouched.outdoorArea);
 
     const p = MODEL[selection];
 
@@ -263,7 +270,7 @@ async function starteMietrechner() {
 
     const factor =
       locationFactor[selected.location] *
-      conditionFactor[selected.condition];
+      CONDITION_FACTORS[Number($("condition").value)];
 
     const premium = exteriorPremium(
       selected.apartmentType,
@@ -363,6 +370,89 @@ async function starteMietrechner() {
     );
   }
 
+  /* Pflichtangaben: erst bei Schätzversuch rot anzeigen. */
+  function updateRequiredLabel(id, value) {
+    text(id + "v", requiredTouched[id] ? value : "Bitte einstellen");
+    $(id + "v").classList.toggle("wr-not-selected", !requiredTouched[id]);
+  }
+
+  function setRequiredError(id, invalid) {
+    const input = $(id);
+    const hint = $(id + "Hint");
+    input.classList.toggle("wr-range-invalid", invalid);
+    if (invalid) input.setAttribute("aria-invalid", "true");
+    else input.removeAttribute("aria-invalid");
+    hint.hidden = !invalid;
+    hint.textContent = invalid ? (id === "living"
+      ? "Bitte stellen Sie die Wohnfläche ein."
+      : "Bitte stellen Sie die Aussenfläche ein (auch 0 m² ist möglich).") : "";
+  }
+
+  function setPlaceError(invalid) {
+    $("placeInput").classList.toggle("wr-place-invalid", invalid);
+    if (invalid) $("placeInput").setAttribute("aria-invalid", "true");
+    else $("placeInput").removeAttribute("aria-invalid");
+    placeHint.classList.toggle("wr-place-error", invalid);
+    if (invalid) {
+      placeHint.setAttribute("role", "alert");
+      placeHint.textContent = "Bitte wählen Sie eine Ortschaft oder Postleitzahl aus der Vorschlagsliste.";
+    } else {
+      placeHint.removeAttribute("role");
+      placeHint.textContent = "";
+    }
+  }
+
+  function currentExteriorId() {
+    return selected.apartmentType === "standard" ? "balconyArea" : "outdoorArea";
+  }
+
+  function firstInvalidField() {
+    if (!placeChosen) return "placeInput";
+    if (!requiredTouched.living) return "living";
+    if (!requiredTouched[currentExteriorId()]) return currentExteriorId();
+    return null;
+  }
+
+  function validate(showErrors = true) {
+    const first = firstInvalidField();
+    if (showErrors) {
+      setPlaceError(!placeChosen);
+      setRequiredError("living", !requiredTouched.living);
+      setRequiredError("balconyArea", selected.apartmentType === "standard" && !requiredTouched.balconyArea);
+      setRequiredError("outdoorArea", selected.apartmentType !== "standard" && !requiredTouched.outdoorArea);
+      if (first) {
+        const input = $(first);
+        const header = document.querySelector(".wrap > header");
+        const headerHeight = header ? header.getBoundingClientRect().height : 0;
+        const top = window.scrollY + input.getBoundingClientRect().top - headerHeight - 26;
+        window.scrollTo({top:Math.max(0,top),behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+      }
+    }
+    return !first;
+  }
+
+  function resetRequired() {
+    placeChosen = false;
+    requiredTouched.living = false;
+    requiredTouched.balconyArea = false;
+    requiredTouched.outdoorArea = false;
+    setPlaceError(false);
+    for (const id of Object.keys(requiredTouched)) setRequiredError(id,false);
+    $("condition").value = 2;
+    text("conditionv", CONDITION_LABELS[2]);
+    refresh();
+  }
+
+  // ux-flow.js darf einen ungültigen Klick nicht als erfolgreiche Schätzung markieren.
+  document.addEventListener("click", event => {
+    if (!event.target.closest("#estimateButtonDesktop, #estimateButtonMobile")) return;
+    if (!validate(false)) {
+      event.preventDefault();
+      event.stopPropagation();
+      validate(true);
+    }
+  }, true);
+
   /* =====================================================
      7. EINHEITLICHE ORTSSUCHE
      ===================================================== */
@@ -419,6 +509,8 @@ async function starteMietrechner() {
 
     selectingPlace = false;
     selection = plz;
+    placeChosen = true;
+    setPlaceError(false);
 
     placeInput.value =
       plz + " " + ortsname(plz);
@@ -592,14 +684,16 @@ async function starteMietrechner() {
 
     // Neue Suche: Feld sofort leeren.
     placeInput.value = "";
+    placeChosen = false;
     placeInput.placeholder = "";
 
-    placeHint.textContent = "";
+    if (!placeHint.classList.contains("wr-place-error")) placeHint.textContent = "";
   });
 
   placeInput.addEventListener("input", () => {
+    placeChosen = false;
 
-    placeHint.textContent =
+    if (!placeHint.classList.contains("wr-place-error")) placeHint.textContent =
       placeInput.value.trim()
         ? "Ort oder PLZ auswählen"
         : "";
@@ -616,7 +710,8 @@ async function starteMietrechner() {
       closeSuggestions();
 
       placeInput.value = "";
-      placeHint.textContent = "";
+      placeChosen = false;
+      if (!placeHint.classList.contains("wr-place-error")) placeHint.textContent = "";
 
       placeInput.focus();
     }
@@ -703,7 +798,7 @@ async function starteMietrechner() {
             selection + " " + ortsname(selection)
         ) {
 
-          placeHint.textContent =
+          if (!placeHint.classList.contains("wr-place-error")) placeHint.textContent =
             "Bitte einen Ort aus den Vorschlägen wählen";
         }
 
@@ -765,17 +860,24 @@ async function starteMietrechner() {
      10. REGLER
      ===================================================== */
 
-  for (const id of [
-    "living",
-    "balconyArea",
-    "outdoorArea"
-  ]) {
-
-    $(id).addEventListener(
-      "input",
-      refresh
-    );
+  for (const id of ["living", "balconyArea", "outdoorArea"]) {
+    const input = $(id);
+    function confirmValue() {
+      requiredTouched[id] = true;
+      setRequiredError(id, false);
+      refresh();
+    }
+    // Auch Antippen des linken Endes bestätigt 0 m² bewusst.
+    input.addEventListener("pointerdown", confirmValue);
+    input.addEventListener("input", confirmValue);
+    input.addEventListener("keydown", e => {
+      if (["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(e.key)) confirmValue();
+    });
   }
+  $("condition").addEventListener("input", () => {
+    text("conditionv", CONDITION_LABELS[Number($("condition").value)]);
+    refresh();
+  });
 
   /* =====================================================
      11. AUSWAHLKNÖPFE
@@ -783,7 +885,6 @@ async function starteMietrechner() {
 
   for (const id of [
     "location",
-    "condition",
     "apartmentType"
   ]) {
 
@@ -813,6 +914,8 @@ async function starteMietrechner() {
 
         if (id === "apartmentType") {
           updateExterior();
+          setRequiredError("balconyArea", false);
+          setRequiredError("outdoorArea", false);
         }
 
         refresh();
@@ -874,7 +977,6 @@ async function starteMietrechner() {
 
       for (const id of [
         "location",
-        "condition",
         "apartmentType"
       ]) {
 
@@ -905,9 +1007,11 @@ async function starteMietrechner() {
       text("garagev", "0");
       text("outsidev", "0");
 
-      $("living").value = 80;
+      $("living").value = 30;
       $("balconyArea").value = 0;
       $("outdoorArea").value = 0;
+      $("condition").value = 2;
+      text("conditionv", CONDITION_LABELS[2]);
 
       updateExterior();
 
@@ -915,9 +1019,14 @@ async function starteMietrechner() {
 
       // Nach Reset nur Platzhalter anzeigen.
       placeInput.value = "";
-      placeHint.textContent = "";
+      placeChosen = false;
+      resetRequired();
     }
   );
+
+  $("uxReset")?.addEventListener("click", () => {
+    queueMicrotask(() => { resetRequired(); });
+  });
 
   /* =====================================================
      14. STARTANZEIGE
@@ -930,7 +1039,8 @@ async function starteMietrechner() {
   // Intern ist die Standard-PLZ für die Berechnung
   // vorhanden. Das Eingabefeld bleibt leer.
   placeInput.value = "";
-  placeHint.textContent = "";
+  placeChosen = false;
+  resetRequired();
 }
 
 /* =======================================================

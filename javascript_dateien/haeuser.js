@@ -185,7 +185,9 @@ async function starteHauswert() {
         placeSelected: false,
 
         // NEU: Wurde bereits auf "Schätzen" geklickt?
-        estimateRequested: false
+        estimateRequested: false,
+        livingConfirmed: false,
+        landConfirmed: false
     };
 
     const places = Object.entries(DATA).map(([plz, d]) => ({
@@ -202,34 +204,46 @@ async function starteHauswert() {
     // RENOVATIONSJAHRE
     // ==================================================
 
+    const CONDITION_LABELS = [
+        'Sehr schlecht',
+        'Schlecht',
+        'Mittel',
+        'Gut',
+        'Sehr gut',
+        'Neuwertig'
+    ];
+
+    // Mittel entspricht dem bisherigen Modus "normal".
+    // Sehr schlecht entspricht "old", sehr gut etwa "new".
+    // Die Zwischenstufen verteilen die angenommenen Bauteilalter.
     function renovationsFor(mode, b) {
-        let r = {};
+        const result = {};
+        const buildingAge = YEAR - b;
+        const normalAges = {
+            kitchen: 18, bath: 20, interior: 15,
+            windows: 25, heat: 15, water: 30,
+            electric: 30, roof: 35, facade: 30
+        };
 
         for (const p of PARTS) {
+            const normalAge = Math.min(buildingAge, normalAges[p.id]);
+            const newAge = Math.min(buildingAge, 4);
+            let age;
 
-            let age = mode === 'old'
-                ? YEAR - b
-                : mode === 'new'
-                    ? Math.min(YEAR - b, 4)
-                    : Math.min(
-                        YEAR - b,
-                        ({
-                            kitchen: 18,
-                            bath: 20,
-                            interior: 15,
-                            windows: 25,
-                            heat: 15,
-                            water: 30,
-                            electric: 30,
-                            roof: 35,
-                            facade: 30
-                        })[p.id]
-                    );
+            switch (Number(mode)) {
+                case 0: age = buildingAge; break;
+                case 1: age = (buildingAge + normalAge) / 2; break;
+                case 2: age = normalAge; break;
+                case 3: age = (normalAge + newAge) / 2; break;
+                case 4: age = newAge; break;
+                case 5: age = 0; break;
+                default: age = normalAge;
+            }
 
-            r[p.id] = YEAR - age;
+            result[p.id] = YEAR - Math.round(age);
         }
 
-        return r;
+        return result;
     }
 
 
@@ -300,23 +314,10 @@ async function starteHauswert() {
     // ==================================================
 
     function setMode(mode) {
-
-        S.mode = mode;
-
-        S.renovations = renovationsFor(
-            mode,
-            +$('built').value
-        );
-
-        document.querySelectorAll('[data-cond]').forEach(b => {
-
-            b.classList.toggle(
-                'active',
-                b.dataset.cond === mode
-            );
-
-        });
-
+        S.mode = Number(mode);
+        $('condition').value = S.mode;
+        $('conditionv').textContent = CONDITION_LABELS[S.mode];
+        S.renovations = renovationsFor(S.mode, +$('built').value);
         renderRenos();
         calc();
     }
@@ -366,6 +367,91 @@ async function starteHauswert() {
     placeInput.placeholder = 'Ort oder PLZ eingeben';
     placeInput.setAttribute('autocomplete', 'off');
 
+    // Validierung: Die interne Standard-PLZ ist keine Benutzerauswahl.
+    // Die Fehlermeldung erscheint erst nach einem Schätzversuch.
+    const placeHint = $('placeHint');
+    placeInput.setAttribute('aria-describedby', 'placeHint');
+
+    function showPlaceError() {
+        placeInput.classList.add('wr-place-invalid');
+        placeInput.setAttribute('aria-invalid', 'true');
+        placeHint.classList.add('wr-place-error');
+        placeHint.setAttribute('role', 'alert');
+        placeHint.textContent =
+            'Bitte wählen Sie eine Ortschaft oder Postleitzahl aus der Vorschlagsliste.';
+
+        // Kein Fokus: Auf Smartphones soll die Tastatur nicht ungefragt öffnen.
+        const header = document.querySelector('.wrap > header');
+        const headerHeight = header ? header.getBoundingClientRect().height : 0;
+        const offset = headerHeight + 20;
+        const target = window.scrollY +
+            placeInput.getBoundingClientRect().top - offset;
+        window.scrollTo({
+            top: Math.max(0, target),
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                ? 'auto' : 'smooth'
+        });
+    }
+
+    function clearPlaceError() {
+        placeInput.classList.remove('wr-place-invalid');
+        placeInput.removeAttribute('aria-invalid');
+        placeHint.classList.remove('wr-place-error');
+        placeHint.removeAttribute('role');
+    }
+
+
+
+    // Flächenregler behalten ihre echten Mindestwerte, sind aber zunächst
+    // nicht bestätigt. Erst eine bewusste Bedienung übernimmt den Wert.
+    function clearRangeError(id) {
+        const slider = $(id);
+        const hint = $(id + 'Hint');
+        slider.classList.remove('wr-range-invalid');
+        slider.removeAttribute('aria-invalid');
+        hint.hidden = true;
+        hint.textContent = '';
+    }
+
+    function showRangeError(id, message) {
+        const slider = $(id);
+        const hint = $(id + 'Hint');
+        slider.classList.add('wr-range-invalid');
+        slider.setAttribute('aria-invalid', 'true');
+        hint.textContent = message;
+        hint.hidden = false;
+    }
+
+    function confirmRange(id) {
+        S[id + 'Confirmed'] = true;
+        clearRangeError(id);
+        $(id + 'v').classList.remove('wr-not-selected');
+        $(id + 'v').textContent = fmt(Number($(id).value)) + ' m²';
+        calc();
+    }
+
+    function updateAreaLabels() {
+        for (const id of ['living', 'land']) {
+            const output = $(id + 'v');
+            if (!S[id + 'Confirmed']) {
+                output.textContent = 'Bitte auswählen';
+                output.classList.add('wr-not-selected');
+            } else {
+                output.textContent = fmt(Number($(id).value)) + ' m²';
+                output.classList.remove('wr-not-selected');
+            }
+        }
+    }
+
+    function scrollToInvalid(element) {
+        const header = document.querySelector('.wrap > header');
+        const headerHeight = header ? header.getBoundingClientRect().height : 0;
+        const target = window.scrollY + element.getBoundingClientRect().top - headerHeight - 25;
+        window.scrollTo({
+            top: Math.max(0, target),
+            behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
+        });
+    }
 
     function normalize(t) {
 
@@ -513,6 +599,7 @@ async function starteHauswert() {
 
         S.plz = plz;
         S.placeSelected = true;
+        clearPlaceError();
 
         $('placeInput').value =
             plz + ' ' + DATA[plz].ort;
@@ -571,8 +658,7 @@ async function starteHauswert() {
         const m = d.median;
 
         // Eingabewerte anzeigen
-        $('livingv').textContent = fmt(w) + ' m²';
-        $('landv').textContent = fmt(g) + ' m²';
+        updateAreaLabels();
         $('builtv').textContent = b === 1910 ? '1910 oder älter' : b;
 
         $('garagev').textContent = S.garage;
@@ -836,7 +922,9 @@ async function starteHauswert() {
         placeInput.value = '';
         placeInput.placeholder = '';
 
-        $('placeHint').textContent = '';
+        if (!placeInput.classList.contains('wr-place-invalid')) {
+            placeHint.textContent = '';
+        }
     });
 
 
@@ -850,10 +938,10 @@ async function starteHauswert() {
         // und Klick auf "Schätzen".
         S.estimateRequested = false;
 
-        $('placeHint').textContent =
-            $('placeInput').value.trim()
-                ? 'Ort oder PLZ auswählen'
-                : '';
+        if (!placeInput.classList.contains('wr-place-invalid')) {
+            placeHint.textContent = placeInput.value.trim()
+                ? 'Ort oder PLZ auswählen' : '';
+        }
 
         suggestions();
 
@@ -876,8 +964,9 @@ async function starteHauswert() {
 
         $('placeInput').focus();
 
-        $('placeHint').textContent =
-            'Ortschaft oder PLZ eingeben';
+        if (!placeInput.classList.contains('wr-place-invalid')) {
+            placeHint.textContent = 'Ortschaft oder PLZ eingeben';
+        }
     });
 
 
@@ -957,8 +1046,10 @@ async function starteHauswert() {
                     S.plz + ' ' + DATA[S.plz].ort
             ) {
 
-                $('placeHint').textContent =
-                    'Bitte einen Ort aus den Vorschlägen wählen';
+                if (!placeInput.classList.contains('wr-place-invalid')) {
+                    placeHint.textContent =
+                        'Bitte einen Ort aus den Vorschlägen wählen';
+                }
             }
 
         }, 160);
@@ -984,14 +1075,16 @@ async function starteHauswert() {
     // EREIGNISSE: REGLER
     // ==================================================
 
-    [
-        'living',
-        'land',
-        ...METRICS.map(s => s.id)
-    ].forEach(id => {
+    // Auch ein Tippen auf den Startwert bestätigt diesen ausdrücklich.
+    // input deckt Ziehen sowie Tastaturbedienung ab; pointerup zusätzlich
+    // das Anklicken des Reglers ohne Wertänderung.
+    ['living', 'land'].forEach(id => {
+        $(id).addEventListener('input', () => confirmRange(id));
+        $(id).addEventListener('pointerup', () => confirmRange(id));
+    });
 
-        $(id).addEventListener('input', calc);
-
+    METRICS.forEach(s => {
+        $(s.id).addEventListener('input', calc);
     });
 
 
@@ -1017,15 +1110,8 @@ async function starteHauswert() {
     });
 
 
-    document.querySelectorAll(
-        '[data-cond]'
-    ).forEach(btn => {
-
-        btn.addEventListener('click', () => {
-
-            setMode(btn.dataset.cond);
-
-        });
+    $('condition').addEventListener('input', () => {
+        setMode($('condition').value);
     });
 
 
@@ -1109,12 +1195,23 @@ async function starteHauswert() {
 
     function showEstimate() {
 
-        // Ohne ausgewählte Gemeinde keine Schätzung.
-        if (!S.placeSelected) {
+        // Die Ortsauswahl sowie beide Flächen müssen bewusst erfolgen.
+        // Alle fehlenden Angaben werden markiert; zum ersten Fehler scrollen.
+        if (!S.placeSelected) showPlaceError();
+        else clearPlaceError();
 
-            $('placeHint').textContent =
-                'Bitte zuerst eine Gemeinde auswählen.';
+        if (!S.livingConfirmed) {
+            showRangeError('living', 'Bitte wählen Sie die Wohnfläche.');
+        } else clearRangeError('living');
 
+        if (!S.landConfirmed) {
+            showRangeError('land', 'Bitte wählen Sie die Parzellenfläche.');
+        } else clearRangeError('land');
+
+        if (!S.placeSelected || !S.livingConfirmed || !S.landConfirmed) {
+            if (S.placeSelected) {
+                scrollToInvalid($(S.livingConfirmed ? 'land' : 'living'));
+            }
             return;
         }
 
@@ -1210,9 +1307,13 @@ async function starteHauswert() {
         // Noch keine Schätzung angefordert.
         S.placeSelected = false;
         S.estimateRequested = false;
+        S.livingConfirmed = false;
+        S.landConfirmed = false;
+        clearRangeError('living');
+        clearRangeError('land');
 
         // Gebäudezustand zurücksetzen.
-        setMode('normal');
+        setMode(2);
 
         // Renovationsregler zurücksetzen.
         document.querySelectorAll(
@@ -1232,6 +1333,7 @@ async function starteHauswert() {
             : Object.keys(DATA)[0];
 
         // Ortseingabe leeren.
+        clearPlaceError();
         placeInput.value = '';
 
         $('placeHint').textContent = '';
@@ -1259,19 +1361,15 @@ async function starteHauswert() {
     // ==================================================
 
     // Sämtliche Schieber am linken Anschlag.
-    setMode('normal');
+    setMode(2);
 
-    S.renovations = renovationsFor(
-        'old',
-        Number($('built').value)
-    );
-
-    renderRenos();
 
     // Zu Beginn wurde noch keine Gemeinde gewählt
     // und noch keine Schätzung angefordert.
     S.placeSelected = false;
     S.estimateRequested = false;
+    S.livingConfirmed = false;
+    S.landConfirmed = false;
 
     calc();
 

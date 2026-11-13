@@ -93,7 +93,10 @@ async function starteWohnungswert() {
         mode: 'normal',
         renovations: {},
         placeSelected: false,
-        estimateRequested: false
+        estimateRequested: false,
+        livingConfirmed: false,
+        landConfirmed: false,
+        floorConfirmed: false
     };
 
     function normalize(t) {
@@ -114,22 +117,28 @@ async function starteWohnungswert() {
     // RENOVATIONEN
     // ==========================================================
 
+    const CONDITION_LABELS = [
+        'Sehr schlecht', 'Schlecht', 'Mittel', 'Gut', 'Sehr gut', 'Neuwertig'
+    ];
+
     function renovationYears(mode, b) {
-
         const out = {};
-
+        const buildingAge = YEAR - b;
         for (const p of PARTS) {
-
-            const age =
-                mode === 'old'
-                    ? YEAR - b
-                    : mode === 'new'
-                        ? Math.min(YEAR - b, 4)
-                        : Math.min(YEAR - b, DEFAULT_AGES[p.id]);
-
-            out[p.id] = YEAR - age;
+            const normalAge = Math.min(buildingAge, DEFAULT_AGES[p.id]);
+            const newAge = Math.min(buildingAge, 4);
+            let age;
+            switch (Number(mode)) {
+                case 0: age = buildingAge; break;
+                case 1: age = (buildingAge + normalAge) / 2; break;
+                case 2: age = normalAge; break;
+                case 3: age = (normalAge + newAge) / 2; break;
+                case 4: age = newAge; break;
+                case 5: age = 0; break;
+                default: age = normalAge;
+            }
+            out[p.id] = YEAR - Math.round(age);
         }
-
         return out;
     }
 
@@ -184,21 +193,10 @@ async function starteWohnungswert() {
     }
 
     function setMode(mode) {
-
-        S.mode = mode;
-
-        S.renovations = renovationYears(
-            mode,
-            +$('built').value
-        );
-
-        document.querySelectorAll('[data-cond]').forEach(btn => {
-            btn.classList.toggle(
-                'active',
-                btn.dataset.cond === mode
-            );
-        });
-
+        S.mode = Number(mode);
+        $('condition').value = S.mode;
+        $('conditionv').textContent = CONDITION_LABELS[S.mode];
+        S.renovations = renovationYears(S.mode, +$('built').value);
         renderRenos();
         calc();
     }
@@ -243,6 +241,60 @@ async function starteWohnungswert() {
     placeInput.placeholder = 'Ort oder PLZ eingeben';
     placeInput.setAttribute('autocomplete', 'off');
 
+    // Pflichtangaben: Fehler erst nach einem Schätzversuch anzeigen.
+    placeInput.setAttribute('aria-describedby', 'placeHint');
+    function clearPlaceError() {
+        placeInput.classList.remove('wr-place-invalid');
+        placeInput.removeAttribute('aria-invalid');
+        placeHint.classList.remove('wr-place-error');
+        placeHint.removeAttribute('role');
+    }
+    function showPlaceError() {
+        placeInput.classList.add('wr-place-invalid');
+        placeInput.setAttribute('aria-invalid', 'true');
+        placeHint.classList.add('wr-place-error');
+        placeHint.setAttribute('role', 'alert');
+        placeHint.textContent = 'Bitte wählen Sie eine Ortschaft oder Postleitzahl aus der Vorschlagsliste.';
+    }
+    function clearRangeError(id) {
+        const el = $(id), hint = $(id + 'Hint');
+        el.classList.remove('wr-range-invalid');
+        el.removeAttribute('aria-invalid');
+        hint.hidden = true;
+        hint.textContent = '';
+    }
+    function showRangeError(id, message) {
+        const el = $(id), hint = $(id + 'Hint');
+        el.classList.add('wr-range-invalid');
+        el.setAttribute('aria-invalid', 'true');
+        hint.textContent = message;
+        hint.hidden = false;
+    }
+    function showRequiredLabels() {
+        for (const id of ['living','land','floor']) {
+            const out = $(id + 'v');
+            if (!S[id + 'Confirmed']) {
+                out.textContent = 'Bitte einstellen';
+                out.classList.add('wr-not-selected');
+            } else {
+                out.classList.remove('wr-not-selected');
+            }
+        }
+    }
+    function confirmRequired(id) {
+        S[id + 'Confirmed'] = true;
+        clearRangeError(id);
+        calc();
+    }
+    function scrollToInvalid(el) {
+        const header = document.querySelector('.wrap > header');
+        const headHeight = header ? header.getBoundingClientRect().height : 0;
+        const offset = headHeight + 28;
+        const top = window.scrollY + el.getBoundingClientRect().top - offset;
+        window.scrollTo({top:Math.max(0,top), behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+    }
+
+
     function closeSuggestions() {
 
         clearTimeout(keyboardTimer);
@@ -274,6 +326,7 @@ async function starteWohnungswert() {
 
         S.plz = plz;
         S.placeSelected = true;
+        clearPlaceError();
 
         placeInput.value = plz + ' ' + DATA[plz].ort;
 
@@ -438,10 +491,11 @@ async function starteWohnungswert() {
 
         $('livingv').textContent = fmt(w) + ' m²';
         $('landv').textContent = fmt(balcony) + ' m²';
-		$('builtv').textContent = b === 1920 ? '1920 oder älter' : b;
+        $('builtv').textContent = b;
 
         $('floorv').textContent =
             floor === 0 ? 'Erdgeschoss' : floor + '. Stock';
+        showRequiredLabels();
 
         $('garagev').textContent = S.garage;
         $('outsidev').textContent = S.outside;
@@ -602,12 +656,9 @@ async function starteWohnungswert() {
             b < 2015 ? 1.02600 :
             1.03701;
 
-        const renovationWeight =
-            S.mode === 'new'
-                ? 0
-                : S.mode === 'old'
-                    ? .5
-                    : 1;
+        // Bisherige Referenzstufen erhalten: 0=alt, 2=normal, 5=neu.
+        // Dazwischen liegende Stufen werden sanft interpoliert.
+        const renovationWeight = [0.5, 0.75, 1, 0.65, 0.25, 0][S.mode] ?? 1;
 
         const calibratedAgeFactor =
             1 + (ageFactor - 1) * renovationWeight;
@@ -640,7 +691,7 @@ async function starteWohnungswert() {
         // ======================================================
 
         $('estimate').textContent =
-            S.placeSelected && S.estimateRequested
+            S.placeSelected && S.livingConfirmed && S.landConfirmed && S.floorConfirmed && S.estimateRequested
                 ? 'CHF ' + fmt(result)
                 : 'CHF 0';
 
@@ -704,7 +755,7 @@ async function starteWohnungswert() {
         placeInput.value = '';
         placeInput.placeholder = '';
 
-        placeHint.textContent = '';
+        if (!placeInput.classList.contains('wr-place-invalid')) placeHint.textContent = '';
     });
 
     placeInput.addEventListener('input', () => {
@@ -715,10 +766,9 @@ async function starteWohnungswert() {
 
         calc();
 
-        placeHint.textContent =
-            placeInput.value.trim()
-                ? 'Ort oder PLZ auswählen'
-                : '';
+        if (!placeInput.classList.contains('wr-place-invalid')) {
+            placeHint.textContent = placeInput.value.trim() ? 'Ort oder PLZ auswählen' : '';
+        }
 
         suggestions();
     });
@@ -736,8 +786,7 @@ async function starteWohnungswert() {
 
         calc();
 
-        placeHint.textContent =
-            'Ortschaft oder PLZ eingeben';
+        if (!placeInput.classList.contains('wr-place-invalid')) placeHint.textContent = 'Ortschaft oder PLZ eingeben';
 
         placeInput.focus();
     });
@@ -802,8 +851,9 @@ async function starteWohnungswert() {
                     S.plz + ' ' + DATA[S.plz].ort
             ) {
 
-                placeHint.textContent =
-                    'Bitte einen Ort aus den Vorschlägen wählen';
+                if (!placeInput.classList.contains('wr-place-invalid')) {
+                    placeHint.textContent = 'Bitte einen Ort aus den Vorschlägen wählen';
+                }
             }
 
         }, 160);
@@ -827,14 +877,23 @@ async function starteWohnungswert() {
     // ==========================================================
 
     [
-        'living',
-        'land',
-        'floor',
         'lift',
         ...METRICS.map(s => s.id)
     ].forEach(id => {
 
         $(id).addEventListener('input', calc);
+    });
+
+    // Erst nach bewusster Bedienung sind die drei Regler bestätigt.
+    // Pointerup erlaubt auch den Mindestwert (etwa 0 m² Balkon),
+    // selbst wenn die Reglerposition unverändert bleibt.
+    ['living','land','floor'].forEach(id => {
+        const slider = $(id);
+        slider.addEventListener('input', () => confirmRequired(id));
+        slider.addEventListener('pointerup', () => confirmRequired(id));
+        slider.addEventListener('keyup', e => {
+            if (['ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'].includes(e.key)) confirmRequired(id);
+        });
     });
 
     document.querySelectorAll(
@@ -855,12 +914,7 @@ async function starteWohnungswert() {
         calc();
     });
 
-    document.querySelectorAll('[data-cond]').forEach(btn => {
-
-        btn.addEventListener('click', () => {
-            setMode(btn.dataset.cond);
-        });
-    });
+    $('condition').addEventListener('input', () => setMode($('condition').value));
 
     // ==========================================================
     // GARAGEN- UND PARKPLATZZÄHLER
@@ -887,32 +941,29 @@ async function starteWohnungswert() {
     // ==========================================================
 
     function showEstimate() {
-
-        if (!S.placeSelected) {
-
-            placeHint.textContent =
-                'Bitte zuerst eine Gemeinde auswählen.';
-
+        // Sämtliche fehlenden Angaben markieren und zum ersten Fehler scrollen.
+        if (!S.placeSelected) showPlaceError(); else clearPlaceError();
+        for (const [id, label] of [
+            ['living','Wohnfläche'], ['land','Balkon- / Terrassenfläche'],
+            ['floor','Stockwerk']
+        ]) {
+            if (!S[id + 'Confirmed']) showRangeError(id, 'Bitte ' + label + ' einstellen.');
+            else clearRangeError(id);
+        }
+        const missing = !S.placeSelected || !S.livingConfirmed ||
+                        !S.landConfirmed || !S.floorConfirmed;
+        if (missing) {
+            const first = !S.placeSelected ? 'placeInput' :
+                !S.livingConfirmed ? 'living' : !S.landConfirmed ? 'land' : 'floor';
+            scrollToInvalid($(first));
             return;
         }
-
-        // Erst jetzt wird der Verkehrswert freigegeben.
         S.estimateRequested = true;
-
         calc();
-
         const resultShell = $('resultShell');
-
-        if (resultShell) {
-            resultShell.classList.add('has-estimate');
-        }
-
+        if (resultShell) resultShell.classList.add('has-estimate');
         if (window.matchMedia('(max-width: 840px)').matches) {
-
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+            window.scrollTo({top:0,behavior:'smooth'});
         }
     }
 
@@ -934,10 +985,10 @@ async function starteWohnungswert() {
 
     $('reset').addEventListener('click', () => {
 
-        $('living').value = 100;
-        $('land').value = 12;
+        $('living').value = $('living').min;
+        $('land').value = $('land').min;
         $('built').value = 1995;
-        $('floor').value = 2;
+        $('floor').value = $('floor').min;
         $('lift').value = 'yes';
 
         document.querySelector(
@@ -960,8 +1011,13 @@ async function starteWohnungswert() {
         // Schätzung zurücksetzen.
         S.placeSelected = false;
         S.estimateRequested = false;
+        S.livingConfirmed = false;
+        S.landConfirmed = false;
+        S.floorConfirmed = false;
+        clearPlaceError();
+        ['living','land','floor'].forEach(clearRangeError);
 
-        setMode('normal');
+        setMode(2);
 
         placeInput.value = '';
         placeHint.textContent = '';
@@ -982,7 +1038,7 @@ async function starteWohnungswert() {
     // INITIALISIERUNG
     // ==========================================================
 
-    setMode('normal');
+    setMode(2);
 
     S.placeSelected = false;
     S.estimateRequested = false;
