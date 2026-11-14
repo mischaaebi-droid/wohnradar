@@ -42,3 +42,69 @@
   .wr-footer .wr-footer__grid { grid-template-columns: 1fr; gap: 24px; }
   .wr-footer .wr-footer__intro { grid-column: auto; }
 }
+
+/* Kompakter, zentral eingebundener Klappfooter */
+.wr-footer { margin-top: 0; }
+.wr-footer .wr-footer__details { margin: 0; padding: 0; border: 0; }
+.wr-footer .wr-footer__toggle {
+  display: flex; align-items: center; justify-content: center; gap: 13px;
+  min-height: 52px; margin: 0; padding: 12px 18px;
+  color: #FFF8F2; font-size: 13px; font-weight: 500;
+  line-height: 1.35; text-align: center; list-style: none; cursor: pointer;
+}
+.wr-footer .wr-footer__toggle::-webkit-details-marker { display: none; }
+.wr-footer .wr-footer__toggle::marker { content: ''; }
+.wr-footer .wr-footer__toggle:focus-visible { outline: 2px solid #FFD5B7; outline-offset: -4px; }
+.wr-footer .wr-footer__chevron {
+  width: 8px; height: 8px; flex: 0 0 8px;
+  border-right: 2px solid currentColor; border-bottom: 2px solid currentColor;
+  transform: rotate(45deg) translateY(-2px); transition: transform .2s ease;
+}
+.wr-footer .wr-footer__details[open] .wr-footer__chevron { transform: rotate(225deg) translateY(-2px); }
+.wr-footer .wr-footer__inner { padding-top: 24px; }
+.wr-footer .wr-footer__bottom { justify-content: flex-end; }
+/* Der bisherige untere Leerraum der Rechnerseiten wird reduziert. */
+.wrap:has(+ #wohnradar-footer) { padding-bottom: 12px; }
+@media (max-width: 530px) {
+  .wrap:has(+ #wohnradar-footer) { padding-bottom: 10px; }
+  .wr-footer .wr-footer__toggle { min-height: 48px; padding: 11px 12px; font-size: 12px; }
+}
+
+/* Heller Footer, abgestimmt auf die Methodik – November 2026 */
+.wr-footer {
+  background: #FFFFFF;
+  color: #352A28;
+  border: 1px solid #DFCFC7;
+  border-radius: 12px;
+  margin-top: 0;
+}
+.wr-footer .wr-footer__toggle {
+  color: #786761;
+  font-weight: 500;
+  justify-content: space-between;
+  gap: 12px;
+  text-align: left;
+}
+.wr-footer .wr-footer__toggle:focus-visible,
+.wr-footer a:focus-visible { outline-color: #B0523B; }
+.wr-footer .wr-footer__inner {
+  border-top: 1px solid #DFCFC7;
+  padding-top: 20px;
+}
+.wr-footer .wr-footer__nav h2,
+.wr-footer .wr-footer__brand { color: #352A28; }
+.wr-footer .wr-footer__brand em { color: #B0523B; }
+.wr-footer .wr-footer__intro p,
+.wr-footer .wr-footer__nav a,
+.wr-footer .wr-footer__bottom { color: #786761; }
+.wr-footer .wr-footer__pending { color: #897C76; }
+.wr-footer a:hover,
+.wr-footer .wr-footer__nav a:hover { color: #893C2B; }
+.wr-footer a[aria-current="page"] { color: #893C2B; }
+.wr-footer .wr-footer__bottom { border-top-color: #DFCFC7; }
+/* Abstand zum vorangehenden Inhalt möglichst klein halten. */
+.wrap:has(+ #wohnradar-footer) { padding-bottom: 14px; }
+@media (max-width: 530px) {
+  .wrap:has(+ #wohnradar-footer) { padding-bottom: 12px; }
+  .wr-footer .wr-footer__toggle { min-height: 48px; }
+}

@@ -11,7 +11,7 @@
  * Baulandpreis/m² = P * Anteil * Ausnützungsannahme
  *
  * Ursprünglich validierte Formel: Faktor 0.5;
- * Bebauungsvarianten 0.65 / 0.35 und Mikrolage +/-20%
+ * Bebauungsvarianten 0.39 / 0.50 / 0.65 und Mikrolage +/-20%
  * sind NICHT separat empirisch validiert.
  */
 
@@ -116,7 +116,7 @@ async function starteBauland() {
     }
 
     const base = p * share *
-      (type === 'multi' ? .65 : .35) *
+      ({single: .39, medium: .50, multi: .65}[type] ?? .39) *
       baulandKorrektur(p);
 
 
@@ -130,11 +130,13 @@ async function starteBauland() {
       fmt(base * 1.2) + ' CHF/m²';
 
     $('buildLabel').textContent =
-      type === 'multi'
-        ? 'Mehrfamilienhäuser'
-        : 'Einfamilienhäuser';
+      ({single: 'Tief (Einfamilienhaus)',
+          medium: 'Mittel (Mehrfamilienhaus)',
+          multi: 'Hoch (Mehrfamilienhaus)'}[type] || 'Tief (Einfamilienhaus)');
 
     $('resultPlace').textContent = plz + ' ' + (d.ort || '');
+    $('resultPlace').hidden = false;
+    $('resultUse').hidden = false;
 
     $('apartmentPrice').textContent =
       'CHF ' + fmt(p) + '/m²';
@@ -622,8 +624,7 @@ async function starteBauland() {
   // 5. ÜBRIGE BEDIENELEMENTE – UNVERÄNDERT
   // ==========================================================
 
-  // Wechsel zwischen Einfamilienhaus
-  // und Mehrfamilienhaus.
+  // Wechsel zwischen drei Ausnützungsstufen.
 
   document.querySelectorAll(
     'input[name="landType"]'
@@ -644,8 +645,10 @@ async function starteBauland() {
     resultReleased = false;
     placeSelected = false;
     ['estimate', 'low', 'high'].forEach(id => { $(id).textContent = '—'; });
-    $('resultPlace').textContent = 'Ort auswählen und Wert berechnen';
-    $('buildLabel').textContent = 'Einfamilienhäuser';
+    $('resultPlace').textContent = '';
+    $('resultPlace').hidden = true;
+    $('resultUse').hidden = true;
+    $('buildLabel').textContent = '';
     $('apartmentPrice').textContent = '';
     placeInput.value = '';
     placeHint.textContent = '';
