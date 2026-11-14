@@ -19,6 +19,35 @@
 <link rel="stylesheet" href="wohnradar-logo.css">
 <link rel="stylesheet" href="wohnradar-resultate.css">
 <link rel="stylesheet" href="wohnradar-header-fix.css">
+
+<style>
+/* Bauland: ruhige Kennzahlenkarte analog zum Mietrechner. */
+.bauland-result { padding:18px 20px !important; }
+.bauland-result .bl-title { font-size:13px; font-weight:700; opacity:.78; margin:0 0 5px; }
+.bauland-result .bl-place { font-size:12px; color:var(--muted,#786761); margin:0 0 13px; line-height:1.4; }
+.bauland-result .bl-row { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:baseline; gap:12px; padding:7px 0; font-size:14px; line-height:1.4; }
+.bauland-result .bl-row strong { font-size:14px; white-space:nowrap; text-align:right; font-variant-numeric:tabular-nums; }
+.bauland-result .bl-row.bl-median { font-weight:700; padding:9px 0; }
+.bauland-result .bl-row.bl-median strong { font-size:21px; }
+.bauland-result .bl-use { margin:10px 0 0; padding-top:11px; border-top:1px solid var(--line,#dfcfc7); font-size:12px; color:var(--muted,#786761); line-height:1.45; }
+.bauland-result .bl-use strong { color:var(--ink,#352a28); font-weight:600; }
+/* Zwei kurze, leicht verständliche Optionen nebeneinander. */
+#type.bl-types {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+#type.bl-types .typechoice {display:flex; flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;min-width:0;min-height:65px;padding:10px 6px;line-height:1.3;cursor:pointer;}
+#type.bl-types .typechoice .bl-choice-main {font-size:13px;font-weight:700;}
+#type.bl-types .typechoice .bl-choice-sub {font-size:11px;font-weight:400;opacity:.8;}
+#type.bl-types input[type=radio] {margin:0 0 3px;}
+.bl-type-help {margin:8px 0 0;font-size:12px;color:var(--muted,#786761);line-height:1.45;}
+@media(max-width:650px) {
+ .bauland-result {padding:13px 15px !important;}
+ .bauland-result .bl-row {padding:5px 0;font-size:13px;gap:7px;}
+ .bauland-result .bl-row strong {font-size:13px;}
+ .bauland-result .bl-row.bl-median strong {font-size:20px;}
+ #type.bl-types {gap:7px;}
+ #type.bl-types .typechoice {padding:9px 4px;}
+ #type.bl-types .typechoice .bl-choice-main {font-size:12px;}
+}
+</style>
 </head>
 <body>
 <span id="wohnradar-top" aria-hidden="true"></span><div class="wrap">
@@ -46,9 +75,22 @@
   </a>
 </header>
 
-<div class="layout"><main class="stack"><section class="card"><h2>Bauland schätzen</h2><div class="grid"><div class="field"><label for="placeInput">PLZ, Ortschaft oder Gemeinde</label><div class="place-wrap"><input aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" aria-label="Ortschaft oder Postleitzahl suchen" autocomplete="off" id="placeInput" role="combobox" spellcheck="false" value="5400 Baden"/><button aria-label="Ortschaft löschen" class="clear-place" id="clearPlace" title="Eingabe löschen" type="button">×</button></div><div class="suggest hide" id="suggestions" role="listbox"></div><div class="hint" id="placeHint"></div></div></div><div class="lbl" style="margin-top:19px">Erlaubte Ausnutzung</div><div class="types" id="type"><label class="typechoice"><input checked="" name="landType" type="radio" value="multi"/>Hoch (Mehrfamilienhaus)</label><label class="typechoice"><input name="landType" type="radio" value="single"/>Tief (Einfamilienhaus)</label></div></section>
+<div class="layout"><main class="stack"><section class="card"><h2>Bauland schätzen</h2><div class="grid"><div class="field"><label for="placeInput">PLZ, Ortschaft oder Gemeinde</label><div class="place-wrap"><input aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" aria-label="Ortschaft oder Postleitzahl suchen" autocomplete="off" id="placeInput" role="combobox" spellcheck="false" value="5400 Baden"/><button aria-label="Ortschaft löschen" class="clear-place" id="clearPlace" title="Eingabe löschen" type="button">×</button></div><div class="suggest hide" id="suggestions" role="listbox"></div><div class="hint" id="placeHint"></div></div></div><div class="lbl" style="margin-top:19px" id="bl-type-label">Was darf hier ungefähr gebaut werden?</div>
+<div class="types bl-types" id="type" role="radiogroup" aria-labelledby="bl-type-label">
+  <label class="typechoice"><input checked name="landType" type="radio" value="single"/><span class="bl-choice-main">Einfamilienhäuser</span><span class="bl-choice-sub">Locker bebaubar</span></label>
+  <label class="typechoice"><input name="landType" type="radio" value="multi"/><span class="bl-choice-main">Mehrfamilienhäuser</span><span class="bl-choice-sub">Dicht bebaubar</span></label>
+</div>
+<p class="bl-type-help">Vereinfachte Auswahl nach der zulässigen Bebauung. Entscheidend sind die Bauvorschriften der Gemeinde.</p></section>
 <div class="mobile-estimate-action"><button class="estimate-button" id="estimateButtonMobile" type="button">Verkehrswert bestimmen</button></div></main>
-<div class="result-shell" id="resultShell"><aside aria-live="polite" class="result"><div class="final-label">Mittlerer Baulandpreis pro m²</div><div class="big" id="estimate">—</div><div class="result-heading">Preisspanne nach Lage</div><div class="detail"><span>Schlechte Lage</span><strong id="low">—</strong></div><div class="detail"><span>Gute Lage</span><strong id="high">—</strong></div><div class="detail"><span>Erlaubte Ausnutzung</span><strong id="buildLabel">Hoch (Mehrfamilienhaus)</strong></div><span hidden="" id="apartmentPrice"></span></aside><div class="result-actions"><button class="estimate-button" id="estimateButtonDesktop" type="button">Verkehrswert bestimmen</button><div class="post-estimate-actions"><button id="adjustButton" type="button">Nachjustieren</button><button id="uxReset" type="button">Zurücksetzen</button></div></div></div></div>
+<div class="result-shell" id="resultShell"><aside aria-live="polite" class="result bauland-result">
+  <div class="bl-title">Geschätzter Baulandpreis pro m²</div>
+  <div class="bl-place" id="resultPlace">Ort auswählen und Wert berechnen</div>
+  <div class="bl-row"><span>Unteres Preisniveau (schlechtere Lage)</span><strong id="low">—</strong></div>
+  <div class="bl-row bl-median"><span>Mittlerer Baulandpreis</span><strong id="estimate">—</strong></div>
+  <div class="bl-row"><span>Oberes Preisniveau (bessere Lage)</span><strong id="high">—</strong></div>
+  <div class="bl-use">Angenommene Bebauung: <strong id="buildLabel">Einfamilienhäuser</strong></div>
+  <span hidden id="apartmentPrice"></span>
+</aside><div class="result-actions"><button class="estimate-button" id="estimateButtonDesktop" type="button">Verkehrswert bestimmen</button><div class="post-estimate-actions"><button id="adjustButton" type="button">Nachjustieren</button><button id="uxReset" type="button">Zurücksetzen</button></div></div></div></div>
 <div class="foot">Modellbasierte Schätzung pro m² Grundstücksfläche. Die Umrechnung für Mehrfamilienhäuser und Einfamilienhäuser sowie die Lage-Spanne beruhen auf Annahmen. Baurecht, Erschliessung und Besonderheiten der Parzelle sind nicht berücksichtigt. Die Spanne ist kein statistisches Konfidenzintervall.</div></div>
 <script src="javascript_dateien/bauland.js"></script>
 <script src="javascript_dateien/ux-flow.js"></script>

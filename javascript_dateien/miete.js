@@ -103,6 +103,62 @@ async function starteMietrechner() {
   // Nur bewusst gewählte Angaben sind gültig; null ist kein Rechenwert.
   let placeChosen = false;
   const requiredTouched = {living:false, balconyArea:false, outdoorArea:false};
+
+  // Drei Mikrolageregler analog zu den Eigentumswohnungen; Zustand und Besonnung werden nicht separat erfasst.
+    const METRICS = [
+        {
+            id:'view',
+            label:'Aussicht',
+            names:['Schlecht','Eingeschränkt','Durchschnittlich','Schön','Sehr schön','Herausragend'],
+            values:[-6,-3,0,3,6,10],
+            def:2
+        },
+        {
+            id:'access',
+            label:'Geschäfte, Schulen und ÖV',
+            names:['Sehr schlecht','Eher schlecht','Durchschnittlich','Gut','Sehr gut'],
+            values:[-6,-3,0,2,4],
+            def:2
+        },
+        {
+            id:'noise',
+            label:'Ruhe / Lärmbelastung',
+            names:['Extrem laut','Stark belastet','Verkehrslärm','Durchschnittlich','Ruhig','Sehr ruhig'],
+            values:[-8,-5,-2,0,2,4],
+            def:3
+        },
+        
+    ];
+
+  // Alle Teilaspekte gemeinsam: maximal -6 % bis +6 % Mietkorrektur.
+  // Die einzelnen Werte behalten die relative Gewichtung der Eigentumswohnungen.
+  // Unterschiedliche Normierung der beiden Seiten wahrt beide Extremwerte.
+  const MICRO_MIN = METRICS.reduce((sum, s) => sum + Math.min(...s.values), 0);
+  const MICRO_MAX = METRICS.reduce((sum, s) => sum + Math.max(...s.values), 0);
+
+  $("sliders").innerHTML = METRICS.map(s => `
+    <div class="range">
+      <div class="rangehead">
+        <label for="${s.id}">${s.label}</label>
+        <output id="${s.id}v"></output>
+      </div>
+      <input id="${s.id}" type="range" min="0" max="${s.values.length - 1}"
+             value="${s.def}" step="1">
+    </div>
+  `).join("");
+
+  function updateMicroLocation() {
+    let score = 0;
+    for (const metric of METRICS) {
+      const index = Number($(metric.id).value);
+      text(metric.id + "v", metric.names[index]);
+      score += metric.values[index];
+    }
+    return score < 0
+      ? 1 + 0.06 * score / -MICRO_MIN
+      : 1 + 0.06 * score / MICRO_MAX;
+  }
+
   const CONDITION_LABELS = ["Sehr schlecht", "Schlecht", "Mittel", "Gut", "Sehr gut", "Neuwertig"];
   const CONDITION_FACTORS = [0.92, 0.96, 1, 1.03, 1.06, 1.08];
 
@@ -115,7 +171,6 @@ async function starteMietrechner() {
   let activeSuggestion = -1;
 
   const selected = {
-    location: "normal",
     condition: "normal",
     apartmentType: "standard"
   };
@@ -138,11 +193,6 @@ async function starteMietrechner() {
     );
   }
 
-  const locationFactor = {
-    poor: 0.94,
-    normal: 1,
-    good: 1.06
-  };
 
   const conditionFactor = {
     old: 0.92,
@@ -269,7 +319,7 @@ async function starteMietrechner() {
     const base = net("q50");
 
     const factor =
-      locationFactor[selected.location] *
+      updateMicroLocation() *
       CONDITION_FACTORS[Number($("condition").value)];
 
     const premium = exteriorPremium(
@@ -874,6 +924,10 @@ async function starteMietrechner() {
       if (["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End","PageUp","PageDown"].includes(e.key)) confirmValue();
     });
   }
+  for (const metric of METRICS) {
+    $(metric.id).addEventListener("input", refresh);
+  }
+
   $("condition").addEventListener("input", () => {
     text("conditionv", CONDITION_LABELS[Number($("condition").value)]);
     refresh();
@@ -883,10 +937,7 @@ async function starteMietrechner() {
      11. AUSWAHLKNÖPFE
      ===================================================== */
 
-  for (const id of [
-    "location",
-    "apartmentType"
-  ]) {
+  for (const id of ["apartmentType"]) {
 
     $(id).addEventListener(
       "click",
@@ -975,15 +1026,9 @@ async function starteMietrechner() {
     "click",
     () => {
 
-      for (const id of [
-        "location",
-        "apartmentType"
-      ]) {
+      for (const id of ["apartmentType"]) {
 
-        selected[id] =
-          id === "apartmentType"
-            ? "standard"
-            : "normal";
+        selected[id] = "standard";
 
         $(id)
           .querySelectorAll("button")
@@ -995,6 +1040,10 @@ async function starteMietrechner() {
                 selected[id]
             );
           });
+      }
+
+      for (const metric of METRICS) {
+        $(metric.id).value = metric.def;
       }
 
       mietwertFreigegeben = false;

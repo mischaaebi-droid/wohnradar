@@ -1,0 +1,308 @@
+
+<!DOCTYPE html>
+
+
+<html lang="de-CH">
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width,initial-scale=1" name="viewport"/>
+
+    <title>Wohnungsmiete berechnen – Mietzins online schätzen | Wohnradar</title>
+    <link href="styles.css" rel="stylesheet"/>
+    <style>
+
+/* Mietrechner: alle Objektdaten in einer platzsparenden ersten Karte. */
+.rent-intro-stack { display:grid; gap:12px; }
+.rent-intro-stack > .field, .rent-intro-stack > .range { min-width:0; width:100%; }
+.rent-intro-stack > .range {
+  margin:0; padding:12px 14px 8px;
+  background:var(--card2); border:1px solid var(--highlight-line);
+  border-radius:11px;
+}
+.rent-intro-stack .rangehead { width:100%; }
+.rent-intro-stack input[type="range"] { display:block; width:100%; margin:9px 0 5px; }
+.rent-parking-row { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:3px; }
+.rent-parking-row .parking-field { min-width:0; }
+.rent-parking-row .lbl { margin-bottom:7px; }
+.rent-outdoor-note { margin:0; }
+@media(max-width:530px) {
+  .rent-intro-stack { gap:10px; }
+  .rent-parking-row { gap:9px; }
+}
+
+/* Wohnungstyp vor den jeweils passenden Aussenflächenregler setzen. */
+.rent-type-control { margin: 2px 0; }
+.rent-type-control .lbl { margin-bottom:8px; }
+.rent-type-control .rent-choice button { min-height:44px; }
+.rent-outdoor-range.hide { display:none !important; }
+@media (max-width:530px) { .rent-type-control .rent-choice { gap:5px; } .rent-type-control .rent-choice button { font-size:11px; padding:9px 4px; } }
+
+/* Kompakte Mietabrechnung wie beim Hausrechner */
+.result.rent-result.result-invoice { padding:18px 20px !important; }
+.result-invoice .invoice-title {font-size:13px;font-weight:700;opacity:.75;margin-bottom:10px;}
+.result-invoice .invoice-row,.result-invoice .invoice-total {display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:8px;line-height:1.35;}
+.result-invoice .invoice-row {padding:5px 0;font-size:14px;}
+.result-invoice .invoice-row strong,.result-invoice .invoice-total strong {text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
+.result-invoice .invoice-total {margin-top:9px;padding-top:12px;border-top:2px solid var(--accent,#B0523B);font-weight:750;}
+.result-invoice .invoice-total strong {font-size:clamp(19px,2.2vw,27px);}
+.result-invoice .rent-status {font-size:11px;margin-top:9px;line-height:1.25;}
+@media(max-width:650px) {
+ .result.rent-result.result-invoice {padding:13px 15px !important;}
+ .result-invoice .invoice-title {margin-bottom:6px;font-size:12px;}
+ .result-invoice .invoice-row {padding:3px 0;font-size:13px;}
+ .result-invoice .invoice-total {margin-top:7px;padding-top:9px;font-size:13px;}
+ .result-invoice .invoice-total strong {font-size:20px;}
+}
+    </style>
+    <link href="wohnradar-ux.css" rel="stylesheet"/>
+    <link href="wohnradar-logo.css" rel="stylesheet"/>
+
+    <link href="wohnradar-resultate.css" rel="stylesheet"/>
+
+    <link href="wohnradar-header-fix.css" rel="stylesheet"/>
+
+    <style>
+
+/* Mietrechner – kompakter Kopf wie Haus und Eigentumswohnung */
+.wrap > header {display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.wrap > header .wr-header-lockup {display:flex;align-items:center;gap:11px;min-width:0;}
+.wrap > header .wr-header-lockup .wr-brand-mark {display:block;width:52px !important;height:52px !important;max-width:none;object-fit:contain;flex:0 0 52px;}
+.wrap > header .wr-header-copy {display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;}
+.wrap > header .wr-header-copy .wr-brand-name {display:block;line-height:1.15;white-space:nowrap;}
+.wrap > header .wr-header-copy .header-description {display:block;margin:0;padding:0;min-width:0;font-size:13px;font-weight:500;line-height:1.25;white-space:nowrap;}
+.wrap > header .home-link {flex-shrink:0;}
+@media(max-width:700px){.wrap > header .wr-header-lockup{gap:8px}.wrap > header .wr-header-lockup .wr-brand-mark{width:48px !important;height:48px !important;flex-basis:48px}.wrap > header .wr-header-copy .header-description{font-size:12px}}
+/* Wohnungstyp auf allen Bildschirmgrössen in einer Zeile */
+.rent-overview #apartmentType {display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:6px;}
+.rent-overview #apartmentType button {min-width:0;min-height:44px;padding:9px 3px;font-size:12px;line-height:1.2;white-space:nowrap;}
+/* Platzsparende, direkt zugeordnete Pflichtfeld-Fehler */
+.rent-overview #placeInput.wr-place-invalid {border:2px solid #b53b37;background:#fff;}
+.rent-overview #placeHint.wr-place-error {color:#a33333;font-size:13px;font-weight:600;line-height:1.4;margin-top:8px;}
+.rent-overview .range:has(.wr-range-invalid) {border-color:#b33f39;}
+.rent-overview input.wr-range-invalid {outline:2px solid #b33f39;outline-offset:4px;border-radius:5px;}
+.rent-overview .wr-required-hint {margin-top:7px;color:#a8312e;font-size:12px;line-height:1.4;}
+.rent-overview .wr-required-hint[hidden] {display:none !important;}
+.rent-overview .rangehead output.wr-not-selected {color:var(--muted,#786761);font-size:13px;font-weight:500;}
+/* Runder, weisser, leicht schwebender Scroll-Hinweis */
+@media(max-width:840px){
+ body.wr-mobile-valuation .wr-scrollcue {width:54px !important;height:54px !important;border-radius:50%;border:1px solid var(--line,#DFCFC7);background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.12);bottom:calc(105px + env(safe-area-inset-bottom,0px));color:var(--ink,#352A28);display:flex;align-items:center;justify-content:center;animation:wr-miete-circle-float 2.1s ease-in-out infinite;}
+ body.wr-mobile-valuation .wr-scrollcue::before {content:none !important;display:none !important;}
+ body.wr-mobile-valuation .wr-scrollcue.is-hidden{opacity:0;visibility:hidden;animation:none;}
+}
+@keyframes wr-miete-circle-float {0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,6px)}}
+@media(prefers-reduced-motion:reduce){body.wr-mobile-valuation .wr-scrollcue{animation:none;}}
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <header>
+
+        <div class="brand wr-header-lockup">
+          <img alt="" aria-hidden="true" class="wr-brand-mark" decoding="async" height="52" src="wohnradar-logo.png" width="52"/>
+          <div class="wr-header-copy">
+            <span class="wr-brand-name">WOHN<em>RADAR</em></span><p class="header-description">Wohnungsmieten</p>
+          </div>
+        </div>
+
+
+        <button class="reset" hidden="" id="reset" type="button">Zurücksetzen</button>
+        <a aria-label="Zur Übersicht aller Rechner" class="home-link" href="index.html">
+        <svg aria-hidden="true" class="home-icon" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="20">
+
+          <path d="m3 10 9-7 9 7"></path>
+          <path d="M5 9v12h14V9"></path>
+          <path d="M9 21v-7h6v7"></path>
+        </svg>
+
+        <span class="home-text">Alle Rechner</span>
+        </a>
+      </header>
+
+      <div class="layout">
+        <main class="stack">
+<h1 class="wr-page-title">Ortsübliche Miete ermitteln</h1>
+
+ <p>
+                    
+           Was ist die übliche Miete an Ihrem Wohnort? Wohnradar berechnet den Mietwert anhand lokaler Mietdaten und spezifischer Eigenschaften Ihrer Wohnung. Bais sind die durchschnittlichen Angebotsmieten.
+                    </p>
+
+
+          <section class="card rent-overview">
+          
+			
+			
+			
+			
+            <div class="rent-intro-stack">
+              <div class="field">
+                <label for="placeInput">PLZ, Ortschaft oder Gemeinde</label>
+                <div class="place-wrap">
+                  <input aria-autocomplete="list" aria-controls="suggestions" aria-describedby="placeHint" aria-expanded="false" aria-label="PLZ oder Ort suchen" autocomplete="off" id="placeInput" role="combobox" spellcheck="false" value="5400 Baden"/><button aria-label="Ortschaft löschen" class="clear-place" id="clearPlace" type="button">×</button>
+                </div>
+                <div class="suggest hide" id="suggestions" role="listbox">
+                </div>
+                <div class="hint" id="placeHint">
+                </div>
+              </div>
+              <div class="rent-type-control">
+                <div class="lbl">
+Wohnungstyp
+                </div>
+                <div class="rent-choice" id="apartmentType">
+                  <button class="active" data-value="standard" type="button">Standard</button><button class="" data-value="attic" type="button">Attika</button><button class="" data-value="garden" type="button">Mit Garten</button>
+                </div>
+              </div>
+
+              <div class="range">
+                <div class="rangehead">
+                  <label for="living">Wohnfläche</label><output class="wr-not-selected" id="livingv">Bitte einstellen</output>
+                </div>
+                <input aria-describedby="livingHint" id="living" max="180" min="30" step="1" type="range" value="30"/>
+                <div class="wr-required-hint" hidden="" id="livingHint" role="alert">
+                </div>
+              </div>
+              <div class="range rent-outdoor-range" id="balconyField">
+                <div class="rangehead">
+                  <label for="balconyArea">Balkonfläche</label><output class="wr-not-selected" id="balconyAreav">Bitte einstellen</output>
+                </div>
+                <input aria-describedby="balconyAreaHint" id="balconyArea" max="15" min="0" step="1" type="range" value="0"/>
+                <div class="wr-required-hint" hidden="" id="balconyAreaHint" role="alert">
+                </div>
+              </div>
+              <div class="range rent-outdoor-range hide" id="outdoorField">
+                <div class="rangehead">
+                  <label for="outdoorArea">Terrassenfläche</label><output class="wr-not-selected" id="outdoorAreav">Bitte einstellen</output>
+                </div>
+                <input aria-describedby="outdoorAreaHint" id="outdoorArea" max="80" min="0" step="1" type="range" value="0"/>
+                <div class="wr-required-hint" hidden="" id="outdoorAreaHint" role="alert">
+                </div>
+              </div>
+              <div class="rent-caption rent-outdoor-note" id="outdoorNote">
+Der Zuschlag steigt bei kleinen Aussenflächen stärker und flacht danach ab. Er richtet sich nach dem örtlichen Mietniveau.
+              </div>
+              <div class="rent-parking-row">
+                <div class="parking-field">
+                  <div class="lbl">
+Einstellhallenplätze
+                  </div>
+                  <div class="rent-stepper">
+                    <button aria-label="Einstellhallenplätze verringern" data-count="garage:-1" type="button">−</button><output id="garagev">0</output><button aria-label="Einstellhallenplätze erhöhen" data-count="garage:1" type="button">+</button>
+                  </div>
+                </div>
+                <div class="parking-field">
+                  <div class="lbl">
+Aussenparkplätze
+                  </div>
+                  <div class="rent-stepper">
+                    <button aria-label="Aussenparkplätze verringern" data-count="outside:-1" type="button">−</button><output id="outsidev">0</output><button aria-label="Aussenparkplätze erhöhen" data-count="outside:1" type="button">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card">
+            <h2>Lage und Wohnkomfort</h2>
+            <div id="sliders"></div>
+</section>
+
+          <section class="card">
+            <h2>Zustand der Wohnung</h2>
+            <div class="range" id="conditionRange">
+              <div class="rangehead">
+                <label for="condition">Zustand der Wohnung</label><output id="conditionv">Mittel</output>
+              </div>
+              <input aria-label="Zustand der Wohnung" id="condition" max="5" min="0" step="1" type="range" value="2"/>
+            </div>
+
+          </section>
+
+          <div class="mobile-estimate-action">
+            <button class="estimate-button" id="estimateButtonMobile" type="button">Mietwert bestimmen</button>
+          </div>
+        </main>
+        <div class="result-shell" id="resultShell">
+          <aside aria-live="polite" class="result rent-result result-invoice">
+
+            <div class="invoice-title">
+Monatliche Mietberechnung
+            </div>
+
+            <div class="invoice-row">
+              <span>Nettomiete</span><strong id="netout">—</strong>
+            </div>
+
+            <div class="invoice-row">
+              <span>Durchschnittliche Nebenkosten</span><strong id="utilitiesout">—</strong>
+            </div>
+
+            <div class="invoice-row">
+              <span id="garageLabel">Einstellhallenplätze (0)</span><strong id="garageout">—</strong>
+            </div>
+
+            <div class="invoice-row">
+              <span id="outsideLabel">Aussenparkplätze (0)</span><strong id="outsideout">—</strong>
+            </div>
+
+            <div class="invoice-total">
+              <span>Total Bruttomiete</span><strong id="estimate">—</strong>
+            </div>
+
+            <div class="rent-status" id="status" style="display:none">
+Lade Mietmodell …
+            </div>
+
+          </aside>
+          <div class="result-actions">
+            <button class="estimate-button" id="estimateButtonDesktop" type="button">Mietwert bestimmen</button>
+            <div class="post-estimate-actions">
+              <button id="adjustButton" type="button">Nachjustieren</button><button id="uxReset" type="button">Zurücksetzen</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    
+
+    <!-- Mobile Ortssuche: separates Suchfenster oberhalb der Bildschirmtastatur -->
+
+    <div aria-label="Ort oder Postleitzahl suchen" aria-modal="true" class="mobile-place-dialog" hidden="" id="mobilePlaceDialog" role="dialog">
+
+      <div class="mobile-place-header">
+
+        <button aria-label="Zurück zum Rechner" class="mobile-place-back" id="mobilePlaceBack" type="button">←</button>
+        <div class="mobile-place-input-wrap">
+
+          <input aria-controls="mobilePlaceSuggestions" aria-label="PLZ oder Ort eingeben" autocapitalize="off" autocomplete="off" id="mobilePlaceInput" inputmode="search" placeholder="PLZ oder Ort eingeben" spellcheck="false" type="search"/>
+        </div>
+
+        <button class="mobile-place-done" id="mobilePlaceDone" type="button">Fertig</button>
+      </div>
+
+      <div aria-label="Ortsvorschläge" class="mobile-place-suggestions" id="mobilePlaceSuggestions" role="listbox">
+      </div>
+
+    </div>
+
+    <script src="javascript_dateien/miete.js">
+    </script>
+    <script src="javascript_dateien/ux-flow.js">
+    </script>
+    <!-- Mobiler Scroll-Hinweis: verschwindet nach der ersten Scrollbewegung. -->
+
+    <div aria-hidden="true" class="wr-scrollcue" id="wrScrollCue">
+      <svg fill="none" height="25" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="25">
+        <path d="M12 4v16"></path><path d="m5 13 7 7 7-7"></path>
+      </svg>
+    </div>
+
+    <script defer="" src="wohnradar-mobile.js">
+    </script>
+	
+	<script src="javascript_dateien/wohnradar-slider-schutz.js?v=7" defer></script>
+
+  </body>
+</html>
+

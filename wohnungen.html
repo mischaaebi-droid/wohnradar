@@ -263,7 +263,43 @@
 <!-- Methodik: analog zum Hausrechner, mit den Berechnungsansätzen aus wohnungen.js -->
 <section aria-label="Methodik der Wohnungsbewertung" class="card wr-methodik-card">
 <details class="wr-methodik" id="methodik">
-<summary class="wr-methodik-summary">Methodik - so berechnet Wohnradar den Wert<span aria-hidden="true" class="wr-methodik-chevron"></span></summary>
+
+
+
+
+
+
+
+
+	<summary class="wr-methodik-summary">
+  <span class="wr-methodik-summary-text">
+    <span class="wr-methodik-summary-title">Methodik</span>
+    <span class="wr-methodik-summary-subtitle">– so berechnet Wohnradar den Wert</span>
+  </span>
+  <span class="wr-methodik-chevron" aria-hidden="true"></span>
+</summary>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 <div class="wr-methodik-content">
 <h2>So berechnet Wohnradar den Wert Ihrer Eigentumswohnung</h2>
 <p>Wohnradar schätzt den Verkehrswert einer Eigentumswohnung anhand der lokalen Immobilienpreise und der Eigenschaften der Wohnung. Berücksichtigt werden unter anderem das Preisniveau am Standort, die Wohnfläche, die Grösse von Balkon oder Terrasse, der Wohnungstyp, das Stockwerk, die Lage sowie Alter und Zustand. Die Berechnung erfolgt in mehreren Schritten.</p>
@@ -354,19 +390,30 @@
 <h3 id="methodik-anhang">Mathematischer Anhang: Berechnung des Grundwerts</h3>
 <p>Für Interessierte und Fachpersonen legen wir hier die mathematischen Grundlagen der Wohnflächen- und Terrassenbewertung offen.</p>
 <p class="wr-methodik-formula-label">Grundwert der Wohnfläche:</p>
-<div aria-label="Grundwert der Wohnfläche gleich m mal w mal (w durch 100) hoch minus 0 Komma 035" class="wr-methodik-formula" role="math">
-<span class="wr-methodik-mathpart">Grundwert = <var>m</var> × <var>w</var> ×</span>
-<span class="wr-methodik-mathpart">(<var>w</var> / 100)<sup>−0,035</sup></span>
+<div class="wr-methodik-formula" role="math" aria-label="Grundwert gleich m mal w mal Klammer w durch 100 Klammer hoch minus 0 Komma 035" style="display:block;overflow-x:auto;text-align:center;">
+<svg style="display:block;width:100%;max-width:660px;height:auto;margin:0 auto;overflow:visible" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 104" role="img" aria-hidden="true" focusable="false">
+<g fill="currentColor" font-family="Cambria Math, STIX Two Math, Times New Roman, serif" font-size="31" text-anchor="middle">
+<text x="110" y="64">Grundwert =</text>
+<text x="275" y="64" font-style="italic">m · w ·</text>
+<text x="380" y="64">(</text><text x="480" y="64">)</text>
+<text x="430" y="45" font-style="italic">w</text>
+<text x="430" y="84">100</text>
+<text x="537" y="36" font-size="20">−0,035</text>
+</g>
+<path d="M395 53 H466" stroke="currentColor" stroke-width="1.5"/>
+</svg>
 </div>
 <p class="wr-methodik-formula-label">Angerechnete Balkon- oder Terrassenfläche:</p>
-<div aria-label="Angerechnete Aussenfläche gleich Minimum von t und 40 plus 0 Komma 35 mal Maximum von 0 und t minus 40" class="wr-methodik-formula" role="math">
-<span class="wr-methodik-mathpart">Aussenfläche = min(<var>t</var>, 40) +</span>
-<span class="wr-methodik-mathpart">0,35 × max(0, <var>t</var> − 40)</span>
+<div class="wr-methodik-formula" role="math" aria-label="Aussenfläche gleich Minimum aus t und 40 plus 0 Komma 35 mal Maximum aus null und t minus 40" style="display:block;overflow-x:auto;text-align:center;">
+<svg style="display:block;width:100%;max-width:660px;height:auto;margin:0 auto;overflow:visible" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 82" role="img" aria-hidden="true" focusable="false">
+<text x="330" y="52" fill="currentColor" text-anchor="middle" font-family="Cambria Math, STIX Two Math, Times New Roman, serif" font-size="27">Aussenfläche = min(t, 40) + 0,35 · max(0, t − 40)</text>
+</svg>
 </div>
 <p class="wr-methodik-formula-label">Wertzuschlag für Balkon oder Terrasse:</p>
-<div aria-label="Wertzuschlag gleich m mal 0 Komma 22 mal angerechnete Aussenfläche" class="wr-methodik-formula" role="math">
-<span class="wr-methodik-mathpart">Zuschlag = <var>m</var> × 0,22 ×</span>
-<span class="wr-methodik-mathpart">Aussenfläche</span>
+<div class="wr-methodik-formula" role="math" aria-label="Zuschlag gleich m mal 0 Komma 22 mal Aussenfläche" style="display:block;overflow-x:auto;text-align:center;">
+<svg style="display:block;width:100%;max-width:660px;height:auto;margin:0 auto;overflow:visible" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 82" role="img" aria-hidden="true" focusable="false">
+<text x="330" y="52" fill="currentColor" text-anchor="middle" font-family="Cambria Math, STIX Two Math, Times New Roman, serif" font-size="28">Zuschlag = m · 0,22 · Aussenfläche</text>
+</svg>
 </div>
 <p>Dabei gilt:</p>
 <ul class="wr-methodik-legend">
@@ -425,10 +472,7 @@
 </div>
 </div>
 </div>
-<div class="foot">
-Modellbasierte Schätzung auf Grundlage von RealAdvisor-PLZ-Medianpreisen.
-Eigenschaften-Zuschläge sind Modellannahmen, keine empirisch geschätzten Koeffizienten.
-</div>
+
 </div>
 <script src="javascript_dateien/wohnungen.js?v=pflicht1"></script>
 <script>

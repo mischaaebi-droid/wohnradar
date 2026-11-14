@@ -52,6 +52,9 @@ async function starteBauland() {
       norm: normalize(plz + ' ' + d.ort)
     }));
 
+  let resultReleased = false;
+  let placeSelected = false;
+
   let plz = DATA['5400']
     ? '5400'
     : places[0].plz;
@@ -65,7 +68,7 @@ async function starteBauland() {
 
     const d = DATA[plz];
 
-    if (!d) return;
+    if (!d || !resultReleased || !placeSelected) return;
 
     const type = document.querySelector(
       'input[name="landType"]:checked'
@@ -118,18 +121,20 @@ async function starteBauland() {
 
 
     $('estimate').textContent =
-      'CHF ' + fmt(base);
+      fmt(base) + ' CHF/m²';
 
     $('low').textContent =
-      'CHF ' + fmt(base * .8);
+      fmt(base * .8) + ' CHF/m²';
 
     $('high').textContent =
-      'CHF ' + fmt(base * 1.2);
+      fmt(base * 1.2) + ' CHF/m²';
 
     $('buildLabel').textContent =
       type === 'multi'
-        ? 'Hoch (Mehrfamilienhaus)'
-        : 'Tief (Einfamilienhaus)';
+        ? 'Mehrfamilienhäuser'
+        : 'Einfamilienhäuser';
+
+    $('resultPlace').textContent = plz + ' ' + (d.ort || '');
 
     $('apartmentPrice').textContent =
       'CHF ' + fmt(p) + '/m²';
@@ -219,6 +224,7 @@ async function starteBauland() {
     selectingPlace = false;
 
     plz = p;
+    placeSelected = true;
 
     placeInput.value =
       p + ' ' + DATA[p].ort;
@@ -460,6 +466,7 @@ async function starteBauland() {
   // ----------------------------------------------------------
 
   placeInput.addEventListener('input', () => {
+    placeSelected = false;
 
     placeHint.textContent =
       placeInput.value.trim()
@@ -475,6 +482,7 @@ async function starteBauland() {
   // ----------------------------------------------------------
 
   $('clearPlace').addEventListener('click', () => {
+    placeSelected = false;
 
     selectingPlace = false;
 
@@ -632,34 +640,43 @@ async function starteBauland() {
   // 6. RECHNER ZURÜCKSETZEN
   // ==========================================================
 
-  $('reset').addEventListener('click', () => {
-
-    document.querySelector(
-      'input[name="landType"][value="multi"]'
-    ).checked = true;
-
-    choose(
-      DATA['5400']
-        ? '5400'
-        : places[0].plz
-    );
-
-    // Nach dem Zurücksetzen nur
-    // den Platzhalter anzeigen.
-
+  function clearResult() {
+    resultReleased = false;
+    placeSelected = false;
+    ['estimate', 'low', 'high'].forEach(id => { $(id).textContent = '—'; });
+    $('resultPlace').textContent = 'Ort auswählen und Wert berechnen';
+    $('buildLabel').textContent = 'Einfamilienhäuser';
+    $('apartmentPrice').textContent = '';
     placeInput.value = '';
-
     placeHint.textContent = '';
-  });
+    document.querySelector('input[name="landType"][value="single"]').checked = true;
+  }
+
+  $('reset').addEventListener('click', clearResult);
+  const uxReset = $('uxReset');
+  if (uxReset) uxReset.addEventListener('click', clearResult);
+
+  // Schätzung erst nach bewusster Ortswahl und Klick auf "Verkehrswert bestimmen".
+  document.addEventListener('click', event => {
+    if (!event.target.closest('#estimateButtonDesktop, #estimateButtonMobile')) return;
+    if (!placeSelected) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      placeHint.textContent = 'Bitte wählen Sie zuerst einen Ort aus der Vorschlagsliste.';
+      placeInput.focus();
+      return;
+    }
+    resultReleased = true;
+    calc();
+  }, true);
 
 
   // ==========================================================
   // 7. INITIALISIERUNG
   // ==========================================================
 
-  // Standardgemeinde intern für die Berechnung setzen.
-
-  choose(plz);
+  // Beim Start weder einen Ort vorbelegen noch einen Preis berechnen.
+  clearResult();
 
   // Im Suchfeld soll zu Beginn
   // keine Gemeinde stehen.
