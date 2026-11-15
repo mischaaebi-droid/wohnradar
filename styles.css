@@ -914,3 +914,9 @@ input[type="range"]:focus-visible {
 
 /* Mietrechner: bisher abweichender Fokusabstand. */
 .rent-overview input.wr-range-invalid {outline-offset:4px;}
+
+/* Dunklen Fokusrahmen bei Schiebereglern entfernen */
+input[type="range"]:focus {
+    outline: none;
+    box-shadow: none;
+}
