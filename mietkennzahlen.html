@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="wohnradar-ux.css">
   <link rel="stylesheet" href="footer.css">
   <link rel="stylesheet" href="wohnradar-logo.css">
-  <link rel="stylesheet" href="wohnradar-resultate.css">
   <link rel="stylesheet" href="wohnradar-header-fix.css">
   <script src="footer.js" defer></script>
   <script src="javascript_dateien/mietkennzahlen.js" defer></script>
@@ -27,49 +26,11 @@
     .wr-miet-desktop-action { margin-top: 10px; }
     .wr-miet-status { margin-top: 13px; min-height: 1.2em; color: var(--muted); font-size: 12px; }
     .wr-miet-status.is-error { color: #9d3027; }
-    .wr-miet-result { padding: 18px 20px !important; }
-    .wr-miet-result .invoice-title { font-size: 13px; font-weight: 700; letter-spacing: .02em;
-      opacity: .78; margin-bottom: 10px; }
-    .wr-miet-result .invoice-row { display: flex; align-items: baseline; justify-content: space-between;
-      gap: 12px; padding: 8px 0; font-size: 14px; }
-    .wr-miet-result .invoice-row strong { white-space: nowrap; font-weight: 700;
-      font-variant-numeric: tabular-nums; }
-    .wr-miet-result .invoice-row--median { font-weight: 700; }
-    .wr-miet-result .invoice-row--median strong { font-size: 20px; }
-    .wr-miet-result .invoice-unit { color: var(--muted); font-size: 12px; margin-top: 6px; }
-    .wr-miet-result .invoice-separator { border: 0; border-top: 1px solid var(--line); margin: 18px 0 14px; }
-    .wr-miet-result .invoice-month { margin-top: 6px; }
-    .wr-miet-result .invoice-month .invoice-row { padding: 5px 0; font-size: 13px; }
-    .wr-miet-result .invoice-month .invoice-row strong { font-size: 13px; }
-    .wr-miet-result .invoice-explainer { color: var(--muted); font-size: 12px; line-height: 1.5; margin-top: 15px; }
-    .wr-miet-result .invoice-place { color: var(--muted); font-size: 12px; margin: -3px 0 13px; }
-    .wr-miet-result .invoice-placeholder { font-size: 13px; color: var(--muted); }
-    .wr-miet-result[aria-busy="true"] { opacity: .7; }
-    .wr-miet-actions { display: none; grid-template-columns: repeat(2,minmax(0,1fr)); }
-    .wr-miet-actions button { min-height: 48px; padding: 10px 8px; border: 1px solid var(--line);
-      background: var(--card); color: var(--ink); font: inherit; font-weight: 700; cursor: pointer; }
-    .wr-miet-actions button:first-child { border-radius: 0 0 0 4px; }
-    .wr-miet-actions button:last-child { border-left: 0; border-radius: 0 0 4px 0; }
-    .wr-miet-result-shell.has-estimate .wr-miet-actions { display: grid; }
-    .wr-miet-result-shell.has-estimate .wr-miet-desktop-action { display: none; }
-    .wr-miet-result-shell.has-estimate .wr-miet-result { border-radius: 2px 2px 0 0; }
-    .wr-miet-mobile-action { display: none; }
-    @media(max-width: 840px) {
-      .wr-miet-result-shell { display: none; }
-      .wr-miet-result-shell.has-estimate { display: block; margin: 0 0 17px; }
-      .wr-miet-result-shell .wr-miet-result { position: static; }
-      .wr-miet-mobile-action { display: block; margin: 0 0 13px; }
-      .wr-miet-result-shell .wr-miet-desktop-action { display: none; }
-    }
-    @media(max-width:530px) {
-      .wr-miet-result { padding: 14px 16px !important; }
-      .wr-miet-result .invoice-row { padding: 6px 0; font-size: 13px; }
-      .wr-miet-result .invoice-row--median strong { font-size: 18px; }
-      .wr-miet-area { font-size: 17px; }
-    }
-  </style>
+    @media(max-width:530px) { .wr-miet-area { font-size: 17px; } }
+</style>
+<link rel="stylesheet" href="wohnradar-resultate.css?v=2">
 </head>
-<body>
+<body class="wr-mietkennzahlen">
   <span id="wohnradar-top" aria-hidden="true"></span>
   <div class="wrap">
 

@@ -32,3 +32,17 @@
     })
     .catch(() => { /* Bei Ladefehlern bleibt der Einfügebereich leer. */ });
 })();
+
+
+document.querySelectorAll('footer details').forEach(details => {
+    details.addEventListener('toggle', () => {
+        if (details.open) {
+            setTimeout(() => {
+                details.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }, 100);
+        }
+    });
+});

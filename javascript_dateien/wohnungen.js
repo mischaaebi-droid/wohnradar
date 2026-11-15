@@ -55,29 +55,29 @@ async function starteWohnungswert() {
         {
             id:'access',
             label:'Geschäfte, Schulen und ÖV',
-            names:['Sehr schlecht','Eher schlecht','Durchschnittlich','Gut','Sehr gut'],
-            values:[-6,-3,0,2,4],
+            names:['Sehr schlecht','Schlecht','Durchschnittlich','Gut','Sehr gut','Hervorragend'],
+            values:[-6,-3,0,2,3,4],
             def:2
         },
         {
             id:'noise',
             label:'Ruhe / Lärmbelastung',
-            names:['Extrem laut','Stark belastet','Verkehrslärm','Durchschnittlich','Ruhig','Sehr ruhig'],
-            values:[-8,-5,-2,0,2,4],
-            def:3
+            names:['Extrem laut','Stark belastet','Durchschnittlich','Eher ruhig','Ruhig','Sehr ruhig'],
+            values:[-8,-5,0,1,2,4],
+            def:2
         },
         {
             id:'quality',
             label:'Bauqualität und Wohnkomfort',
-            names:['Einfach','Eher einfach','Durchschnittlich','Gehoben','Sehr hochwertig'],
-            values:[-7,-3,0,4,8],
+            names:['Sehr einfach','Einfach','Durchschnittlich','Gehoben','Sehr gehoben','Luxuriös'],
+            values:[-7,-3,0,4,6,8],
             def:2
         },
         {
             id:'light',
             label:'Besonnung / Tageslicht',
-            names:['Sehr schlecht','Eher schlecht','Durchschnittlich','Gut','Sehr gut'],
-            values:[-5,-2,0,2,4],
+            names:['Sehr schlecht','Schlecht','Durchschnittlich','Gut','Sehr gut','Hervorragend'],
+            values:[-5,-2,0,2,3,4],
             def:2
         }
     ];
@@ -216,7 +216,7 @@ async function starteWohnungswert() {
                 type="range"
                 min="0"
                 max="${s.values.length - 1}"
-                value="0"
+                value="${s.def}"
                 step="1"
             >
         </div>
@@ -940,6 +940,11 @@ async function starteWohnungswert() {
     // SCHÄTZEN-BUTTON
     // ==========================================================
 
+    document.addEventListener('wr:adjust-start', () => {
+        S.estimateRequested = false;
+        calc();
+    });
+
     function showEstimate() {
         // Sämtliche fehlenden Angaben markieren und zum ersten Fehler scrollen.
         if (!S.placeSelected) showPlaceError(); else clearPlaceError();
@@ -959,6 +964,7 @@ async function starteWohnungswert() {
             return;
         }
         S.estimateRequested = true;
+        document.dispatchEvent(new CustomEvent('wr:estimate-success'));
         calc();
         const resultShell = $('resultShell');
         if (resultShell) resultShell.classList.add('has-estimate');

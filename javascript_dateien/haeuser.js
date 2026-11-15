@@ -128,46 +128,68 @@ async function starteHauswert() {
             values: [-4, -2, 0, 3, 5, 8],
             def: 2
         },
-        {
-            id: 'access',
-            label: 'Geschäfte, Schulen und ÖV',
-            names: [
-                'Sehr schlecht',
-                'Eher schlecht',
-                'Durchschnittlich',
-                'Gut',
-                'Sehr gut'
-            ],
-            values: [-4, -3, 0, 2, 4],
-            def: 2
-        },
+		
+		
+		
+	{
+    id: 'access',
+    label: 'Geschäfte, Schulen und ÖV',
+    names: [
+        'Sehr schlecht',
+        'Schlecht',
+        'Durchschnittlich',
+        'Gut',
+        'Sehr gut',
+        'Hervorragend'
+    ],
+    values: [-4, -3, 0, 2, 3, 4],
+    def: 2
+},	
+   
+   
+   
+   
+   
         {
             id: 'noise',
             label: 'Ruhe / Lärmbelastung',
             names: [
                 'Extrem laut',
                 'Stark belastet',
-                'Verkehrslärm',
-                'Durchschnittlich',
+				 'Durchschnittlich',
+                'Eher ruhig',
                 'Ruhig',
                 'Sehr ruhig'
             ],
             values: [-4, -2.5, -1.5, 0, 2, 4],
-            def: 3
-        },
-        {
-            id: 'quality',
-            label: 'Bauqualität und Wohnkomfort',
-            names: [
-                'Einfach',
-                'Eher einfach',
-                'Durchschnittlich',
-                'Gehoben',
-                'Sehr hochwertig'
-            ],
-            values: [-4, -2, 0, 2, 4],
             def: 2
-        }
+        },
+
+
+{
+    id: 'quality',
+    label: 'Bauqualität und Wohnkomfort',
+    names: [
+        'Sehr einfach',
+        'Einfach',
+        'Durchschnittlich',
+        'Gehoben',
+        'Sehr gehoben',
+        'Luxuriös'
+    ],
+    values: [-4, -2, 0, 2, 3, 4],
+    def: 2
+},
+
+
+
+
+
+
+
+
+
+
     ];
 
     // ==================================================
@@ -342,7 +364,7 @@ async function starteHauswert() {
                 type="range"
                 min="0"
                 max="${s.values.length - 1}"
-                value="0"
+                value="${s.def}"
                 step="1"
             >
         </div>
@@ -1193,6 +1215,11 @@ async function starteHauswert() {
     // SCHÄTZEN-BUTTON
     // ==================================================
 
+    document.addEventListener('wr:adjust-start', () => {
+        S.estimateRequested = false;
+        calc();
+    });
+
     function showEstimate() {
 
         // Die Ortsauswahl sowie beide Flächen müssen bewusst erfolgen.
@@ -1218,6 +1245,7 @@ async function starteHauswert() {
         // NEU:
         // Erst jetzt darf der Verkehrswert erscheinen.
         S.estimateRequested = true;
+        document.dispatchEvent(new CustomEvent('wr:estimate-success'));
 
         calc();
 
@@ -1250,31 +1278,6 @@ async function starteHauswert() {
     // EINGABEN ANPASSEN
     // ==================================================
 
-    $('adjustButton').addEventListener('click', () => {
-
-        if (mobileMode.matches) {
-
-            resultShell.classList.remove(
-                'has-estimate'
-            );
-
-            document.querySelector(
-                '.house-overview'
-            ).scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-
-        } else {
-
-            document.querySelector(
-                '.house-overview'
-            ).scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
 
 
     // ==================================================
@@ -1295,8 +1298,8 @@ async function starteHauswert() {
 
         // Lage- und Komfortregler zurücksetzen.
         METRICS.forEach(s => {
-            $(s.id).value = 0;
-        });
+    $(s.id).value = s.def;
+});
 
         // Garagen und Parkplätze zurücksetzen.
         S.garage = 0;

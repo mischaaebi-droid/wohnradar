@@ -129,14 +129,6 @@ async function starteBauland() {
     $('high').textContent =
       fmt(base * 1.2) + ' CHF/m²';
 
-    $('buildLabel').textContent =
-      ({single: 'Tief (Einfamilienhaus)',
-          medium: 'Mittel (Mehrfamilienhaus)',
-          multi: 'Hoch (Mehrfamilienhaus)'}[type] || 'Tief (Einfamilienhaus)');
-
-    $('resultPlace').textContent = plz + ' ' + (d.ort || '');
-    $('resultPlace').hidden = false;
-    $('resultUse').hidden = false;
 
     $('apartmentPrice').textContent =
       'CHF ' + fmt(p) + '/m²';
@@ -645,10 +637,7 @@ async function starteBauland() {
     resultReleased = false;
     placeSelected = false;
     ['estimate', 'low', 'high'].forEach(id => { $(id).textContent = '—'; });
-    $('resultPlace').textContent = '';
-    $('resultPlace').hidden = true;
-    $('resultUse').hidden = true;
-    $('buildLabel').textContent = '';
+
     $('apartmentPrice').textContent = '';
     placeInput.value = '';
     placeHint.textContent = '';
@@ -657,7 +646,11 @@ async function starteBauland() {
 
   $('reset').addEventListener('click', clearResult);
   const uxReset = $('uxReset');
-  if (uxReset) uxReset.addEventListener('click', clearResult);
+
+
+  document.addEventListener('wr:adjust-start', () => {
+    resultReleased = false;
+  });
 
   // Schätzung erst nach bewusster Ortswahl und Klick auf "Verkehrswert bestimmen".
   document.addEventListener('click', event => {
@@ -671,6 +664,7 @@ async function starteBauland() {
     }
     resultReleased = true;
     calc();
+    document.dispatchEvent(new CustomEvent('wr:estimate-success'));
   }, true);
 
 

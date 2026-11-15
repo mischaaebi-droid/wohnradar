@@ -87,3 +87,203 @@
     z-index: 10;
   }
 }
+
+
+/* ===========================================================
+   HAUS UND EIGENTUMSWOHNUNG – identische Ergebnisdarstellung
+   =========================================================== */
+
+/* Kompakte, responsive Rechnungsdarstellung */
+body:is(.wr-haus,.wr-wohnung) .result-invoice { padding: 18px 20px !important; }
+body:is(.wr-haus,.wr-wohnung) .result-invoice .invoice-title { font-size: 17px; font-weight: 700; letter-spacing: .02em; opacity: .75; margin-bottom: 10px; }
+body:is(.wr-haus,.wr-wohnung) .result-invoice .invoice-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 5px 0; font-size: 14px; line-height: 1.35; }
+body:is(.wr-haus,.wr-wohnung) .result-invoice .invoice-row strong { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
+body:is(.wr-haus,.wr-wohnung) .result-invoice .invoice-total { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 9px; padding-top: 12px; border-top: 2px solid var(--accent, #B0523B); font-weight: 750; line-height: 1.25; }
+body:is(.wr-haus,.wr-wohnung) .result-invoice .invoice-total strong { font-size: 13px; white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
+@media (max-width: 650px) {
+  body:is(.wr-haus,.wr-wohnung) .result-invoice { padding: 13px 15px !important; }
+  body:is(.wr-haus,.wr-wohnung) .result-invoice .invoice-title { margin-bottom: 6px; font-size: 20px; }
+  body:is(.wr-haus,.wr-wohnung) .result-invoice .invoice-row { padding: 3px 0; font-size: 13px; }
+  body:is(.wr-haus,.wr-wohnung) .result-invoice .invoice-total { margin-top: 7px; padding-top: 9px; font-size: 13px; }
+  body:is(.wr-haus,.wr-wohnung) .result-invoice .invoice-total strong { font-size: 13px; }
+}
+
+/* Muster: neuer Ablauf, bestehende Farbpalette und Schieberegler unverändert */
+body.wr-immobilienrechner .result-shell { min-width:0; }
+body.wr-immobilienrechner .result-actions { margin-top:10px; }
+body.wr-immobilienrechner .estimate-button { width:100%; min-height:52px; padding:12px 18px; border:0; border-radius:11px; background:var(--ink); color:white; font:inherit; font-weight:750; font-size:15px; cursor:pointer; }
+body.wr-immobilienrechner .post-estimate-actions { display:none; grid-template-columns:1fr 1fr; gap:0; }
+body.wr-immobilienrechner .post-estimate-actions button { min-height:48px; padding:10px 8px; border:1px solid var(--line); background:var(--card); color:var(--ink); font:inherit; font-weight:700; cursor:pointer; }
+body.wr-immobilienrechner .post-estimate-actions button:first-child { border-radius:0 0 0 11px; }
+body.wr-immobilienrechner .post-estimate-actions button:last-child { border-radius:0 0 11px 0; border-left:0; }
+body.wr-immobilienrechner .result-shell.has-estimate body.wr-immobilienrechner .post-estimate-actions { display:grid; }
+body.wr-immobilienrechner .result-shell.has-estimate body.wr-immobilienrechner .result-actions { margin-top:0; }
+body.wr-immobilienrechner .result-shell.has-estimate .result { border-radius:2px 2px 0 0; }
+body.wr-immobilienrechner .result-shell.has-estimate body.wr-immobilienrechner .estimate-button { display:none; }
+body.wr-immobilienrechner .mobile-estimate-action { display:none; }
+@media(max-width:840px) {
+  body.wr-immobilienrechner .result-shell { display:none; }
+  body.wr-immobilienrechner .result-shell.has-estimate { display:block; margin:0 0 17px; }
+  body.wr-immobilienrechner .result-shell .result { position:static; }
+  body.wr-immobilienrechner .result-shell body.wr-immobilienrechner .result-actions { margin-top:0; }
+  body.wr-immobilienrechner .mobile-estimate-action { display:block; margin:3px 0 14px; }
+  body.wr-immobilienrechner .result-shell.has-estimate ~ * { margin-top:0; }
+  body.wr-immobilienrechner .result-shell body.wr-immobilienrechner .post-estimate-actions { gap:0; }
+}
+
+
+/* ===========================================================
+   MIETWERT – abweichendes Raster und Statuszeile
+   =========================================================== */
+/* Kompakte Mietabrechnung wie beim Hausrechner */
+body.wr-mietwert .result.rent-resultbody.wr-mietwert .result-invoice { padding:18px 20px !important; }
+body.wr-mietwert .result-invoice .invoice-title {font-size:13px;font-weight:700;opacity:.75;margin-bottom:10px;}
+body.wr-mietwert .result-invoice .invoice-row,body.wr-mietwert .result-invoice .invoice-total {display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:8px;line-height:1.35;}
+body.wr-mietwert .result-invoice .invoice-row {padding:5px 0;font-size:14px;}
+body.wr-mietwert .result-invoice .invoice-row strong,body.wr-mietwert .result-invoice .invoice-total strong {text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
+body.wr-mietwert .result-invoice .invoice-total {margin-top:9px;padding-top:12px;border-top:2px solid var(--accent,#B0523B);font-weight:750;}
+body.wr-mietwert .result-invoice .invoice-total strong {font-size:clamp(19px,2.2vw,27px);}
+body.wr-mietwert .result-invoice .rent-status {font-size:11px;margin-top:9px;line-height:1.25;}
+@media(max-width:650px) {
+ body.wr-mietwert .result.rent-resultbody.wr-mietwert .result-invoice {padding:13px 15px !important;}
+ body.wr-mietwert .result-invoice .invoice-title {margin-bottom:6px;font-size:12px;}
+ body.wr-mietwert .result-invoice .invoice-row {padding:3px 0;font-size:13px;}
+ body.wr-mietwert .result-invoice .invoice-total {margin-top:7px;padding-top:9px;font-size:13px;}
+ body.wr-mietwert .result-invoice .invoice-total strong {font-size:20px;}
+}
+    
+/* ===========================================================
+   BAULAND – eigene Preiszeilen
+   =========================================================== */
+
+/* Bauland: ruhige Kennzahlenkarte analog zum Mietrechner. */
+.bauland-result { padding:18px 20px !important; }
+.bauland-result .bl-title { font-size:20px; padding-bottom:20px; font-weight:700; opacity:.78; margin:0 0 5px; }
+
+.bauland-result .bl-row { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:baseline; gap:12px; padding:7px 0; font-size:14px; line-height:1.4; }
+.bauland-result .bl-row strong { font-size:14px; white-space:nowrap; text-align:right; font-variant-numeric:tabular-nums; }
+.bauland-result .bl-row.bl-median { font-size:16px; font-weight:700; padding:9px 0; }
+.bauland-result .bl-row.bl-median strong { font-size:16px; }
+.bauland-result .bl-use { margin:0 0 14px; padding:0 0 12px; border-bottom:1px solid var(--line,#dfcfc7); font-size:12px; color:var(--muted,#786761); line-height:1.45; }
+.bauland-result .bl-use strong { color:var(--ink,#352a28); font-weight:600; }
+
+@media(max-width:650px) {
+ .bauland-result {padding:13px 15px !important;}
+ .bauland-result .bl-row {padding:5px 0;font-size:13px;gap:7px;}
+ .bauland-result .bl-row strong {font-size:13px;}
+ .bauland-result .bl-row.bl-median {font-size:16px;}
+ .bauland-result .bl-row.bl-median strong {font-size:16px;}
+}
+
+/* ===========================================================
+   MIETKENNZAHLEN – Quadratmeterpreise und Monatsmieten
+   =========================================================== */
+    .wr-miet-result { padding: 18px 20px !important; }
+    .wr-miet-result .invoice-title { font-size: 13px; font-weight: 700; letter-spacing: .02em;
+      opacity: .78; margin-bottom: 10px; }
+    .wr-miet-result .invoice-row { display: flex; align-items: baseline; justify-content: space-between;
+      gap: 12px; padding: 8px 0; font-size: 14px; }
+    .wr-miet-result .invoice-row strong { white-space: nowrap; font-weight: 700;
+      font-variant-numeric: tabular-nums; }
+    .wr-miet-result .invoice-row--median { font-weight: 700; }
+    .wr-miet-result .invoice-row--median strong { font-size: 20px; }
+    .wr-miet-result .invoice-unit { color: var(--muted); font-size: 12px; margin-top: 6px; }
+    .wr-miet-result .invoice-separator { border: 0; border-top: 1px solid var(--line); margin: 18px 0 14px; }
+    .wr-miet-result .invoice-month { margin-top: 6px; }
+    .wr-miet-result .invoice-month .invoice-row { padding: 5px 0; font-size: 13px; }
+    .wr-miet-result .invoice-month .invoice-row strong { font-size: 13px; }
+    .wr-miet-result .invoice-explainer { color: var(--muted); font-size: 12px; line-height: 1.5; margin-top: 15px; }
+    .wr-miet-result .invoice-place { color: var(--muted); font-size: 12px; margin: -3px 0 13px; }
+    .wr-miet-result .invoice-placeholder { font-size: 13px; color: var(--muted); }
+    .wr-miet-result[aria-busy="true"] { opacity: .7; }
+    .wr-miet-actions { display: none; grid-template-columns: repeat(2,minmax(0,1fr)); }
+    .wr-miet-actions button { min-height: 48px; padding: 10px 8px; border: 1px solid var(--line);
+      background: var(--card); color: var(--ink); font: inherit; font-weight: 700; cursor: pointer; }
+    .wr-miet-actions button:first-child { border-radius: 0 0 0 4px; }
+    .wr-miet-actions button:last-child { border-left: 0; border-radius: 0 0 4px 0; }
+    .wr-miet-result-shell.has-estimate .wr-miet-actions { display: grid; }
+    .wr-miet-result-shell.has-estimate .wr-miet-desktop-action { display: none; }
+    .wr-miet-result-shell.has-estimate .wr-miet-result { border-radius: 2px 2px 0 0; }
+    .wr-miet-mobile-action { display: none; }
+    @media(max-width: 840px) {
+      .wr-miet-result-shell { display: none; }
+      .wr-miet-result-shell.has-estimate { display: block; margin: 0 0 17px; }
+      .wr-miet-result-shell .wr-miet-result { position: static; }
+      .wr-miet-mobile-action { display: block; margin: 0 0 13px; }
+      .wr-miet-result-shell .wr-miet-desktop-action { display: none; }
+    }
+    @media(max-width:530px) {
+      .wr-miet-result { padding: 14px 16px !important; }
+      .wr-miet-result .invoice-row { padding: 6px 0; font-size: 13px; }
+      .wr-miet-result .invoice-row--median strong { font-size: 18px; }
+      .wr-miet-area { font-size: 17px; }
+    }
+
+/* ===========================================================
+   DESKTOP – Ergebnisbox inklusive Aktionsbuttons beim Scrollen
+   sichtbar halten (alle fünf Rechner).
+   Mobile Darstellung bis 840 px bleibt unverändert.
+   =========================================================== */
+@media (min-width: 841px) {
+  .wrap > .layout > #resultShell {
+    position: sticky;
+    top: 90px; /* Unterhalb des ebenfalls fixierten Headers */
+    align-self: start;
+    max-height: calc(100vh - 102px);
+    max-height: calc(100dvh - 102px);
+    overflow-y: auto; /* Auch bei kleinen Desktop-Fenstern bedienbar */
+    overscroll-behavior: contain;
+  }
+}
+
+/* Wohnradar – neue Bedienlogik (Desktop und Smartphone) */
+#resultShell .wr-adjust-hint { display:none; margin:0; padding:12px 18px; font-size:14px; line-height:1.45; background:#f7f2ee; color:var(--ink,#332b29); }
+#resultShell.wr-adjusting .wr-adjust-hint { display:block; }
+#resultShell.wr-adjusting .post-estimate-actions { display:none !important; }
+#resultShell.wr-adjusting .estimate-button { display:block !important; }
+#resultShell.wr-adjusting .result strong[id] { font-size:0 !important; }
+#resultShell.wr-adjusting .result strong[id]::after { content:'—'; font-size:14px; color:var(--muted,#786761); }
+#resultShell.wr-adjusting .result .invoice-total strong[id]::after { font-size:20px; }
+@media (max-width:840px) {
+  body.wr-immobilienrechner .mobile-estimate-action,
+  body .mobile-estimate-action {
+    display:block !important;
+    position:fixed !important;
+    bottom:0 !important;
+    left:0 !important;
+    right:0 !important;
+    z-index:1300 !important;
+    margin:0 !important;
+    padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px)) !important;
+    background:var(--card,#fff);
+    box-shadow:0 -3px 15px rgba(0,0,0,.13);
+    box-sizing:border-box;
+  }
+  .mobile-estimate-action .post-estimate-actions { display:none !important; grid-template-columns:1fr 1fr; gap:0; }
+  .mobile-estimate-action.wr-show-pair .post-estimate-actions { display:grid !important; }
+  .mobile-estimate-action.wr-show-pair #estimateButtonMobile { display:none !important; }
+  .mobile-estimate-action .post-estimate-actions button { min-height:52px; padding:10px 8px; font:inherit; font-size:14px; font-weight:700; border:1px solid var(--line,#d8d0c9); background:var(--card,#fff); color:var(--ink,#332b29); }
+  .mobile-estimate-action .post-estimate-actions button:first-child { background:var(--ink,#332b29); color:white; border-radius:4px 0 0 4px; }
+  .mobile-estimate-action .post-estimate-actions button:last-child { border-radius:0 4px 4px 0; }
+  body.wr-result-pinned #resultShell .post-estimate-actions { display:none !important; }
+  body.wr-result-pinned #resultShell .estimate-button { display:none !important; }
+  body .wrap { padding-bottom:85px; }
+  #resultShell.wr-adjusting { display:block !important; }
+}
+
+/* Button-Fix: Hinweis in der Eingabekarte, nicht in der Ergebnisbox. */
+.wr-adjust-hint {
+  display: none !important;
+  margin: 0 0 16px !important;
+  color: #b42318 !important;
+  font-size: 16px !important;
+  line-height: 1.45 !important;
+  font-weight: 750 !important;
+  background: transparent !important;
+  padding: 0 !important;
+}
+body:has(#resultShell.wr-adjusting) .wr-adjust-hint { display: block !important; }
+@media (max-width: 840px) {
+  /* Nur die fixierte mobile Aktion, kein zweiter Button unter der Ergebnisbox. */
+  #resultShell .result-actions { display: none !important; }
+}

@@ -1,0 +1,20 @@
+WOHNRADAR – CSS-BEREINIGUNG, SCHRITT 3
+
+Basis: zuletzt getestetes ZIP wohnradar-css-bereinigt.zip
+
+Änderungen:
+- styles.css: vollständige, identische Kopie der Ergebnisbox-Regeln entfernt.
+  Die Regeln stehen bereits in wohnradar-resultate.css.
+- styles.css: zwei identische Kopien der Sticky-Header-Regeln entfernt.
+  Die Regeln stehen bereits in wohnradar-header-fix.css.
+- wohnradar-ux.css: Zuständigkeit/Fallbacks kommentiert.
+- Die übrigen CSS-Regeln und sämtliche HTML-Dateien unverändert.
+
+Bewusst beibehalten:
+- UX-Basisregeln für Buttons und Resultate-Shells, weil sie auch
+  auf Seiten ohne die Resultate-CSS wirken können und teils die
+  Ausgangswerte für spätere spezifische Regeln bilden.
+- Unterschiedliche mobile und seitenspezifische Regeln.
+
+Einspielen: alle neun Dateien wie bisher ersetzen.
+Test: Desktop und Handy, vor und nach der ersten Berechnung.

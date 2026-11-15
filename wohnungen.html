@@ -7,43 +7,14 @@
 <title>Wohnung kostenlos schätzen – ohne E-Mail &amp; Handynummer | Schweiz</title>
 <meta content="Wie viel ist Ihre Wohnung wert? Ermitteln Sie den Verkehrswert anonym und mit wenigen Klicks – anhand lokaler Immobilienpreise, Lage und Zustand. Ergebnis sofort online sichtbar." name="description"/>
 <link href="styles.css" rel="stylesheet"/>
-<style>
-/* Kompakte, responsive Rechnungsdarstellung */
-.result-invoice { padding: 18px 20px !important; }
-.result-invoice .invoice-title { font-size: 13px; font-weight: 700; letter-spacing: .02em; opacity: .75; margin-bottom: 10px; }
-.result-invoice .invoice-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 5px 0; font-size: 14px; line-height: 1.35; }
-.result-invoice .invoice-row strong { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
-.result-invoice .invoice-total { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 9px; padding-top: 12px; border-top: 2px solid var(--accent, #B0523B); font-weight: 750; line-height: 1.25; }
-.result-invoice .invoice-total strong { font-size: clamp(19px, 2.2vw, 27px); white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
-@media (max-width: 650px) {
-  .result-invoice { padding: 13px 15px !important; }
-  .result-invoice .invoice-title { margin-bottom: 6px; font-size: 12px; }
-  .result-invoice .invoice-row { padding: 3px 0; font-size: 13px; }
-  .result-invoice .invoice-total { margin-top: 7px; padding-top: 9px; font-size: 13px; }
-  .result-invoice .invoice-total strong { font-size: 20px; }
-}
-</style>
+
 <link href="wohnradar-ux.css" rel="stylesheet"/>
 <link href="footer.css" rel="stylesheet"/>
 <script defer="" src="footer.js"></script>
 <link href="wohnradar-logo.css" rel="stylesheet"/>
-<link href="wohnradar-resultate.css" rel="stylesheet"/>
 <link href="wohnradar-header-fix.css" rel="stylesheet"/>
 <link href="wohnradar-methodik.css" rel="stylesheet"/>
 <style>
-/* Eigentumswohnungen: Header analog Hausrechner */
-.wrap > header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
-.wrap > header .wr-header-lockup { display:flex; align-items:center; gap:11px; min-width:0; }
-.wrap > header .wr-header-lockup .wr-brand-mark { display:block; width:52px !important; height:52px !important; max-width:none; object-fit:contain; flex:0 0 52px; }
-.wrap > header .wr-header-copy { display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:0; }
-.wrap > header .wr-header-copy .wr-brand-name { display:block; line-height:1.15; white-space:nowrap; }
-.wrap > header .wr-header-copy .header-description { display:block; margin:0; padding:0; min-width:0; font-size:13px; font-weight:500; line-height:1.25; white-space:nowrap; }
-.wrap > header .home-link { flex-shrink:0; }
-@media (max-width:700px) {
- .wrap > header .wr-header-lockup { gap:8px; }
- .wrap > header .wr-header-lockup .wr-brand-mark {width:48px !important; height:48px !important; flex-basis:48px;}
- .wrap > header .wr-header-copy .header-description { font-size:12px; }
-}
 /* Pflichtangaben: dezent, direkt am jeweiligen Regler */
 .apartment-overview #placeInput.wr-place-invalid {border:2px solid #b53b37; background:#fff;}
 .apartment-overview #placeHint.wr-place-error {color:#a33333; font-size:13px; font-weight:600; line-height:1.4; margin-top:8px;}
@@ -101,8 +72,10 @@
   outline:2px solid var(--accent-dark);
   outline-offset:2px;
 }
-</style></head>
-<body>
+</style>
+<link rel="stylesheet" href="wohnradar-resultate.css?v=buttons2">
+</head>
+<body class="wr-immobilienrechner wr-wohnung">
 <span aria-hidden="true" id="wohnradar-top"></span>
 <div class="wrap">
 <header>
@@ -126,7 +99,7 @@
 <div class="layout">
 <main class="stack">
 <h1 class="wr-page-title">Wohnung kostenlos schätzen</h1>
-<p>Wie viel ist Ihre Eigentumswohnung wert? Wohnradar berechnet den Verkehrswert anhand lokaler Immobilienpreise und individueller Eigenschaften. Das Ergebnis sehen Sie sofort online – ohne E-Mail-Adresse.</p>
+<p>Wie viel ist Ihre Eigentumswohnung wert? Wohnradar berechnet den Verkehrswert anhand lokaler Immobilienpreise und individueller Eigenschaften. Ergebnis sofort sichtbar – <u>ohne</u> Angabe der E-Mail-Adresse.</p>
 <section class="card apartment-overview">
 <div class="grid" style="grid-template-columns:1fr">
 <div class="field">
@@ -238,7 +211,7 @@
 </label>
 <output id="builtv"></output>
 </div>
-<input id="built" max="2026" min="1850" step="1" type="range" value="1920"/>
+<input id="built" max="2026" min="1850" step="1" type="range" value="1955"/>
 </div>
 
 <div class="range wr-condition-range"><div class="rangehead"><label for="condition">Zustand</label><output id="conditionv">Mittel</output></div><input aria-label="Zustand der Wohnung" id="condition" max="5" min="0" step="1" type="range" value="2"/></div>
@@ -467,14 +440,15 @@
 </button>
 <div class="post-estimate-actions">
 <button id="adjustButton" type="button">Nachjustieren</button>
-<button id="uxReset" type="button">Zurücksetzen</button>
+<button id="uxReset" type="button">Neue Schätzung</button>
 </div>
 </div>
 </div>
 </div>
 
 </div>
-<script src="javascript_dateien/wohnungen.js?v=pflicht1"></script>
+<button id="reset" type="button" hidden>Zurücksetzen</button>
+<script src="javascript_dateien/wohnungen.js?v=buttons2"></script>
 <script>
 /* Beträge einheitlich mit CHF rechts anzeigen;
    Rohwert ohne Änderung des Bewertungsmodells rekonstruieren. */
@@ -529,7 +503,7 @@
   update();
 })();
 </script>
-<script src="javascript_dateien/ux-flow.js"></script>
+<script src="javascript_dateien/ux-flow.js?v=buttons2"></script>
 <!-- Footer-Inhalt wird ausschliesslich aus footer.html geladen. -->
 <div id="wohnradar-footer"></div>
 <!-- Mobiler Scroll-Hinweis: verschwindet nach der ersten Scrollbewegung. -->

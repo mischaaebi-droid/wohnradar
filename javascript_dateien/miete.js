@@ -116,16 +116,16 @@ async function starteMietrechner() {
         {
             id:'access',
             label:'Geschäfte, Schulen und ÖV',
-            names:['Sehr schlecht','Eher schlecht','Durchschnittlich','Gut','Sehr gut'],
-            values:[-6,-3,0,2,4],
+            names:['Sehr schlecht','Schlecht','Durchschnittlich','Gut','Sehr gut','Hervorragend'],
+            values:[-6,-3,0,2,3,4],
             def:2
         },
         {
             id:'noise',
             label:'Ruhe / Lärmbelastung',
-            names:['Extrem laut','Stark belastet','Verkehrslärm','Durchschnittlich','Ruhig','Sehr ruhig'],
-            values:[-8,-5,-2,0,2,4],
-            def:3
+            names:['Extrem laut','Stark belastet','Durchschnittlich','Eher ruhig','Ruhig','Sehr ruhig'],
+            values:[-8,-5,0,1,2,4],
+            def:2
         },
         
     ];
@@ -1007,13 +1007,20 @@ async function starteMietrechner() {
       );
     });
 
+  document.addEventListener('wr:adjust-start', () => {
+    mietwertFreigegeben = false;
+    refresh();
+  });
+
   // Mietbeträge erst nach Klick auf "Mietwert bestimmen" anzeigen.
   for (const id of ["estimateButtonDesktop", "estimateButtonMobile"]) {
     const button = $(id);
     if (button) {
       button.addEventListener("click", () => {
+        if (!validate(false)) return;
         mietwertFreigegeben = true;
         refresh();
+        document.dispatchEvent(new CustomEvent('wr:estimate-success'));
       });
     }
   }
@@ -1073,9 +1080,7 @@ async function starteMietrechner() {
     }
   );
 
-  $("uxReset")?.addEventListener("click", () => {
-    queueMicrotask(() => { resetRequired(); });
-  });
+
 
   /* =====================================================
      14. STARTANZEIGE

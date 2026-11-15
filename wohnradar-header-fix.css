@@ -16,3 +16,19 @@
 }
 /* Beim automatischen Scrollen nicht unter dem Kopf landen. */
 html { scroll-padding-top: 90px; }
+
+/* Gemeinsamer Header: Haus, Wohnung und Mietrechner. */
+
+
+body.wr-immobilienrechner .wrap > header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+body.wr-immobilienrechner .wrap > header .wr-header-lockup { display:flex; align-items:center; gap:11px; min-width:0; }
+body.wr-immobilienrechner .wrap > header .wr-header-lockup .wr-brand-mark { display:block; width:52px !important; height:52px !important; max-width:none; object-fit:contain; flex:0 0 52px; }
+body.wr-immobilienrechner .wrap > header .wr-header-copy { display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:0; }
+body.wr-immobilienrechner .wrap > header .wr-header-copy .wr-brand-name { display:block; line-height:1.15; white-space:nowrap; }
+body.wr-immobilienrechner .wrap > header .wr-header-copy .header-description { display:block; margin:0; padding:0; min-width:0; font-size:13px; font-weight:500; line-height:1.25; white-space:nowrap; }
+body.wr-immobilienrechner .wrap > header .home-link { flex-shrink:0; }
+@media(max-width:700px) {
+ body.wr-immobilienrechner .wrap > header .wr-header-lockup { gap:8px; }
+ body.wr-immobilienrechner .wrap > header .wr-header-lockup .wr-brand-mark { width:48px !important; height:48px !important; flex-basis:48px; }
+ body.wr-immobilienrechner .wrap > header .wr-header-copy .header-description { font-size:12px; }
+}

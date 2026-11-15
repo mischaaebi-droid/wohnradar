@@ -43,38 +43,12 @@
 .rent-outdoor-range.hide { display:none !important; }
 @media (max-width:530px) { .rent-type-control .rent-choice { gap:5px; } .rent-type-control .rent-choice button { font-size:11px; padding:9px 4px; } }
 
-/* Kompakte Mietabrechnung wie beim Hausrechner */
-.result.rent-result.result-invoice { padding:18px 20px !important; }
-.result-invoice .invoice-title {font-size:13px;font-weight:700;opacity:.75;margin-bottom:10px;}
-.result-invoice .invoice-row,.result-invoice .invoice-total {display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:baseline;gap:8px;line-height:1.35;}
-.result-invoice .invoice-row {padding:5px 0;font-size:14px;}
-.result-invoice .invoice-row strong,.result-invoice .invoice-total strong {text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;}
-.result-invoice .invoice-total {margin-top:9px;padding-top:12px;border-top:2px solid var(--accent,#B0523B);font-weight:750;}
-.result-invoice .invoice-total strong {font-size:clamp(19px,2.2vw,27px);}
-.result-invoice .rent-status {font-size:11px;margin-top:9px;line-height:1.25;}
-@media(max-width:650px) {
- .result.rent-result.result-invoice {padding:13px 15px !important;}
- .result-invoice .invoice-title {margin-bottom:6px;font-size:12px;}
- .result-invoice .invoice-row {padding:3px 0;font-size:13px;}
- .result-invoice .invoice-total {margin-top:7px;padding-top:9px;font-size:13px;}
- .result-invoice .invoice-total strong {font-size:20px;}
-}
-    </style>
+</style>
 <link href="wohnradar-ux.css" rel="stylesheet"/>
 <link href="wohnradar-logo.css" rel="stylesheet"/>
-<link href="wohnradar-resultate.css" rel="stylesheet"/>
 <link href="wohnradar-header-fix.css" rel="stylesheet"/>
 <style>
 
-/* Mietrechner – kompakter Kopf wie Haus und Eigentumswohnung */
-.wrap > header {display:flex;align-items:center;justify-content:space-between;gap:12px;}
-.wrap > header .wr-header-lockup {display:flex;align-items:center;gap:11px;min-width:0;}
-.wrap > header .wr-header-lockup .wr-brand-mark {display:block;width:52px !important;height:52px !important;max-width:none;object-fit:contain;flex:0 0 52px;}
-.wrap > header .wr-header-copy {display:flex;flex-direction:column;align-items:flex-start;gap:2px;min-width:0;}
-.wrap > header .wr-header-copy .wr-brand-name {display:block;line-height:1.15;white-space:nowrap;}
-.wrap > header .wr-header-copy .header-description {display:block;margin:0;padding:0;min-width:0;font-size:13px;font-weight:500;line-height:1.25;white-space:nowrap;}
-.wrap > header .home-link {flex-shrink:0;}
-@media(max-width:700px){.wrap > header .wr-header-lockup{gap:8px}.wrap > header .wr-header-lockup .wr-brand-mark{width:48px !important;height:48px !important;flex-basis:48px}.wrap > header .wr-header-copy .header-description{font-size:12px}}
 /* Wohnungstyp auf allen Bildschirmgrössen in einer Zeile */
 .rent-overview #apartmentType {display:grid !important;grid-template-columns:repeat(3,minmax(0,1fr)) !important;gap:6px;}
 .rent-overview #apartmentType button {min-width:0;min-height:44px;padding:9px 3px;font-size:12px;line-height:1.2;white-space:nowrap;}
@@ -103,8 +77,10 @@
 .wr-methodik-content .wr-methodik-note{font-size:.94em;opacity:.9}
 .wr-methodik-content .wr-methodik-legend{margin-top:12px}
 @media(max-width:530px){.wr-methodik-mathbox{padding:12px 6px}}
-</style></head>
-<body>
+</style>
+<link rel="stylesheet" href="wohnradar-resultate.css?v=buttons2">
+</head>
+<body class="wr-immobilienrechner wr-mietwert">
 <div class="wrap">
 <header>
 <div class="brand wr-header-lockup">
@@ -128,7 +104,7 @@
 <h1 class="wr-page-title">Ortsübliche Miete ermitteln</h1>
 <p>
                     
-           Was ist die übliche Miete an Ihrem Wohnort? Wohnradar berechnet den Mietwert anhand lokaler Mietdaten und spezifischer Eigenschaften Ihrer Wohnung. Bais sind die durchschnittlichen Angebotsmieten.
+           Was ist die übliche Miete an Ihrem Wohnort? Wohnradar berechnet den Mietwert anhand lokaler Mietdaten und spezifischer Eigenschaften Ihrer Wohnung. Basis sind die durchschnittlichen Angebotsmieten. Resultate direkt sichtbar <u>ohne </u>E-Mail-Adresse.
                     </p>
 <section class="card rent-overview">
 <div class="rent-intro-stack">
@@ -306,7 +282,7 @@ Lade Mietmodell …
 <div class="result-actions">
 <button class="estimate-button" id="estimateButtonDesktop" type="button">Mietwert bestimmen</button>
 <div class="post-estimate-actions">
-<button id="adjustButton" type="button">Nachjustieren</button><button id="uxReset" type="button">Zurücksetzen</button>
+<button id="adjustButton" type="button">Nachjustieren</button><button id="uxReset" type="button">Neue Schätzung</button>
 </div>
 </div>
 </div>
@@ -323,9 +299,9 @@ Lade Mietmodell …
 <div aria-label="Ortsvorschläge" class="mobile-place-suggestions" id="mobilePlaceSuggestions" role="listbox">
 </div>
 </div>
-<script src="javascript_dateien/miete.js">
+<script src="javascript_dateien/miete.js?v=buttons2">
 </script>
-<script src="javascript_dateien/ux-flow.js">
+<script src="javascript_dateien/ux-flow.js?v=buttons2">
 </script>
 <!-- Mobiler Scroll-Hinweis: verschwindet nach der ersten Scrollbewegung. -->
 <div aria-hidden="true" class="wr-scrollcue" id="wrScrollCue">

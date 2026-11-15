@@ -1,5 +1,7 @@
 
-/* UX-Erweiterung: unveränderte Grundgestaltung der Rechner */
+/* UX-Basis und Fallbacks für Seiten ohne wohnradar-resultate.css.
+   Die verbindlichen Resultate- und Aktionsbutton-Regeln der fünf Rechner
+   stehen in wohnradar-resultate.css (wird danach geladen). */
 .home-link{display:inline-flex;align-items:center;gap:7px;text-decoration:none;color:var(--ink);font-weight:750;padding:9px 13px;border:1px solid var(--line);border-radius:11px;background:var(--card);min-height:42px}
 .home-link:hover,.home-link:focus-visible{border-color:var(--accent);background:var(--card2)}
 header .reset[hidden]{display:none!important}
