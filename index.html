@@ -529,6 +529,39 @@
 
         }
 
+
+        /* Neue, klar gegliederte Startseite */
+        .home-page header { display:flex; align-items:center; justify-content:space-between; gap:20px; }
+        .home-nav { display:flex; align-items:center; flex-wrap:wrap; gap:22px; }
+        .home-nav a { color:var(--ink); font-weight:700; font-size:14px; text-decoration:none; white-space:nowrap; }
+        .home-nav a:hover, .home-nav a:focus-visible { color:var(--accent); text-decoration:underline; }
+        .home-section-title { font-size:clamp(21px,2.5vw,26px); letter-spacing:-.035em; margin:0 0 18px; }
+        .home-extras, .home-about { margin-top:42px; }
+        .home-extras { padding:25px 0 0; border-top:1px solid var(--line); }
+        .home-text-link { display:inline-flex; align-items:center; gap:10px; color:var(--accent-dark); font-weight:750; text-decoration:none; line-height:1.5; }
+		li{margin-left:15px}
+        .home-text-link:hover { text-decoration:underline; }
+        .home-extras-links { display:flex; flex-direction:column; align-items:flex-start; gap:14px; }
+        .home-about { background:#fff; border:1px solid var(--line); border-radius:16px; padding:30px 34px; }
+        .home-about h2 { margin:6px 0 15px; font-size:clamp(23px,3vw,30px); }
+        .home-about p:not(.home-eyebrow) { max-width:780px; line-height:1.7; color:var(--ink); }
+        .home-eyebrow { color:var(--accent-dark); font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.1em; margin:0; }
+        .home-info-links { display:flex; flex-wrap:wrap; gap:12px 24px; margin:40px 0 12px; padding:22px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
+        .home-info-links a { font-size:14px; font-weight:700; color:var(--ink); text-decoration:none; }
+        .home-info-links a:hover { color:var(--accent); text-decoration:underline; }
+        @media (max-width:650px) {
+          /* Kompakter mobiler Header: Logo links, Über uns rechts. */
+          .home-page header { flex-direction:row; align-items:center; justify-content:space-between; gap:8px; }
+          .home-page header .wr-header-lockup { min-width:0; }
+          .home-nav { flex:0 0 auto; flex-wrap:nowrap; justify-content:flex-end; gap:0; padding-bottom:0; }
+          .home-nav a { font-size:13px; display:inline-flex; align-items:center; min-height:44px; transform: translateY(-6px) }
+          .home-nav a:not(:first-child) { display:none; }
+          .home-about { padding:22px 20px; }
+          .home-extras,.home-about { margin-top:30px; }
+          .home-section-title { margin-bottom:12px; }
+          .home-info-links { gap:12px 18px; margin-top:28px; }
+        }
+
     </style>
 
 
@@ -554,22 +587,15 @@
     <img class="wr-brand-mark" src="wohnradar-logo.png" alt="" aria-hidden="true" width="52" height="52" decoding="async">
     <div class="wr-header-copy">
       <span class="wr-brand-name">WOHN<em>RADAR</em></span>
-      <p class="header-description">Immobilienbewertung <span class="separator">●</span> Verkehrswert <span class="separator">●</span> Mietwert</p>
+      <p class="header-description">Immobilienbewertung <span class="separator">●</span> Verkehrswert <span class="separator">●</span> Mietwert <span class="separator">●</span> Baulandpreise</p>
     </div>
   </div>
 
-  <a class="home-link" href="index.html" aria-label="Zur Startseite">
-    <svg class="home-icon" viewBox="0 0 24 24"
-         width="20" height="20" fill="none"
-         stroke="currentColor" stroke-width="1.8"
-         stroke-linecap="round" stroke-linejoin="round"
-         aria-hidden="true">
-      <path d="m3 10 9-7 9 7"/>
-      <path d="M5 9v12h14V9"/>
-      <path d="M9 21v-7h6v7"/>
-    </svg>
-    <span class="home-text">Home</span>
-  </a>
+  <nav class="home-nav" aria-label="Hauptnavigation">
+    <a href="ueber-wohnradar.html">Über uns</a>
+    <a href="faq.html">FAQ</a>
+    <a href="kontakt.html">Kontakt</a>
+  </nav>
 </header>
 
 
@@ -594,10 +620,7 @@
                       Immobilien kostenlos schätzen
                     </h1>
 
-                <p>
-                    
-                   Mit Wohnradar ermitteln Sie den Verkehrswert von Einfamilienhäusern, Eigentumswohnungen und Bauland, anonym und unabhängig. Auch Mietwerte können Sie berechnen.<span style="white-space: nowrap;"><strong> Resultate direkt sichtbar <u>ohne </u>E-Mail-Adresse.</strong></span> 
-                    </p>
+                <p>Mit Wohnradar ermitteln Sie den Verkehrswert von Einfamilienhäusern, Eigentumswohnungen und Bauland. Auch Mietwerte können Sie berechnen. <strong>Kostenlos, anonym und ohne E-Mail-Adresse.</strong></p>
                 </div>
 
                 <!-- Echte Schweizer Gemeindegrenzen, rein dekorativ -->
@@ -623,6 +646,7 @@
              
 
 
+                <h2 class="home-section-title">Was möchten Sie schätzen?</h2>
                 <div class="tiles">
 
 
@@ -758,7 +782,7 @@
                             </span>
 
                             <span class="tile-name">
-                                Miete
+                                Ortsübliche Miete
                             </span>
 
                             <span
@@ -825,142 +849,34 @@
                     </a>
 
 
-                    <!-- ==================================
-                         KACHEL 5: KENNZAHLEN
-                         ================================== -->
-
-                    <a
-                        class="tile"
-                        href="mietkennzahlen.html"
-                    >
-
-                        <span class="tile-top">
-
-                            <span class="tile-icon">
-
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.65"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    aria-hidden="true"
-                                >
-                                    <path d="M4 20V5m0 15h17"/>
-                                    <path d="m7 16 4-5 4 2 5-7"/>
-                                    <path d="M17 6h3v3"/>
-                                </svg>
-
-                            </span>
-
-                            <span class="tile-name">
-                                Kennzahlen
-                            </span>
-
-                            <span
-                                class="tile-arrow"
-                                aria-hidden="true"
-                            >
-                                ↗
-                            </span>
-
-                        </span>
-
-                        <span class="tile-action">
-                            Quadratmetermieten vergleichen
-                        </span>
-
-                    </a>
-
-
-                    <!-- ==================================
-                         KACHEL 6: SCHÄTZUNGSEXPERTEN
-                         NEU HINZUGEFÜGT
-                         ================================== -->
-
-                    <div
-                        class="tile tile-upcoming"
-                        aria-label="Schätzungsexperten vor Ort, in Vorbereitung"
-                    >
-
-                        <span class="tile-top">
-
-                            <span class="tile-icon">
-
-                                <!-- Symbol: Person mit Lupe -->
-
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="1.65"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    aria-hidden="true"
-                                >
-                                    <circle cx="9" cy="7" r="3"/>
-                                    <path d="M3 20v-2a6 6 0 0 1 9-5.2"/>
-                                    <circle cx="16" cy="16" r="4"/>
-                                    <path d="m19 19 3 3"/>
-                                </svg>
-
-                            </span>
-
-                            <span class="tile-name">
-                                Experten vor Ort
-                            </span>
-
-                            <span class="tile-badge">
-                                Bald verfügbar
-                            </span>
-
-                        </span>
-
-                        <span class="tile-action">
-                            Immobilienbewertung durch Fachleute
-                        </span>
-
-                    </div>
-
-                    <!-- KACHEL 7: ÜBER WOHNRADAR -->
-                    <a class="tile" href="https://wohnradar.ch/ueber-wohnradar.html">
-                        <span class="tile-top">
-                            <span class="tile-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                     stroke-width="1.65" stroke-linecap="round"
-                                     stroke-linejoin="round" aria-hidden="true">
-                                    <circle cx="12" cy="12" r="9"/>
-                                    <path d="M12 11v6M12 7h.01"/>
-                                </svg>
-                            </span>
-                            <span class="tile-name">Über Wohnradar</span>
-                            <span class="tile-arrow" aria-hidden="true">↗</span>
-                        </span>
-                        <span class="tile-action">Wer wir sind und wie Wohnradar funktioniert</span>
-                    </a>
-
-                    <!-- KACHEL 8: AKTUELLES (NOCH KEINE ZIELSEITE) -->
-                    <div class="tile tile-upcoming" aria-label="Aktuelles, in Vorbereitung">
-                        <span class="tile-top">
-                            <span class="tile-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                     stroke-width="1.65" stroke-linecap="round"
-                                     stroke-linejoin="round" aria-hidden="true">
-                                    <rect x="4" y="4" width="16" height="16" rx="2"/>
-                                    <path d="M8 8h8M8 12h8M8 16h5"/>
-                                </svg>
-                            </span>
-                            <span class="tile-name">Aktuelles</span>
-                            <span class="tile-badge">Bald verfügbar</span>
-                        </span>
-                        <span class="tile-action">Neuigkeiten rund um Wohnradar</span>
-                    </div>
-
                 </div>
 
             </section>
 
+
+
+            <section class="home-extras" aria-labelledby="extras-heading">
+              <h2 id="extras-heading" class="home-section-title">Weitere Angebote</h2>
+              <div class="home-extras-links">
+               <li> <a class="home-text-link" href="mietkennzahlen.html">Kennzahlen zu Mietewerten <span aria-hidden="true">→</span></a>
+               <li> <a class="home-text-link" href="https://www.immoga.ch/" target="_blank" rel="noopener noreferrer">Schätzungsexperten engagieren <span aria-hidden="true">→</span></a>
+              </div>
+            </section>
+
+            <section class="home-about" aria-labelledby="about-heading">
+              <p class="home-eyebrow">Unabhängig · Anonym</p>
+              <h2 id="about-heading">Was ist Wohnradar?</h2>
+              <p>Wohnradar ist eine unabhängige Plattform für Immobilienschätzungen in der Schweiz. Die Berechnungen beruhen auf Marktdaten und Bewertungsmodellen. Für die Nutzung braucht es weder E-Mail-Adresse noch Telefonnummer oder Registrierung.
+              Hinter Wohnradar steht die Immo Glauser &amp; Aebi AG aus Bern. Entwickelt wurde das Angebot von diplomierten Immobilienbewertern, die Genauigkeit von reinen Onlineschätzungen ist eingeschränkt.</p>
+              <a class="home-text-link" href="ueber-wohnradar.html">Mehr über Wohnradar <span aria-hidden="true">→</span></a>
+            </section>
+
+            <nav class="home-info-links" aria-label="Weitere Informationen">
+              <a href="ueber-wohnradar.html">Über Wohnradar</a>
+              <a href="faq.html">FAQ</a>
+              <a href="kontakt.html">Kontakt</a>
+              <a href="impressum.html">Impressum</a>
+            </nav>
 
             <!-- ==========================================
                  RECHTLICHER / METHODISCHER HINWEIS
