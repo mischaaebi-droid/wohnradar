@@ -18,6 +18,7 @@
 <script src="footer.js" defer></script>
 <link rel="stylesheet" href="wohnradar-logo.css">
 <link rel="stylesheet" href="wohnradar-header-fix.css">
+<link rel="stylesheet" href="wohnradar-methodik.css">
 
 <style>/* Drei verständliche Ausnützungsstufen nebeneinander. */
 #type.bl-types {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;}
@@ -36,6 +37,11 @@
  #type.bl-types .typechoice .bl-choice-main {font-size:11px;}
  #type.bl-types .typechoice .bl-choice-sub {font-size:10px;}
 }
+</style>
+<style>
+/* Formeln im Methodik-Anhang: auch auf schmalen Displays lesbar. */
+.wr-bauland .wr-methodik-formula { overflow-x: auto; max-width: 100%; }
+.wr-bauland .wr-methodik-formula math { font-size: clamp(15px, 2.1vw, 21px); color: var(--ink, #352a28); margin: 0 auto; width: max-content; max-width: none; }
 </style>
 <link rel="stylesheet" href="wohnradar-resultate.css?v=buttons2">
 <style>
@@ -215,6 +221,132 @@ body.wr-bauland .wr-related-links a:hover { text-decoration-color: currentColor;
   </ul>
 
 </div></section>
+
+<!-- Methodik: gleiche aufklappbare Darstellung wie bei der Hausbewertung -->
+<section class="card wr-methodik-card" aria-label="Methodik der Baulandbewertung">
+  <details class="wr-methodik" id="methodik">
+    <summary class="wr-methodik-summary">
+      <span class="wr-methodik-summary-text">
+        <span class="wr-methodik-summary-title">Methodik</span>
+        <span class="wr-methodik-summary-subtitle">– so berechnet Wohnradar den Wert</span>
+      </span>
+      <span class="wr-methodik-chevron" aria-hidden="true"></span>
+    </summary>
+    <div class="wr-methodik-content">
+      <h2>So berechnet Wohnradar den Wert von Bauland</h2>
+      <p>Die Bewertung von unbebautem Bauland ist schwieriger als die Bewertung von Häusern oder Eigentumswohnungen. Der Grund: In den meisten Schweizer Gemeinden wird heute nur noch wenig Bauland verkauft. Deshalb gibt es kaum zuverlässige Statistiken zu den tatsächlich bezahlten Baulandpreisen.</p>
+      <p>Der Wert von Bauland lässt sich aber auch indirekt ermitteln. Wohnradar verwendet dafür ein mathematisches Modell, das sich am sogenannten Lageklassensystem orientiert.</p>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-1">
+        <h3 id="methodik-1">1. Wie lässt sich der Baulandwert indirekt bestimmen?</h3>
+        <p>In der Immobilienbewertung gibt es verschiedene Verfahren, um den Wert von Bauland zu ermitteln, auch wenn kaum Verkaufspreise bekannt sind.</p>
+        <h4>Die Differenzmethode</h4>
+        <p>Eine Möglichkeit besteht darin, vom Wert eines Hauses auf den Wert des Grundstücks zu schliessen.</p>
+        <p>Dazu wird zunächst der Verkehrswert einer Liegenschaft ermittelt. Anschliessend werden die geschätzten Baukosten abgezogen. Was übrig bleibt, ist vereinfacht gesagt der Wert des Landes.</p>
+        <p><strong>Beispiel:</strong></p>
+        <ul class="wr-methodik-legend">
+          <li>Verkehrswert eines neu gebauten Hauses: 1'500'000 Franken</li>
+          <li>Baukosten ohne Land: 900'000 Franken</li>
+          <li>Wert des Grundstücks: <strong>600'000 Franken</strong></li>
+        </ul>
+        <p>Die Methode lässt sich auch auf standardisierte Gebäude anwenden. So kann man beispielsweise berechnen, wie viel ein typisches Mehrfamilienhaus an einem bestimmten Standort wert wäre und welcher Anteil davon auf das Land entfällt.</p>
+        <h4>Die Lageklassenmethode</h4>
+        <p>Ein anderes Verfahren ist die Lageklassenmethode. Sie beruht auf einer einfachen Beobachtung:</p>
+        <p><strong>Je teurer ein Standort ist, desto grösser ist in der Regel der Anteil des Landwerts am gesamten Immobilienwert.</strong></p>
+        <p>In einer ländlichen Gemeinde mit tiefen Immobilienpreisen macht das Grundstück oft einen vergleichsweise kleinen Teil des Gesamtwerts aus. An einer begehrten Lage in Zürich oder Genf kann der Landanteil dagegen sehr hoch sein.</p>
+        <p>Der Grund dafür ist einfach: Die Baukosten für ein vergleichbares Gebäude unterscheiden sich zwischen den Regionen weit weniger stark als die Immobilienpreise. An teuren Standorten entfällt deshalb ein grösserer Teil des Gesamtwerts auf das Land.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-2">
+        <h3 id="methodik-2">2. Wie geht Wohnradar vor?</h3>
+        <p>Wohnradar verwendet ein Verfahren, das sich am Prinzip der Lageklassenmethode orientiert.</p>
+        <p>Ausgangspunkt sind die lokalen Immobilienpreise. Für die einzelnen Postleitzahlen sind durchschnittliche Preisniveaus in Form von Medianpreisen pro Quadratmeter Wohnfläche hinterlegt.</p>
+        <p>Anhand dieser Preise berechnet Wohnradar, welcher Anteil des gesamten Immobilienwerts auf das Land entfällt.</p>
+        <p>Dazu haben wir eine mathematische Funktion entwickelt. Sie bildet den Zusammenhang zwischen dem lokalen Immobilienpreisniveau und dem Landwertanteil ab.</p>
+        <p><strong>Das Prinzip: Je höher das lokale Immobilienpreisniveau, desto höher ist der berechnete Landwertanteil.</strong></p>
+        <p>Im Unterschied zur klassischen Lageklassenmethode verwendet Wohnradar keine festen Lageklassen. Der Landwertanteil wird vielmehr mit einer kontinuierlichen mathematischen Funktion berechnet. Dadurch verändert er sich mit dem lokalen Preisniveau.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-3">
+        <h3 id="methodik-3">3. Wie wird die bauliche Ausnützung berücksichtigt?</h3>
+        <p>Der Wert eines Grundstücks hängt nicht nur von seiner Lage ab. Entscheidend ist auch, wie stark es bebaut werden darf.</p>
+        <p>Auf einem Grundstück, auf dem ein viergeschossiges Mehrfamilienhaus erstellt werden kann, lässt sich normalerweise mehr Wohnfläche realisieren als auf einem gleich grossen Grundstück, das nur für ein Einfamilienhaus vorgesehen ist.</p>
+        <p>Wohnradar unterscheidet deshalb drei Arten der baulichen Ausnützung:</p>
+        <div class="wr-methodik-table-scroll" role="region" aria-label="Bauliche Ausnützung und Berechnungsfaktoren" tabindex="0">
+          <table class="wr-methodik-table">
+            <thead><tr><th scope="col">Bauliche Ausnützung</th><th scope="col">Typische Bebauung</th><th scope="col">Berechnungsfaktor</th></tr></thead>
+            <tbody>
+              <tr><td>Tief</td><td>Einfamilienhäuser, etwa Wohnzone W2</td><td>0,39</td></tr>
+              <tr><td>Mittel</td><td>Kleinere Mehrfamilienhäuser, etwa W3</td><td>0,50</td></tr>
+              <tr><td>Hoch</td><td>Grössere Mehrfamilienhäuser, etwa W4 und höher</td><td>0,65</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Die Faktoren dienen dazu, die unterschiedlichen Bebauungsmöglichkeiten vereinfacht zu berücksichtigen.</p>
+        <p>Die tatsächlich zulässige Ausnützung richtet sich nach den jeweiligen kommunalen Bauvorschriften.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-4">
+        <h3 id="methodik-4">4. Wie zuverlässig ist die Schätzung?</h3>
+        <p>Wohnradar liefert eine modellbasierte Schätzung des Baulandwerts. Sie beruht auf dem lokalen Immobilienpreisniveau und den angenommenen Bebauungsmöglichkeiten.</p>
+        <p>Das Verfahren ermöglicht eine rasche Einschätzung, auch wenn für eine Gemeinde keine zuverlässigen Statistiken zu Baulandverkäufen vorliegen.</p>
+        <p>Allerdings hängt der Wert eines Grundstücks von weiteren Faktoren ab. Dazu gehören insbesondere die genaue Lage, die Grundstücksform, die Erschliessung, die Topografie und die geltenden Bauvorschriften.</p>
+        <p>Auch die Nachfrage nach Bauland kann sich innerhalb einer Gemeinde erheblich unterscheiden.</p>
+        <p><strong>Der berechnete Wert ist deshalb als Orientierung zu verstehen und nicht als verbindliches Verkehrswertgutachten.</strong> Der tatsächlich erzielbare Verkaufspreis kann davon abweichen.</p>
+      </section>
+
+      <section class="wr-methodik-appendix" aria-labelledby="methodik-anhang">
+        <h3 id="methodik-anhang">Mathematischer Anhang: Berechnung des Baulandwerts</h3>
+        <p>Für Interessierte und Fachpersonen legen wir hier die mathematische Grundlage der Baulandbewertung offen.</p>
+        <h4>1. Berechnung des Landwertanteils</h4>
+        <p>Zunächst berechnet Wohnradar anhand des lokalen Immobilienpreisniveaus den Landwertanteil.</p>
+        <p class="wr-methodik-formula-label">Die Formel lautet:</p>
+        <div class="wr-methodik-formula" role="group" aria-label="Landwertanteil gleich 0 Komma 3212595 plus 0 Komma 2652819 mal natürlicher Logarithmus von P geteilt durch 10 000">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mrow><mi>L</mi><mo>=</mo><mn>0,3212595</mn><mo>+</mo><mn>0,2652819</mn><mo>·</mo><mi mathvariant="normal">ln</mi><mo>⁡</mo><mo>(</mo><mfrac><mi>P</mi><mn>10 000</mn></mfrac><mo>)</mo></mrow>
+          </math>
+        </div>
+        <p>Dabei bedeutet:</p>
+        <ul class="wr-methodik-legend">
+          <li><strong>P:</strong> lokaler Medianpreis von Eigentumswohnungen in Franken pro Quadratmeter Wohnfläche</li>
+          <li><strong>ln:</strong> natürlicher Logarithmus</li>
+          <li><strong>L:</strong> rechnerischer Anteil des Landes am Immobilienwert</li>
+        </ul>
+        <p>Der Landwertanteil wird auf mindestens 6,25 Prozent und höchstens 62,5 Prozent begrenzt.</p>
+
+        <h4>2. Berechnung des Baulandpreises</h4>
+        <p>Aus dem Landwertanteil wird anschliessend der Baulandpreis pro Quadratmeter Grundstücksfläche berechnet.</p>
+        <div class="wr-methodik-formula" role="group" aria-label="Baulandpreis gleich P mal Landwertanteil mal Ausnützungsfaktor mal Korrekturfaktor">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mrow><mi>B</mi><mo>=</mo><mi>P</mi><mo>·</mo><mi>L</mi><mo>·</mo><mi>A</mi><mo>·</mo><mi>K</mi></mrow>
+          </math>
+        </div>
+        <ul class="wr-methodik-legend">
+          <li><strong>B:</strong> Baulandpreis pro Quadratmeter Grundstücksfläche</li>
+          <li><strong>A:</strong> Ausnützungsfaktor (0,39, 0,50 oder 0,65)</li>
+          <li><strong>K:</strong> zusätzlicher Korrekturfaktor, abhängig vom lokalen Immobilienpreisniveau (1,09 bis 1,17)</li>
+        </ul>
+
+        <h4>3. Berechnungsbeispiel</h4>
+        <p>Angenommen wird eine Gemeinde mit einem mittleren Preisniveau für Eigentumswohnungen von 10'000 Franken pro Quadratmeter Wohnfläche.</p>
+        <p>Daraus ergibt sich:</p>
+        <div class="wr-methodik-formula" role="group" aria-label="Landwertanteil gleich 0 Komma 3212595 plus 0 Komma 2652819 mal natürlicher Logarithmus von 1 gleich 32 Komma 13 Prozent">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>L</mi><mo>=</mo><mn>0,3212595</mn><mo>+</mo><mn>0,2652819</mn><mo>·</mo><mi mathvariant="normal">ln</mi><mo>⁡</mo><mo>(</mo><mn>1</mn><mo>)</mo><mo>=</mo><mn>32,13 %</mn></mrow></math>
+        </div>
+        <p>Für eine mittlere bauliche Ausnützung ergibt sich daraus:</p>
+        <div class="wr-methodik-formula" role="group" aria-label="Baulandpreis gleich 10 000 mal 0 Komma 3212595 mal 0 Komma 50 mal 1 Komma 13 ergibt rund 1 815 Franken pro Quadratmeter">
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mrow><mi>B</mi><mo>=</mo><mn>10 000</mn><mo>·</mo><mn>0,3212595</mn><mo>·</mo><mn>0,50</mn><mo>·</mo><mn>1,13</mn></mrow></math>
+        </div>
+        <p><strong>Geschätzter Baulandpreis: rund 1'815 Franken pro m² Grundstücksfläche.</strong></p>
+
+        <h4>4. Bandbreite</h4>
+        <p>Da Baulandpreise innerhalb einer Gemeinde stark variieren können, zeigt Wohnradar neben dem geschätzten Wert auch eine Bandbreite an.</p>
+        <p>Diese reicht von 20 Prozent unter bis 20 Prozent über dem berechneten Wert.</p>
+        <p>Bei einem geschätzten Baulandpreis von 1'815 Franken pro Quadratmeter ergibt sich somit eine Bandbreite von rund 1'450 bis 2'180 Franken.</p>
+      </section>
+    </div>
+  </details>
+</section>
 <div class="mobile-estimate-action"><button class="estimate-button" id="estimateButtonMobile" type="button">Verkehrswert bestimmen</button></div></main>
 <div class="result-shell" id="resultShell"><aside aria-live="polite" class="result bauland-result">
   <div class="bl-title">Geschätzter Baulandpreis</div>

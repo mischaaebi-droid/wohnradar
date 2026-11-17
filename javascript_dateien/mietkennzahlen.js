@@ -11,6 +11,8 @@ async function starteMietkennzahlen() {
     const placeInput = $('placeInput');
     const suggestionsEl = $('suggestions');
     const areaInput = $('area');
+    const areaOutput = $('areav');
+    let areaSelected = false;
     const resultShell = $('resultShell');
     const resultPlace = $('resultPlace');
     const resultValues = $('resultValues');
@@ -143,12 +145,12 @@ async function starteMietkennzahlen() {
             return;
         }
         const area = Number(areaInput.value);
-        if (!areaInput.value.trim() || !Number.isFinite(area) || area < 30 || area > 180) {
-            setStatus('Bitte eine Wohnfläche zwischen 30 und 180 m² eingeben.', true);
+        if (!areaSelected || !Number.isFinite(area) || area < 30 || area > 180) {
+            setStatus('Bitte die Wohnfläche mit dem Schieberegler einstellen (30 bis 180 m²).', true);
             areaInput.focus();
             return;
         }
-        // Nur ein Dezimalzeichen wie im ursprünglichen Testtool erlaubt.
+        // Der Wert wird über den Schieberegler in ganzen Quadratmetern gewählt.
         const betas = model[selectedPlz];
         const q20 = estimate(betas.q20, area);
         const q50 = estimate(betas.q50, area);
@@ -165,7 +167,7 @@ async function starteMietkennzahlen() {
         }
         const ort = places.find(p => p.plz === selectedPlz)?.ort || '';
         const showArea = area.toLocaleString('de-CH', {maximumFractionDigits: 1});
-        resultPlace.textContent = `${selectedPlz} ${ort} · ${showArea} m²`;
+        resultPlace.textContent = `Wohnung mit ${showArea} m² Wohnfläche in ${selectedPlz} ${ort}`;
         resultValues.hidden = false;
         resultPlaceholder.hidden = true;
         resultShell.classList.add('has-estimate');
@@ -242,12 +244,15 @@ async function starteMietkennzahlen() {
             closeSuggestions();
         }
     });
-    areaInput.addEventListener('keydown', ev => {
-        if (ev.key === 'Enter') {
-            ev.preventDefault();
-            calculate();
-        }
-    });
+    // Wohnfläche wie beim Hausrechner: erst eine bewusste Reglerbedienung zählt.
+    function updateArea() {
+        areaSelected = true;
+        areaOutput.textContent = `${Number(areaInput.value).toLocaleString('de-CH')} m²`;
+        areaOutput.classList.remove('wr-not-selected');
+        if (status.classList.contains('is-error')) setStatus('');
+    }
+    areaInput.addEventListener('input', updateArea);
+    areaInput.addEventListener('change', updateArea);
     desktopButton.addEventListener('click', calculate);
     mobileButton.addEventListener('click', calculate);
     $('adjustButton').addEventListener('click', () => {
@@ -257,7 +262,10 @@ async function starteMietkennzahlen() {
         invalidateSelection();
         closeSuggestions();
         placeInput.value = '';
-        areaInput.value = '';
+        areaInput.value = areaInput.min;
+        areaSelected = false;
+        areaOutput.textContent = 'Bitte einstellen';
+        areaOutput.classList.add('wr-not-selected');
         $('placeHint').textContent = '';
         setStatus('');
         if (mobileMode.matches) window.scrollTo({top: 0, behavior: 'smooth'});

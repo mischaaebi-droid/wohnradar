@@ -11,7 +11,8 @@
   <link rel="stylesheet" href="wohnradar-logo.css">
   <link rel="stylesheet" href="wohnradar-header-fix.css">
   <script src="footer.js" defer></script>
-  <script src="javascript_dateien/mietkennzahlen.js" defer></script>
+  <script src="javascript_dateien/mietkennzahlen.js?v=slider1" defer></script>
+  <script src="javascript_dateien/wohnradar-slider-schutz.js?v=7" defer></script>
   <style>
     /* Nur die spezifischen Ergebniszeilen dieses Rechners; Grunddesign aus Wohnradar-CSS. */
     .stack > h1.wr-page-title { margin: 0; }
@@ -28,7 +29,233 @@
     .wr-miet-status.is-error { color: #9d3027; }
     @media(max-width:530px) { .wr-miet-area { font-size: 17px; } }
 </style>
+<style>
+/* =======================================================
+   Navigation auf den Rechnerseiten
+   ======================================================= */
+.wr-mietkennzahlen .wr-page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-left: auto;
+}
+.wr-mietkennzahlen .wr-page-nav > a:not(.home-link) {
+    color: var(--ink, #352a28);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.wr-mietkennzahlen .wr-page-nav > a:hover,
+.wr-mietkennzahlen .wr-page-nav > a:focus-visible {
+    color: var(--accent, #a4513e);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.wr-mietkennzahlen .wr-page-nav > a:focus-visible,
+.wr-mietkennzahlen .wr-below-nav a:focus-visible {
+    outline: 2px solid var(--accent, #a4513e);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+.wr-mietkennzahlen .wr-below-nav {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1080px;
+    margin: 24px auto 16px;
+    padding: 0 24px;
+    color: var(--ink, #352a28);
+}
+.wr-mietkennzahlen .wr-below-nav h2 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 750;
+}
+/* Die Rechnerlinks sind die primäre Navigation unter dem Rechner. */
+.wr-mietkennzahlen .wr-related-links,
+.wr-mietkennzahlen .wr-info-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.wr-mietkennzahlen .wr-related-links {
+    gap: 8px 22px;
+}
+.wr-mietkennzahlen .wr-related-links a {
+    color: var(--accent-dark, #89542d);
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.6;
+    text-decoration: none;
+}
+.wr-mietkennzahlen .wr-related-links a .wr-link-arrow {
+    margin-left: 4px;
+    color: var(--accent, #a4513e);
+}
+.wr-mietkennzahlen .wr-related-links a:hover,
+.wr-mietkennzahlen .wr-related-links a:focus-visible {
+    color: var(--accent, #a4513e);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+/* Informationslinks bleiben bewusst kleiner und zurückhaltender. */
+.wr-mietkennzahlen .wr-info-links {
+    gap: 6px 18px;
+    border-top: 1px solid var(--line, #ded5ce);
+    margin-top: 15px;
+    padding-top: 12px;
+}
+.wr-mietkennzahlen .wr-info-links a {
+    color: var(--muted, #786761);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+    text-decoration: none;
+}
+.wr-mietkennzahlen .wr-info-links a:hover,
+.wr-mietkennzahlen .wr-info-links a:focus-visible {
+    color: var(--accent-dark, #89542d);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+/* Auf breiten Ansichten ausführliche, auf Smartphones kurze Linktexte. */
+.wr-mietkennzahlen .wr-related-links .wr-link-mobile { display: none; }
+@media (max-width: 650px) {
+    .wr-mietkennzahlen .wr-page-nav { gap: 0; flex-wrap: nowrap; }
+    .wr-mietkennzahlen .wr-page-nav > a:not(.home-link) { display: none; }
+    .wr-mietkennzahlen .wr-below-nav {
+        margin-top: 15px;
+        margin-bottom: 12px;
+        padding: 0 16px;
+    }
+    .wr-mietkennzahlen .wr-below-nav h2 { font-size: 15px; margin-bottom: 7px; }
+    .wr-mietkennzahlen .wr-related-links {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 14px;
+    }
+    .wr-mietkennzahlen .wr-related-links a {
+        font-size: 12px;
+        line-height: 1.35;
+        white-space: nowrap;
+    }
+    .wr-mietkennzahlen .wr-related-links .wr-link-desktop { display: none; }
+    .wr-mietkennzahlen .wr-related-links .wr-link-mobile { display: inline; }
+    .wr-mietkennzahlen .wr-info-links {
+        gap: 6px 15px;
+        margin-top: 12px;
+        padding-top: 10px;
+    }
+    .wr-mietkennzahlen .wr-info-links a { font-size: 12px; line-height: 1.4; }
+}
+
+/* Gut erkennbare, ruhige Verlinkungen wie auf haus.html. */
+body.wr-mietkennzahlen .wr-related-links a {
+    text-decoration: underline;
+    text-decoration-color: rgba(137, 84, 45, .55);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+body.wr-mietkennzahlen .wr-related-links a:hover,
+body.wr-mietkennzahlen .wr-related-links a:focus-visible {
+    text-decoration-color: currentColor;
+}
+@media (max-width: 650px) {
+    body.wr-mietkennzahlen .wr-related-links { gap: 12px; }
+}
+</style>
 <link rel="stylesheet" href="wohnradar-resultate.css?v=2">
+<style>
+/* Navigation der Mietkennzahlen – exakt an den Hausrechner angelehnt. */
+body.wr-mietkennzahlen .wr-below-nav {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1080px;
+  margin: 24px auto 16px;
+  padding: 0 24px;
+  color: var(--ink, #352a28);
+}
+body.wr-mietkennzahlen .wr-below-nav h2 {
+  margin: 0 0 8px;
+  font-size: 17px;
+  font-weight: 750;
+}
+body.wr-mietkennzahlen .wr-below-nav .wr-related-links,
+body.wr-mietkennzahlen .wr-below-nav .wr-info-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+body.wr-mietkennzahlen .wr-below-nav .wr-related-links {
+  justify-content: flex-start;
+  gap: 8px 22px;
+}
+body.wr-mietkennzahlen .wr-below-nav .wr-related-links > a {
+  display: inline-block;
+  color: var(--accent-dark, #89542d) !important;
+  font-size: 14px;
+  font-weight: 650;
+  line-height: 1.6;
+  text-decoration-line: underline !important;
+  text-decoration-color: rgba(137, 84, 45, .55) !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 3px !important;
+}
+body.wr-mietkennzahlen .wr-below-nav .wr-related-links > a:hover,
+body.wr-mietkennzahlen .wr-below-nav .wr-related-links > a:focus-visible {
+  color: var(--accent, #a4513e) !important;
+  text-decoration-color: currentColor !important;
+}
+body.wr-mietkennzahlen .wr-below-nav .wr-related-links .wr-link-mobile { display: none; }
+body.wr-mietkennzahlen .wr-below-nav .wr-info-links {
+  justify-content: flex-start;
+  gap: 6px 18px;
+  border-top: 1px solid var(--line, #ded5ce);
+  margin-top: 15px;
+  padding-top: 12px;
+}
+body.wr-mietkennzahlen .wr-below-nav .wr-info-links > a {
+  color: var(--muted, #786761);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-decoration: none;
+}
+body.wr-mietkennzahlen .wr-below-nav .wr-info-links > a:hover,
+body.wr-mietkennzahlen .wr-below-nav .wr-info-links > a:focus-visible {
+  color: var(--accent-dark, #89542d);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 650px) {
+  body.wr-mietkennzahlen .wr-below-nav {
+    margin-top: 15px;
+    margin-bottom: 12px;
+    padding: 0 16px;
+  }
+  body.wr-mietkennzahlen .wr-below-nav h2 { font-size: 15px; margin-bottom: 7px; }
+  body.wr-mietkennzahlen .wr-below-nav .wr-related-links {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    gap: 14px;
+  }
+  body.wr-mietkennzahlen .wr-below-nav .wr-related-links > a {
+    font-size: 12px;
+    line-height: 1.35;
+    white-space: nowrap;
+  }
+  body.wr-mietkennzahlen .wr-below-nav .wr-related-links .wr-link-desktop { display: none; }
+  body.wr-mietkennzahlen .wr-below-nav .wr-related-links .wr-link-mobile { display: inline; }
+  body.wr-mietkennzahlen .wr-below-nav .wr-info-links {
+    gap: 6px 15px;
+    margin-top: 12px;
+    padding-top: 10px;
+  }
+  body.wr-mietkennzahlen .wr-below-nav .wr-info-links > a { font-size: 12px; line-height: 1.4; }
+}
+</style>
 </head>
 <body class="wr-mietkennzahlen">
   <span id="wohnradar-top" aria-hidden="true"></span>
@@ -44,8 +271,8 @@
       <p class="header-description">Immobilien Kennnzahlen</p>
     </div>
   </div>
-
-  <a class="home-link" href="index.html" aria-label="Zur Startseite">
+  <nav class="wr-page-nav" aria-label="Hauptnavigation">
+    <a class="home-link" href="index.html" aria-label="Zur Startseite">
     <svg class="home-icon" viewBox="0 0 24 24"
          width="20" height="20" fill="none"
          stroke="currentColor" stroke-width="1.8"
@@ -57,6 +284,10 @@
     </svg>
     <span class="home-text">Home</span>
   </a>
+    <a href="ueber-wohnradar.html">Über uns</a>
+    <a href="faq.html">FAQ</a>
+    <a href="kontakt.html">Kontakt</a>
+  </nav>
 </header>
 
 
@@ -81,7 +312,7 @@
 
         <section class="card" aria-label="Mietkennzahlen berechnen">
           <h2>Ort und Wohnfläche</h2>
-          <div class="grid">
+          <div class="grid" style="grid-template-columns: 1fr;">
             <div class="field">
               <label for="placeInput">PLZ, Ortschaft oder Gemeinde</label>
               <div class="place-wrap">
@@ -91,10 +322,13 @@
               <div class="suggest hide" id="suggestions" role="listbox"></div>
               <div class="hint" id="placeHint"></div>
             </div>
-            <div class="field">
-              <label for="area">Wohnfläche (m²)</label>
-              <input class="wr-miet-area" id="area" name="area" type="number" inputmode="decimal" min="30" max="180" step="0.1" placeholder="z. B. 80" autocomplete="off">
-              <div class="hint wr-miet-area-hint">30 bis 180 m²</div>
+            <div class="range wr-miet-area-range">
+              <div class="rangehead">
+                <label for="area">Wohnfläche</label>
+                <output id="areav" class="wr-not-selected" for="area">Bitte einstellen</output>
+              </div>
+              <input id="area" name="area" type="range" min="30" max="180" step="1" value="30" aria-describedby="areaHint">
+              <div class="hint" id="areaHint">30 bis 180 m²</div>
             </div>
           </div>
           <div id="status" class="wr-miet-status" aria-live="polite">Lade Mietpreisdaten …</div>
@@ -104,7 +338,7 @@
 
       <div class="result-shell wr-miet-result-shell" id="resultShell">
         <aside class="result wr-miet-result" aria-live="polite" aria-atomic="false" id="resultCard">
-          <div class="invoice-title">Mietpreise nach Wohnfläche</div>
+          <div class="invoice-title">Nettomiete / m² Nettowohnfläche</div>
           <div id="resultPlace" class="invoice-place"></div>
           <div id="resultPlaceholder" class="invoice-placeholder">Ort und Wohnfläche auswählen, dann berechnen.</div>
           <div id="resultValues" hidden>
@@ -113,13 +347,13 @@
             <div class="invoice-row"><span>Oberes Preisniveau (Q80)</span><strong id="q80sqm">—</strong></div>
             <div class="invoice-unit">Alle Quadratmeterpreise in CHF/m²/Jahr</div>
             <hr class="invoice-separator">
-            <div class="invoice-title">Entspricht folgender Monatsmiete</div>
+            <div class="invoice-title">Entspricht folgender Nettomiete (Monat)</div>
             <div class="invoice-month">
               <div class="invoice-row"><span>Unteres Preisniveau</span><strong id="q20rent">—</strong></div>
               <div class="invoice-row invoice-row--median"><span>Median</span><strong id="q50rent">—</strong></div>
               <div class="invoice-row"><span>Oberes Preisniveau</span><strong id="q80rent">—</strong></div>
             </div>
-            <p class="invoice-explainer">Q20, Median und Q80 zeigen unterschiedliche Preisniveaus von vergleichbaren Mietangeboten. Die Werte sind Modellschätzungen, keine garantierten Vertragsmieten.</p>
+            <p class="invoice-explainer">Q20 = 20-Prozent-Quantil, Q80 = 80-Prozent-Quantil</p>
           </div>
         </aside>
         <div class="wr-miet-desktop-action"><button class="wr-miet-button" id="estimateButtonDesktop" type="button" disabled>Mietkennzahlen berechnen</button></div>
@@ -127,8 +361,24 @@
       </div>
     </div>
 
-    <div class="foot">Modellbasierte Mietkennzahlen für Wohnungen mit 30 bis 180 m² Wohnfläche; Ergebnisse hängen ausschliesslich von der Postleitzahl und Wohnfläche ab.</div>
+  
   </div>
+  <!-- Weitere Rechner und Informationsseiten -->
+  <nav class="wr-below-nav" aria-label="Weitere Angebote und Informationen">
+    <h2>Weitere Berechnungen</h2>
+    <div class="wr-related-links">
+      <a href="haus.html" aria-label="Haus schätzen"><span class="wr-link-desktop">Haus schätzen</span><span class="wr-link-mobile" aria-hidden="true">Haus</span></a>
+      <a href="wohnungen.html" aria-label="Eigentumswohnung schätzen"><span class="wr-link-desktop">Eigentumswohnung schätzen</span><span class="wr-link-mobile" aria-hidden="true">Wohnung</span></a>
+      <a href="miete.html" aria-label="Miete berechnen"><span class="wr-link-desktop">Miete berechnen</span><span class="wr-link-mobile" aria-hidden="true">Miete</span></a>
+      <a href="bauland.html" aria-label="Baulandpreise berechnen"><span class="wr-link-desktop">Baulandpreise berechnen</span><span class="wr-link-mobile" aria-hidden="true">Bauland</span></a>
+    </div>
+    <div class="wr-info-links" aria-label="Weitere Informationen">
+      <a href="ueber-wohnradar.html">Über Wohnradar</a>
+      <a href="faq.html">FAQ</a>
+      <a href="kontakt.html">Kontakt</a>
+      <a href="impressum.html">Impressum</a>
+    </div>
+  </nav>
   <div id="wohnradar-footer"></div>
 </body>
 </html>
