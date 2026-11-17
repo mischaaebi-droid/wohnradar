@@ -45,6 +45,129 @@
   font-weight: 500;
 }
 </style>
+<style>
+
+/* =======================================================
+   Navigation auf den Rechnerseiten
+   ======================================================= */
+.wr-haus .wr-page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-left: auto;
+}
+.wr-haus .wr-page-nav > a:not(.home-link) {
+    color: var(--ink, #352a28);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.wr-haus .wr-page-nav > a:hover,
+.wr-haus .wr-page-nav > a:focus-visible {
+    color: var(--accent, #a4513e);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.wr-haus .wr-page-nav > a:focus-visible,
+.wr-haus .wr-below-nav a:focus-visible {
+    outline: 2px solid var(--accent, #a4513e);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+.wr-haus .wr-below-nav {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1080px;
+    margin: 24px auto 16px;
+    padding: 0 24px;
+    color: var(--ink, #352a28);
+}
+.wr-haus .wr-below-nav h2 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 750;
+}
+/* Die Rechnerlinks sind die primäre Navigation unter dem Rechner. */
+.wr-haus .wr-related-links,
+.wr-haus .wr-info-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.wr-haus .wr-related-links {
+    gap: 8px 22px;
+}
+.wr-haus .wr-related-links a {
+    color: var(--accent-dark, #89542d);
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.6;
+    text-decoration: none;
+}
+.wr-haus .wr-related-links a .wr-link-arrow {
+    margin-left: 4px;
+    color: var(--accent, #a4513e);
+}
+.wr-haus .wr-related-links a:hover,
+.wr-haus .wr-related-links a:focus-visible {
+    color: var(--accent, #a4513e);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+/* Informationslinks bleiben bewusst kleiner und zurückhaltender. */
+.wr-haus .wr-info-links {
+    gap: 6px 18px;
+    border-top: 1px solid var(--line, #ded5ce);
+    margin-top: 15px;
+    padding-top: 12px;
+}
+.wr-haus .wr-info-links a {
+    color: var(--muted, #786761);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+    text-decoration: none;
+}
+.wr-haus .wr-info-links a:hover,
+.wr-haus .wr-info-links a:focus-visible {
+    color: var(--accent-dark, #89542d);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+/* Auf breiten Ansichten ausführliche, auf Smartphones kurze Linktexte. */
+.wr-haus .wr-related-links .wr-link-mobile { display: none; }
+@media (max-width: 650px) {
+    .wr-haus .wr-page-nav { gap: 0; flex-wrap: nowrap; }
+    .wr-haus .wr-page-nav > a:not(.home-link) { display: none; }
+    .wr-haus .wr-below-nav {
+        margin-top: 15px;
+        margin-bottom: 12px;
+        padding: 0 16px;
+    }
+    .wr-haus .wr-below-nav h2 { font-size: 15px; margin-bottom: 7px; }
+    .wr-haus .wr-related-links {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 14px;
+    }
+    .wr-haus .wr-related-links a {
+        font-size: 12px;
+        line-height: 1.35;
+        white-space: nowrap;
+    }
+    .wr-haus .wr-related-links .wr-link-desktop { display: none; }
+    .wr-haus .wr-related-links .wr-link-mobile { display: inline; }
+    .wr-haus .wr-info-links {
+        gap: 6px 15px;
+        margin-top: 12px;
+        padding-top: 10px;
+    }
+    .wr-haus .wr-info-links a { font-size: 12px; line-height: 1.4; }
+}
+</style>
 <link rel="stylesheet" href="wohnradar-resultate.css?v=buttons2">
 </head>
 <body class="wr-immobilienrechner wr-haus">
@@ -62,6 +185,7 @@
     </div>
   </div>
 
+  <nav class="wr-page-nav" aria-label="Hauptnavigation">
   <a class="home-link" href="index.html" aria-label="Zur Startseite">
     <svg class="home-icon" viewBox="0 0 24 24"
          width="20" height="20" fill="none"
@@ -74,6 +198,10 @@
     </svg>
     <span class="home-text">Home</span>
   </a>
+    <a href="ueber-wohnradar.html">Über uns</a>
+    <a href="faq.html">FAQ</a>
+    <a href="kontakt.html">Kontakt</a>
+  </nav>
 </header>
 
 
@@ -987,6 +1115,23 @@ z
 </div>
 
 </div>
+<!-- Weitere Rechner und Informationsseiten: auf Desktop und Smartphone sichtbar. -->
+<nav class="wr-below-nav" aria-label="Weitere Angebote und Informationen">
+  <h2>Weitere Berechnungen</h2>
+  <div class="wr-related-links">
+    <a href="wohnungen.html" aria-label="Eigentumswohnung schätzen"><span class="wr-link-desktop">Eigentumswohnung schätzen</span><span class="wr-link-mobile" aria-hidden="true">Wohnung schätzen</span></a>
+    <a href="miete.html" aria-label="Miete berechnen"><span class="wr-link-desktop">Miete berechnen</span><span class="wr-link-mobile" aria-hidden="true">Miete</span></a>
+    <a href="bauland.html" aria-label="Baulandpreise berechnen"><span class="wr-link-desktop">Baulandpreise berechnen</span><span class="wr-link-mobile" aria-hidden="true">Bauland</span></a>
+  </div>
+
+  <div class="wr-info-links" aria-label="Weitere Informationen">
+    <a href="ueber-wohnradar.html">Über Wohnradar</a>
+    <a href="faq.html">FAQ</a>
+    <a href="kontakt.html">Kontakt</a>
+    <a href="impressum.html">Impressum</a>
+  </div>
+</nav>
+
 <script src="javascript_dateien/haeuser.js?v=buttons2"></script>
 <script>
 /* Beträge einheitlich mit CHF rechts anzeigen; Rohwert ohne Änderung des Bewertungsmodells rekonstruieren. */
@@ -1054,5 +1199,23 @@ z
 <script src="wohnradar-mobile.js" defer></script>
 
 <script src="javascript_dateien/wohnradar-slider-schutz.js?v=7" defer></script>
+
+<!-- Direkte Links zur Methodik öffnen den aufklappbaren Abschnitt automatisch. -->
+<script>
+(function () {
+  function openLinkedMethodik() {
+    if (location.hash !== '#methodik' && !location.hash.startsWith('#methodik-')) return;
+    const section = document.getElementById('methodik');
+    if (!section) return;
+    section.open = true;
+    requestAnimationFrame(() => {
+      const target = document.getElementById(location.hash.slice(1)) || section;
+      target.scrollIntoView({block: 'start'});
+    });
+  }
+  window.addEventListener('DOMContentLoaded', openLinkedMethodik);
+  window.addEventListener('hashchange', openLinkedMethodik);
+})();
+</script>
 </body>
 </html>

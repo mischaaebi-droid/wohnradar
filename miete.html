@@ -79,6 +79,137 @@
 @media(max-width:530px){.wr-methodik-mathbox{padding:12px 6px}}
 </style>
 <link rel="stylesheet" href="wohnradar-resultate.css?v=buttons2">
+<style>
+/* =======================================================
+   Navigation auf den Rechnerseiten – miete
+   ======================================================= */
+.wr-mietwert .wr-page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-left: auto;
+}
+.wr-mietwert .wr-page-nav > a:not(.home-link) {
+    color: var(--ink, #352a28);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.wr-mietwert .wr-page-nav > a:hover,
+.wr-mietwert .wr-page-nav > a:focus-visible {
+    color: var(--accent, #a4513e);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.wr-mietwert .wr-page-nav > a:focus-visible,
+.wr-mietwert .wr-below-nav a:focus-visible {
+    outline: 2px solid var(--accent, #a4513e);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+.wr-mietwert .wr-below-nav {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1080px;
+    margin: 24px auto 16px;
+    padding: 0 24px;
+    color: var(--ink, #352a28);
+}
+.wr-mietwert .wr-below-nav h2 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 750;
+}
+/* Die Rechnerlinks sind die primäre Navigation unter dem Rechner. */
+.wr-mietwert .wr-related-links,
+.wr-mietwert .wr-info-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.wr-mietwert .wr-related-links {
+    gap: 8px 22px;
+}
+.wr-mietwert .wr-related-links a {
+    color: var(--accent-dark, #89542d);
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.6;
+    text-decoration: none;
+}
+.wr-mietwert .wr-related-links a .wr-link-arrow {
+    margin-left: 4px;
+    color: var(--accent, #a4513e);
+}
+.wr-mietwert .wr-related-links a:hover,
+.wr-mietwert .wr-related-links a:focus-visible {
+    color: var(--accent, #a4513e);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+/* Informationslinks bleiben bewusst kleiner und zurückhaltender. */
+.wr-mietwert .wr-info-links {
+    gap: 6px 18px;
+    border-top: 1px solid var(--line, #ded5ce);
+    margin-top: 15px;
+    padding-top: 12px;
+}
+.wr-mietwert .wr-info-links a {
+    color: var(--muted, #786761);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+    text-decoration: none;
+}
+.wr-mietwert .wr-info-links a:hover,
+.wr-mietwert .wr-info-links a:focus-visible {
+    color: var(--accent-dark, #89542d);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+/* Auf breiten Ansichten ausführliche, auf Smartphones kurze Linktexte. */
+.wr-mietwert .wr-related-links .wr-link-mobile { display: none; }
+@media (max-width: 650px) {
+    .wr-mietwert .wr-page-nav { gap: 0; flex-wrap: nowrap; }
+    .wr-mietwert .wr-page-nav > a:not(.home-link) { display: none; }
+    .wr-mietwert .wr-below-nav {
+        margin-top: 15px;
+        margin-bottom: 12px;
+        padding: 0 16px;
+    }
+    .wr-mietwert .wr-below-nav h2 { font-size: 15px; margin-bottom: 7px; }
+    .wr-mietwert .wr-related-links {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 14px;
+    }
+    .wr-mietwert .wr-related-links a {
+        font-size: 12px;
+        line-height: 1.35;
+        white-space: nowrap;
+    }
+    .wr-mietwert .wr-related-links .wr-link-desktop { display: none; }
+    .wr-mietwert .wr-related-links .wr-link-mobile { display: inline; }
+    .wr-mietwert .wr-info-links {
+        gap: 6px 15px;
+        margin-top: 12px;
+        padding-top: 10px;
+    }
+    .wr-mietwert .wr-info-links a { font-size: 12px; line-height: 1.4; }
+}
+
+/* Links bleiben auch ohne Hover eindeutig erkennbar. */
+body.wr-mietwert .wr-related-links a {
+    text-decoration: underline;
+    text-decoration-color: rgba(137, 84, 45, .55);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+body.wr-mietwert .wr-related-links a:hover { text-decoration-color: currentColor; }
+</style>
 </head>
 <body class="wr-immobilienrechner wr-mietwert">
 <div class="wrap">
@@ -90,6 +221,7 @@
 </div>
 </div>
 <button class="reset" hidden="" id="reset" type="button">Zurücksetzen</button>
+<nav class="wr-page-nav" aria-label="Hauptnavigation">
 <a aria-label="Zur Übersicht aller Rechner" class="home-link" href="index.html">
 <svg aria-hidden="true" class="home-icon" fill="none" height="20" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" viewbox="0 0 24 24" width="20">
 <path d="m3 10 9-7 9 7"></path>
@@ -98,6 +230,10 @@
 </svg>
 <span class="home-text">Alle Rechner</span>
 </a>
+    <a href="ueber-wohnradar.html">Über uns</a>
+    <a href="faq.html">FAQ</a>
+    <a href="kontakt.html">Kontakt</a>
+  </nav>
 </header>
 <div class="layout">
 <main class="stack">
@@ -287,6 +423,23 @@ Lade Mietmodell …
 </div>
 </div>
 </div>
+
+<!-- Weitere Rechner und Informationsseiten: auf Desktop und Smartphone sichtbar. -->
+<nav class="wr-below-nav" aria-label="Weitere Angebote und Informationen">
+  <h2>Weitere Berechnungen</h2>
+  <div class="wr-related-links">
+    <a href="haus.html" aria-label="Haus schätzen"><span class="wr-link-desktop">Haus schätzen</span><span class="wr-link-mobile" aria-hidden="true">Haus</span></a>
+    <a href="wohnungen.html" aria-label="Eigentumswohnung schätzen"><span class="wr-link-desktop">Eigentumswohnung schätzen</span><span class="wr-link-mobile" aria-hidden="true">Wohnung</span></a>
+    <a href="bauland.html" aria-label="Baulandpreise berechnen"><span class="wr-link-desktop">Baulandpreise berechnen</span><span class="wr-link-mobile" aria-hidden="true">Bauland</span></a>
+  </div>
+  <div class="wr-info-links" aria-label="Weitere Informationen">
+    <a href="ueber-wohnradar.html">Über Wohnradar</a>
+    <a href="faq.html">FAQ</a>
+    <a href="kontakt.html">Kontakt</a>
+    <a href="impressum.html">Impressum</a>
+  </div>
+</nav>
+
 <!-- Mobile Ortssuche: separates Suchfenster oberhalb der Bildschirmtastatur -->
 <div aria-label="Ort oder Postleitzahl suchen" aria-modal="true" class="mobile-place-dialog" hidden="" id="mobilePlaceDialog" role="dialog">
 <div class="mobile-place-header">

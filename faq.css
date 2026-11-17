@@ -1,0 +1,147 @@
+/* Wohnradar FAQ – ruhiges Kartenlayout.
+   Ersetzt die bisherige faq.css vollständig. */
+
+.wr-faq-page .wr-faq-main {
+  max-width: 850px;
+}
+
+.wr-faq-page .wr-faq-intro {
+  margin: 0 0 28px;
+  line-height: 1.65;
+}
+
+.wr-faq-page .wr-faq-section {
+  margin: 34px 0 0;
+}
+
+.wr-faq-page .wr-faq-section h2 {
+  margin: 0 0 14px;
+  font-size: clamp(19px, 2.4vw, 23px);
+  line-height: 1.3;
+}
+
+/* Jede Frage ist eine eigene Karte – keine doppelten Trennlinien. */
+.wr-faq-page .wr-faq-item {
+  display: block;
+  margin: 0 0 9px !important;
+  padding: 0 !important;
+  background: #fff !important;
+  border: 1px solid rgba(73, 57, 45, .15) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.wr-faq-page .wr-faq-item[open] {
+  border-color: rgba(145, 88, 62, .34) !important;
+}
+
+.wr-faq-page .wr-faq-item > summary {
+  display: flex !important;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0 !important;
+  padding: 14px 18px !important;
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  color: inherit;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.45;
+  list-style: none;
+}
+
+.wr-faq-page .wr-faq-item > summary::-webkit-details-marker { display: none; }
+.wr-faq-page .wr-faq-item > summary::marker { content: ''; }
+.wr-faq-page .wr-faq-item > summary:hover { color: #89542d; }
+.wr-faq-page .wr-faq-item > summary:focus-visible {
+  outline: 2px solid #89542d;
+  outline-offset: -4px;
+}
+
+/* Einfache Winkelmarkierung statt doppelter Linien */
+.wr-faq-page .wr-faq-item > summary .wr-faq-chevron {
+  display: block;
+  flex: 0 0 9px;
+  width: 9px;
+  height: 9px;
+  margin: -4px 3px 0 0;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+  transition: transform .18s ease;
+}
+
+.wr-faq-page .wr-faq-item[open] > summary .wr-faq-chevron {
+  transform: rotate(225deg);
+  margin-top: 4px;
+}
+
+.wr-faq-page .wr-faq-item > .wr-faq-answer {
+  margin: 0 !important;
+  padding: 0 18px 16px !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.wr-faq-page .wr-faq-answer p {
+  margin: 0 0 10px;
+  line-height: 1.65;
+}
+.wr-faq-page .wr-faq-answer p:last-child { margin-bottom: 0; }
+
+/* Unerwünschte Dekorationslinien aus globalen Stylesheets ausschalten. */
+.wr-faq-page .wr-faq-item::before,
+.wr-faq-page .wr-faq-item::after,
+.wr-faq-page .wr-faq-item > summary::before,
+.wr-faq-page .wr-faq-item > summary::after {
+  content: none !important;
+  display: none !important;
+}
+
+.wr-faq-page .wr-faq-end { margin-top: 36px; padding-top: 4px; }
+.wr-faq-page .wr-faq-end p { margin-bottom: 17px; }
+
+
+/* Links in FAQ-Antworten: Wohnradar-Farbwelt statt Browser-Blau.
+   Unterstreichung bleibt zur klaren Erkennbarkeit bestehen. */
+.wr-faq-page .wr-faq-answer a,
+.wr-faq-page .wr-faq-answer a:visited {
+  color: #895139;
+  text-decoration: underline;
+  text-decoration-color: rgba(137, 81, 57, .48);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+  transition: color .15s ease, text-decoration-color .15s ease;
+}
+.wr-faq-page .wr-faq-answer a:hover {
+  color: #663b2b;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 2px;
+}
+.wr-faq-page .wr-faq-answer a:focus-visible {
+  outline: 2px solid #895139;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (max-width: 640px) {
+  .wr-faq-page .wr-faq-intro { margin-bottom: 22px; }
+  .wr-faq-page .wr-faq-section { margin-top: 29px; }
+  .wr-faq-page .wr-faq-item > summary {
+    padding: 12px 14px !important;
+    font-size: 15px;
+  }
+  .wr-faq-page .wr-faq-item > .wr-faq-answer {
+    padding: 0 14px 14px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wr-faq-page .wr-faq-chevron { transition: none !important; }
+}

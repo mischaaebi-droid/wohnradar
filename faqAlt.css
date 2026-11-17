@@ -1,0 +1,24 @@
+/* Zusatzgestaltung der FAQ – nutzt denselben Header und dieselben Grundstyles wie «Über Wohnradar». */
+.wr-faq-main { max-width: 850px; }
+.wr-faq-intro { margin: 0 0 2rem; line-height: 1.7; }
+.wr-faq-section { margin: 2.1rem 0 0; }
+.wr-faq-section h2 { margin: 0 0 .8rem; font-size: clamp(1.15rem, 2.4vw, 1.4rem); line-height: 1.35; }
+.wr-faq-item { border-bottom: 1px solid rgba(73, 57, 45, .18); }
+.wr-faq-item:first-of-type { border-top: 1px solid rgba(73, 57, 45, .18); }
+.wr-faq-item summary { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1.02rem .15rem; cursor: pointer; font-weight: 650; line-height: 1.5; list-style: none; }
+.wr-faq-item summary::-webkit-details-marker { display: none; }
+.wr-faq-item summary::marker { content: ''; }
+.wr-faq-item summary:hover { color: #89542d; }
+.wr-faq-item summary:focus-visible { outline: 2px solid currentColor; outline-offset: 3px; border-radius: 3px; }
+.wr-faq-chevron { flex: 0 0 9px; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(45deg); transition: transform .17s ease; margin: -.3rem .35rem 0 0; }
+.wr-faq-item[open] .wr-faq-chevron { transform: rotate(225deg); margin-top: .3rem; }
+.wr-faq-answer { padding: 0 .3rem .6rem; }
+.wr-faq-answer p { margin: 0 0 .85rem; line-height: 1.72; }
+.wr-faq-end { margin-top: 2.5rem; padding-top: .35rem; }
+.wr-faq-end p { margin-bottom: 1.1rem; }
+@media (max-width: 640px) {
+  .wr-faq-section { margin-top: 1.75rem; }
+  .wr-faq-item summary { padding: .9rem 0; font-size: .98rem; }
+  .wr-faq-answer { padding: 0 0 .45rem; }
+}
+@media (prefers-reduced-motion: reduce) { .wr-faq-chevron { transition: none; } }

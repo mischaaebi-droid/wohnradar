@@ -920,3 +920,15 @@ input[type="range"]:focus {
     outline: none;
     box-shadow: none;
 }
+
+
+body.wr-haus .wr-related-links a {
+    text-decoration: underline !important;
+    text-decoration-color: rgba(137, 84, 45, 0.55) !important;
+    text-decoration-thickness: 1px !important;
+    text-underline-offset: 3px !important;
+}
+
+body.wr-haus .wr-related-links a:hover {
+    text-decoration-color: currentColor !important;
+}

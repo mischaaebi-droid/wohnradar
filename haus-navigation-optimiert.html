@@ -1,0 +1,1203 @@
+<!-- GitHub Test 2026 -->
+<!DOCTYPE html>
+
+<html lang="de-CH">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+
+
+
+<title>Haus kostenlos schätzen – ohne E-Mail & Handynummer | Schweiz</title>
+<meta name="description" content="Wie viel ist Ihr Haus wert? Ermitteln Sie den Verkehrswert anonym und mit wenigen Klicks – anhand lokaler Immobilienpreise, Lage und Zustand. Ergebnis sofort online sichtbar.">
+
+
+<link href="styles.css" rel="stylesheet"/>
+
+<link href="wohnradar-ux.css" rel="stylesheet"/>
+<link rel="stylesheet" href="footer.css">
+<script src="footer.js" defer></script>
+<link rel="stylesheet" href="wohnradar-logo.css">
+<link rel="stylesheet" href="wohnradar-header-fix.css">
+
+<link rel="stylesheet" href="wohnradar-methodik.css">
+
+<style>
+/* Hausrechner: dezente Pflichtfeld-Warnung bei nicht bestätigten Flächen. */
+.house-overview input.wr-range-invalid {
+  outline: 2px solid #b33f39;
+  outline-offset: 5px;
+  border-radius: 5px;
+}
+.house-overview .wr-required-hint {
+  margin-top: 7px;
+  color: #a8312e;
+  font-size: 12px;
+  line-height: 1.4;
+}
+.house-overview .wr-required-hint[hidden] { display: none !important; }
+.house-overview .range:has(.wr-range-invalid) {
+  border-color: #b33f39;
+}
+.house-overview .rangehead output.wr-not-selected {
+  color: var(--muted, #786761);
+  font-size: 13px;
+  font-weight: 500;
+}
+</style>
+<style>
+
+/* =======================================================
+   Navigation auf den Rechnerseiten
+   ======================================================= */
+.wr-haus .wr-page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-left: auto;
+}
+.wr-haus .wr-page-nav > a:not(.home-link) {
+    color: var(--ink, #352a28);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.wr-haus .wr-page-nav > a:hover,
+.wr-haus .wr-page-nav > a:focus-visible {
+    color: var(--accent, #a4513e);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.wr-haus .wr-page-nav > a:focus-visible,
+.wr-haus .wr-below-nav a:focus-visible {
+    outline: 2px solid var(--accent, #a4513e);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+.wr-haus .wr-below-nav {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1080px;
+    margin: 38px auto 26px;
+    padding: 0 24px;
+    color: var(--ink, #352a28);
+}
+.wr-haus .wr-below-nav h2 {
+    margin: 0 0 12px;
+    font-size: 17px;
+    font-weight: 750;
+}
+/* Die Rechnerlinks sind die primäre Navigation unter dem Rechner. */
+.wr-haus .wr-related-links,
+.wr-haus .wr-info-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.wr-haus .wr-related-links {
+    gap: 12px 25px;
+}
+.wr-haus .wr-related-links a {
+    color: var(--accent-dark, #89542d);
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.6;
+    text-decoration: none;
+}
+.wr-haus .wr-related-links a .wr-link-arrow {
+    margin-left: 4px;
+    color: var(--accent, #a4513e);
+}
+.wr-haus .wr-related-links a:hover,
+.wr-haus .wr-related-links a:focus-visible {
+    color: var(--accent, #a4513e);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+/* Informationslinks bleiben bewusst kleiner und zurückhaltender. */
+.wr-haus .wr-info-links {
+    gap: 9px 20px;
+    border-top: 1px solid var(--line, #ded5ce);
+    margin-top: 25px;
+    padding-top: 20px;
+}
+.wr-haus .wr-info-links a {
+    color: var(--muted, #786761);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.6;
+    text-decoration: none;
+}
+.wr-haus .wr-info-links a:hover,
+.wr-haus .wr-info-links a:focus-visible {
+    color: var(--accent-dark, #89542d);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+@media (max-width: 650px) {
+    .wr-haus .wr-page-nav { gap: 0; flex-wrap: nowrap; }
+    .wr-haus .wr-page-nav > a:not(.home-link) { display: none; }
+    .wr-haus .wr-below-nav {
+        margin-top: 28px;
+        margin-bottom: 20px;
+        padding: 0 16px;
+    }
+    .wr-haus .wr-below-nav h2 { font-size: 16px; }
+    .wr-haus .wr-related-links { gap: 12px 18px; }
+    .wr-haus .wr-info-links { gap: 9px 16px; }
+}
+</style>
+<link rel="stylesheet" href="wohnradar-resultate.css?v=buttons2">
+</head>
+<body class="wr-immobilienrechner wr-haus">
+<span id="wohnradar-top" aria-hidden="true"></span>
+<div class="wrap">
+
+
+
+<header>
+  <div class="brand wr-header-lockup">
+    <img class="wr-brand-mark" src="wohnradar-logo.png" alt="" aria-hidden="true" width="52" height="52" decoding="async">
+    <div class="wr-header-copy">
+      <span class="wr-brand-name">WOHN<em>RADAR</em></span>
+      <p class="header-description">Immobilienbewertung</p>
+    </div>
+  </div>
+
+  <nav class="wr-page-nav" aria-label="Hauptnavigation">
+  <a class="home-link" href="index.html" aria-label="Zur Startseite">
+    <svg class="home-icon" viewBox="0 0 24 24"
+         width="20" height="20" fill="none"
+         stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round" stroke-linejoin="round"
+         aria-hidden="true">
+      <path d="m3 10 9-7 9 7"/>
+      <path d="M5 9v12h14V9"/>
+      <path d="M9 21v-7h6v7"/>
+    </svg>
+    <span class="home-text">Home</span>
+  </a>
+    <a href="ueber-wohnradar.html">Über uns</a>
+    <a href="faq.html">FAQ</a>
+    <a href="kontakt.html">Kontakt</a>
+  </nav>
+</header>
+
+
+
+
+
+
+
+<div class="layout">
+<main class="stack">
+<h1 class="wr-page-title">Haus kostenlos schätzen</h1>
+
+ <p>
+                    
+           Wie viel ist Ihr Haus wert? Wohnradar berechnet den Verkehrswert Ihres Einfamilienhauses anhand lokaler Immobilienpreise und individueller Eigenschaften. Ergebnis sofort sichtbar: <u>ohne</u> Angabe der E-Mail-Adresse.
+                    </p>
+
+
+
+<section class="card house-overview">
+<div class="grid" style="grid-template-columns:1fr">
+<div class="field">
+<label for="placeInput">
+         PLZ, Ortschaft oder Gemeinde
+        </label>
+<div class="place-wrap">
+<input aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" aria-label="Ortschaft oder Postleitzahl suchen" autocomplete="off" id="placeInput" role="combobox" spellcheck="false" value="5400 Baden"/>
+<button aria-label="Ortschaft löschen" class="clear-place" id="clearPlace" title="Eingabe löschen" type="button">
+          ×
+         </button>
+</div>
+<div class="suggest hide" id="suggestions" role="listbox">
+</div>
+<div class="hint" id="placeHint">
+</div>
+</div>
+</div>
+<div class="lbl" style="margin-top:19px">
+       Haustyp
+      </div>
+<div class="types" id="type" role="radiogroup" aria-label="Haustyp">
+<label class="typechoice" title="Freistehendes Einfamilienhaus">
+<input checked="" name="houseType" type="radio" value="free" aria-label="Freistehendes Einfamilienhaus"/>
+<span>Freistehend</span>
+</label>
+<label class="typechoice" title="Eckhaus oder Doppelhaus">
+<input name="houseType" type="radio" value="end" aria-label="Eckhaus oder Doppelhaus"/>
+<span>Doppel-/Eckhaus</span>
+</label>
+<label class="typechoice" title="Reihenmittelhaus">
+<input name="houseType" type="radio" value="mid" aria-label="Reihenmittelhaus"/>
+<span>Reihenhaus</span>
+</label>
+</div>
+<div class="grid">
+<div class="range">
+<div class="rangehead">
+<label for="living">
+          Wohnfläche
+         </label>
+<output id="livingv">
+</output>
+</div>
+<input id="living" max="290" min="60" step="5" type="range" value="60"/>
+<div class="wr-required-hint" id="livingHint" role="alert" hidden></div>
+</div>
+<div class="range">
+<div class="rangehead">
+<label for="land">
+          Parzellenfläche
+         </label>
+<output id="landv">
+</output>
+</div>
+<input id="land" max="1900" min="100" step="25" type="range" value="100"/>
+<div class="wr-required-hint" id="landHint" role="alert" hidden></div>
+</div>
+</div>
+<div class="parking-inputs" style="margin-top:18px"><div class="parking-field">
+<div class="lbl">
+         Garagenplätze
+        </div>
+<div class="count">
+<button aria-label="Garagenplätze verringern" data-count="garage:-1">
+          −
+         </button>
+<output id="garagev">
+          0
+         </output>
+<button aria-label="Garagenplätze erhöhen" data-count="garage:1">
+          +
+         </button>
+</div>
+</div><div class="parking-field">
+<div class="lbl">
+         Aussenparkplätze
+        </div>
+<div class="count">
+<button aria-label="Aussenparkplätze verringern" data-count="outside:-1">
+          −
+         </button>
+<output id="outsidev">
+          0
+         </output>
+<button aria-label="Aussenparkplätze erhöhen" data-count="outside:1">
+          +
+         </button>
+</div>
+</div></div>
+</section>
+<section class="card">
+<h2>
+       Lage und Wohnkomfort
+      </h2>
+<div id="sliders">
+</div>
+</section><section class="card">
+<h2>
+       Alter und Renovationen
+      </h2>
+<div class="range">
+<div class="rangehead">
+<label for="built">
+         Baujahr
+        </label>
+<output id="builtv">
+</output>
+</div>
+<input id="built" max="2026" min="1910" step="1" type="range" value="1955"/>
+</div>
+<div class="range">
+  <div class="rangehead">
+    <label for="condition">Zustand</label>
+    <output id="conditionv">Mittel</output>
+  </div>
+  <input id="condition" type="range" min="0" max="5" step="1" value="2" aria-label="Zustand der Liegenschaft"/>
+</div>
+<details>
+<summary>
+        Optional: Zustand detailliert
+       </summary>
+<div class="hint">
+        Jahr der letzten Erneuerung wählen. Nie erneuert? Baujahr belassen.
+       </div>
+<div id="ageFields">
+</div>
+</details>
+</section>
+
+<!-- Methodik: transparenter, aufklappbarer Erläuterungstext direkt nach den Eingaben -->
+<section class="card wr-methodik-card" aria-label="Methodik der Hausbewertung">
+  <details class="wr-methodik" id="methodik">
+    
+	<summary class="wr-methodik-summary">
+  <span class="wr-methodik-summary-text">
+    <span class="wr-methodik-summary-title">Methodik</span>
+    <span class="wr-methodik-summary-subtitle">– so berechnet Wohnradar den Wert</span>
+  </span>
+  <span class="wr-methodik-chevron" aria-hidden="true"></span>
+</summary>
+
+	
+	<div class="wr-methodik-content">
+      <h2>So berechnet Wohnradar den Wert Ihres Hauses</h2>
+      <p>Wohnradar schätzt den Verkehrswert eines Einfamilienhauses anhand der lokalen Immobilienpreise und der Eigenschaften des Gebäudes. Berücksichtigt werden unter anderem das allgemeine Immobilienpreisniveau in der jeweiligen Gemeinde oder im jeweiligen Stadtteil, die Wohnfläche, die Grundstücksgrösse, das Alter und der Zustand. Die Berechnung erfolgt in mehreren Schritten.</p>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-1">
+        <h3 id="methodik-1">1. Lokales Immobilienpreisniveau</h3>
+        <p>Die Immobilienpreise unterscheiden sich in der Schweiz von Ort zu Ort. Ein Haus in Zürich kostet in der Regel deutlich mehr als ein vergleichbares Haus in einer ländlichen Gemeinde. Wohnradar berücksichtigt diese Unterschiede anhand von lokalen Immobilienpreisdaten. Für die erfassten Postleitzahlen sind durchschnittliche Preisniveaus in Form von Medianpreisen pro Quadratmeter hinterlegt. Die verwendeten lokalen Quadratmeterpreise wurden im Oktober 2026 für Wohnradar zusammengestellt. Sie beruhen auf statistischen Auswertungen des Immobilienmarkts, unter anderem von Angebotspreisen und tatsächlichen Verkaufspreisen.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-2">
+        <h3 id="methodik-2">2. Die Wohnfläche</h3>
+        <p>Die Wohnfläche ist ein wichtiger Faktor für den Hauswert. Allerdings ist ein Haus mit 300 m² Wohnfläche in der Regel nicht doppelt so viel wert wie ein vergleichbares Haus mit 150 m². <strong>Denn je grösser ein Haus ist, desto tiefer liegt gewöhnlich der Preis pro Quadratmeter Wohnfläche.</strong> Wohnradar berücksichtigt diesen Zusammenhang mit einer mathematischen Formel, die den Quadratmeterpreis abhängig von der Wohnfläche anpasst.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-3">
+        <h3 id="methodik-3">3. Die Grundstücksfläche</h3>
+        <p>Neben der Wohnfläche beeinflusst auch die Grundstücksgrösse den Hauswert. Allerdings ist ihr Einfluss deutlich geringer als jener der Wohnfläche. Ein Haus auf einer Parzelle von 800 m² ist deshalb in der Regel nicht annähernd doppelt so viel wert wie ein vergleichbares Haus auf 400 m². Wohnradar berücksichtigt diese Zusammenhänge mit einer mathematischen Formel, deren Faktoren mithilfe multipler Regressionsrechnung ermittelt wurden.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-4">
+        <h3 id="methodik-4">4. Lage, Haustyp und Wohnkomfort</h3>
+        <p>Im nächsten Schritt berücksichtigt Wohnradar die individuellen Eigenschaften der Liegenschaft.</p>
+        <p>Dazu werden auf den bereits um die altersbedingten Abzüge verminderten Hauswert prozentuale Zu- oder Abschläge angewendet.</p>
+        <div class="wr-methodik-table-scroll" role="region" aria-label="Zu- und Abschläge für Lage, Haustyp und Wohnkomfort" tabindex="0">
+          <table class="wr-methodik-table">
+            <thead><tr><th scope="col">Einflussfaktor</th><th scope="col">Zu- oder Abschlag</th></tr></thead>
+            <tbody>
+              <tr><td>Freistehendes Einfamilienhaus</td><td>+2,5 %</td></tr>
+              <tr><td>Reiheneckhaus</td><td>−2 %</td></tr>
+              <tr><td>Reihenmittelhaus</td><td>−6 %</td></tr>
+              <tr><td>Aussicht</td><td>−4 % bis +8 %</td></tr>
+              <tr><td>Erreichbarkeit von Geschäften, Schulen und öffentlichem Verkehr</td><td>−4 % bis +4 %</td></tr>
+              <tr><td>Ruhe und Lärmbelastung</td><td>−4 % bis +4 %</td></tr>
+              <tr><td>Bauqualität und Wohnkomfort</td><td>−4 % bis +4 %</td></tr>
+              <tr><td>Gebäudealter (zusätzliche Korrektur)</td><td>0 % bis −3,5 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-5">
+        <h3 id="methodik-5">5. Alter und Renovationen</h3>
+        <p>Ein älteres Haus ist nicht zwangsläufig weniger wert als ein jüngeres. Entscheidend ist auch, wann wichtige Gebäudeteile zuletzt erneuert wurden.</p>
+        <p>Wohnradar unterscheidet deshalb neun Bauteilgruppen. Eine Bauteilgruppe ist etwa die Küche. Eine andere Bauteilgruppe ist das Dach. Für jede Bauteilgruppe werden die ungefähren Erneuerungskosten und eine typische Nutzungsdauer angenommen. Daraus berechnet Wohnradar einen altersabhängigen Wertabzug. Das Prinzip ist einfach: Ein gerade erneuertes Bauteil führt zu keinem Altersabzug. Mit zunehmendem Alter einer Bauteilgruppe (also zum Beispiel der Küche) steigt der Abzug schrittweise bis zu einem Maximalwert. Dieser entspricht den Kosten, die für die totale Erneuerung der Bauteilgruppe anfallen.</p>
+        <h4>Beispiel: Ein Einfamilienhaus mit 180 m² Wohnfläche</h4>
+        <p>Die folgende Tabelle zeigt, wie Wohnradar die Altersabzüge berechnet.</p>
+        <p>Angenommen wird ein Haus mit 180 m² Wohnfläche in einer Gemeinde mit einem lokalen Immobilienpreisniveau von 10'000 Franken pro m².</p>
+        <p>Alle aufgeführten Bauteile wurden vor 15 Jahren zuletzt erneuert.</p>
+        <div class="wr-methodik-table-scroll" role="region" aria-label="Beispieltabelle der Altersabzüge" tabindex="0">
+          <table class="wr-methodik-table wr-methodik-table--renovations">
+            <thead><tr><th scope="col">Bauteil</th><th scope="col">Angenommene Erneuerungskosten</th><th scope="col">Nutzungsdauer</th><th scope="col">Altersabzug nach 15 Jahren</th></tr></thead>
+            <tbody>
+              <tr><td>Küche</td><td>30'000 Fr.</td><td>30 Jahre</td><td>15'000 Fr.</td></tr>
+              <tr><td>Bäder und WC</td><td>40'000 Fr.</td><td>30 Jahre</td><td>20'000 Fr.</td></tr>
+              <tr><td>Innenausbau</td><td>65'000 Fr.</td><td>30 Jahre</td><td>32'500 Fr.</td></tr>
+              <tr><td>Fenster</td><td>35'000 Fr.</td><td>35 Jahre</td><td>15'000 Fr.</td></tr>
+              <tr><td>Heizung</td><td>35'000 Fr.</td><td>25 Jahre</td><td>21'000 Fr.</td></tr>
+              <tr><td>Wasser- und Abwasserleitungen</td><td>30'000 Fr.</td><td>50 Jahre</td><td>9'000 Fr.</td></tr>
+              <tr><td>Elektroinstallationen</td><td>25'000 Fr.</td><td>40 Jahre</td><td>9'400 Fr.</td></tr>
+              <tr><td>Dach</td><td>50'000 Fr.</td><td>50 Jahre</td><td>15'000 Fr.</td></tr>
+              <tr><td>Fassade</td><td>35'000 Fr.</td><td>40 Jahre</td><td>13'100 Fr.</td></tr>
+            </tbody>
+            <tfoot><tr><th scope="row">Total</th><td>345'000 Fr.</td><td></td><td>150'000 Fr.</td></tr></tfoot>
+          </table>
+        </div>
+        <p>In diesem Beispiel beträgt der gesamte altersbedingte Wertabzug rund 150'000 Franken.</p>
+        <p><strong>Wichtig:</strong> Die angenommenen Erneuerungskosten sind keine festen Beträge für jedes Haus. Wohnradar passt sie an die Wohnfläche und das örtliche Immobilienpreisniveau an. Bei grösseren Häusern und an teureren Standorten wird zum Beispiel angenommen, dass eine teurere Küche eingebaut ist als bei einem kleinen Haus an einem Standort mit tiefem Immobilienpreisniveau. Die Tabelle zeigt somit ein konkretes Rechenbeispiel und keine allgemein gültigen Renovationskosten.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-6">
+        <h3 id="methodik-6">6. Garagen und Parkplätze</h3>
+        <p>Wohnradar berücksichtigt auch hier das lokale Preisniveau. An teuren Standorten wird für einen Garagen- oder Aussenparkplatz grundsätzlich ein höherer Wert angesetzt als an günstigeren Standorten.</p>
+        <div class="wr-methodik-table-scroll" role="region" aria-label="Werte für Garagen und Aussenparkplätze" tabindex="0">
+          <table class="wr-methodik-table">
+            <thead><tr><th scope="col">Parkierung</th><th scope="col">Angesetzter Wert pro Platz</th></tr></thead>
+            <tbody>
+              <tr><td>Garagenplatz</td><td>28'000 bis 38'000 Fr.</td></tr>
+              <tr><td>Aussenparkplatz</td><td>8'000 bis 18'000 Fr.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Die berechneten Einzelwerte werden mit der Anzahl der vorhandenen Plätze multipliziert und zum Hauswert addiert.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-7">
+        <h3 id="methodik-7">7. Wie zuverlässig ist die Schätzung?</h3>
+        <p>Wohnradar liefert eine modellbasierte Schätzung des Verkehrswerts. Sie beruht auf aktuellen lokalen Immobilienpreisen, den Angaben zum Gebäude und festgelegten Bewertungsregeln.</p>
+        <p>Das Verfahren ermöglicht eine rasche und nachvollziehbare Einschätzung, ohne dass eine Besichtigung notwendig ist.</p>
+        <p>Allerdings kann ein automatisiertes Modell nicht alle Besonderheiten einer Liegenschaft berücksichtigen. Dazu gehören beispielsweise aussergewöhnliche Grundrisse, rechtliche Einschränkungen, zusätzliche Ausnützungsreserven oder spezielle bauliche Mängel.</p>
+        <p>Der berechnete Wert ist deshalb als Orientierung und nicht als verbindliches Verkehrswertgutachten zu verstehen. Der tatsächlich erzielbare Verkaufspreis kann davon abweichen.</p>
+      </section>
+
+      <section class="wr-methodik-appendix" aria-labelledby="methodik-anhang">
+        <h3 id="methodik-anhang">Mathematischer Anhang: Berechnung des Grundwerts</h3>
+        <p>Für Interessierte und Fachpersonen legen wir hier die mathematische Grundlage der Flächenbewertung offen.</p>
+        <p class="wr-methodik-formula-label">Grundformel:</p>
+        <div class="wr-methodik-formula" role="group" aria-label="Grundformel zur Berechnung des Hauswerts">
+<svg role="img" aria-label="Grundwert = m mal w mal (w durch 180) hoch minus 0,426 mal (g durch 590) hoch 0,145 mal 1,18" style="display:block;width:100%;max-width:620px;height:auto;margin:0 auto" xmlns:xlink="http://www.w3.org/1999/xlink" width="495.87pt" height="46.47pt" viewBox="0 0 495.87 46.47" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ 
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 46.47 
+L 495.87 46.47 
+L 495.87 0 
+L 0 0 
+L 0 46.47 
+z
+" style="fill: none; opacity: 0"/>
+  </g>
+  <g id="text_1">
+   <!-- $\mathrm{Grundwert}=m\cdot w\cdot\left(\frac{w}{180}\right)^{-0{,}426}\cdot\left(\frac{g}{590}\right)^{0{,}145}\cdot1{,}18$ -->
+   <g style="fill: #352a28" transform="translate(8.64 29.22) scale(0.21 -0.21)">
+    <defs>
+     <path id="DejaVuSans-47" d="M 3809 666 
+L 3809 1919 
+L 2778 1919 
+L 2778 2438 
+L 4434 2438 
+L 4434 434 
+Q 4069 175 3628 42 
+Q 3188 -91 2688 -91 
+Q 1594 -91 976 548 
+Q 359 1188 359 2328 
+Q 359 3472 976 4111 
+Q 1594 4750 2688 4750 
+Q 3144 4750 3555 4637 
+Q 3966 4525 4313 4306 
+L 4313 3634 
+Q 3963 3931 3569 4081 
+Q 3175 4231 2741 4231 
+Q 1884 4231 1454 3753 
+Q 1025 3275 1025 2328 
+Q 1025 1384 1454 906 
+Q 1884 428 2741 428 
+Q 3075 428 3337 486 
+Q 3600 544 3809 666 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-72" d="M 2631 2963 
+Q 2534 3019 2420 3045 
+Q 2306 3072 2169 3072 
+Q 1681 3072 1420 2755 
+Q 1159 2438 1159 1844 
+L 1159 0 
+L 581 0 
+L 581 3500 
+L 1159 3500 
+L 1159 2956 
+Q 1341 3275 1631 3429 
+Q 1922 3584 2338 3584 
+Q 2397 3584 2469 3576 
+Q 2541 3569 2628 3553 
+L 2631 2963 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-75" d="M 544 1381 
+L 544 3500 
+L 1119 3500 
+L 1119 1403 
+Q 1119 906 1312 657 
+Q 1506 409 1894 409 
+Q 2359 409 2629 706 
+Q 2900 1003 2900 1516 
+L 2900 3500 
+L 3475 3500 
+L 3475 0 
+L 2900 0 
+L 2900 538 
+Q 2691 219 2414 64 
+Q 2138 -91 1772 -91 
+Q 1169 -91 856 284 
+Q 544 659 544 1381 
+z
+M 1991 3584 
+L 1991 3584 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-6e" d="M 3513 2113 
+L 3513 0 
+L 2938 0 
+L 2938 2094 
+Q 2938 2591 2744 2837 
+Q 2550 3084 2163 3084 
+Q 1697 3084 1428 2787 
+Q 1159 2491 1159 1978 
+L 1159 0 
+L 581 0 
+L 581 3500 
+L 1159 3500 
+L 1159 2956 
+Q 1366 3272 1645 3428 
+Q 1925 3584 2291 3584 
+Q 2894 3584 3203 3211 
+Q 3513 2838 3513 2113 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-64" d="M 2906 2969 
+L 2906 4863 
+L 3481 4863 
+L 3481 0 
+L 2906 0 
+L 2906 525 
+Q 2725 213 2448 61 
+Q 2172 -91 1784 -91 
+Q 1150 -91 751 415 
+Q 353 922 353 1747 
+Q 353 2572 751 3078 
+Q 1150 3584 1784 3584 
+Q 2172 3584 2448 3432 
+Q 2725 3281 2906 2969 
+z
+M 947 1747 
+Q 947 1113 1208 752 
+Q 1469 391 1925 391 
+Q 2381 391 2643 752 
+Q 2906 1113 2906 1747 
+Q 2906 2381 2643 2742 
+Q 2381 3103 1925 3103 
+Q 1469 3103 1208 2742 
+Q 947 2381 947 1747 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-77" d="M 269 3500 
+L 844 3500 
+L 1563 769 
+L 2278 3500 
+L 2956 3500 
+L 3675 769 
+L 4391 3500 
+L 4966 3500 
+L 4050 0 
+L 3372 0 
+L 2619 2869 
+L 1863 0 
+L 1184 0 
+L 269 3500 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-65" d="M 3597 1894 
+L 3597 1613 
+L 953 1613 
+Q 991 1019 1311 708 
+Q 1631 397 2203 397 
+Q 2534 397 2845 478 
+Q 3156 559 3463 722 
+L 3463 178 
+Q 3153 47 2828 -22 
+Q 2503 -91 2169 -91 
+Q 1331 -91 842 396 
+Q 353 884 353 1716 
+Q 353 2575 817 3079 
+Q 1281 3584 2069 3584 
+Q 2775 3584 3186 3129 
+Q 3597 2675 3597 1894 
+z
+M 3022 2063 
+Q 3016 2534 2758 2815 
+Q 2500 3097 2075 3097 
+Q 1594 3097 1305 2825 
+Q 1016 2553 972 2059 
+L 3022 2063 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-74" d="M 1172 4494 
+L 1172 3500 
+L 2356 3500 
+L 2356 3053 
+L 1172 3053 
+L 1172 1153 
+Q 1172 725 1289 603 
+Q 1406 481 1766 481 
+L 2356 481 
+L 2356 0 
+L 1766 0 
+Q 1100 0 847 248 
+Q 594 497 594 1153 
+L 594 3053 
+L 172 3053 
+L 172 3500 
+L 594 3500 
+L 594 4494 
+L 1172 4494 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-3d" d="M 678 2906 
+L 4684 2906 
+L 4684 2381 
+L 678 2381 
+L 678 2906 
+z
+M 678 1631 
+L 4684 1631 
+L 4684 1100 
+L 678 1100 
+L 678 1631 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-Oblique-6d" d="M 5747 2113 
+L 5338 0 
+L 4763 0 
+L 5166 2094 
+Q 5191 2228 5203 2325 
+Q 5216 2422 5216 2491 
+Q 5216 2772 5059 2928 
+Q 4903 3084 4622 3084 
+Q 4203 3084 3875 2770 
+Q 3547 2456 3450 1953 
+L 3066 0 
+L 2491 0 
+L 2900 2094 
+Q 2925 2209 2937 2307 
+Q 2950 2406 2950 2484 
+Q 2950 2769 2794 2926 
+Q 2638 3084 2363 3084 
+Q 1938 3084 1609 2770 
+Q 1281 2456 1184 1953 
+L 800 0 
+L 225 0 
+L 909 3500 
+L 1484 3500 
+L 1375 2956 
+Q 1609 3263 1923 3423 
+Q 2238 3584 2597 3584 
+Q 2978 3584 3223 3384 
+Q 3469 3184 3519 2828 
+Q 3781 3197 4126 3390 
+Q 4472 3584 4856 3584 
+Q 5306 3584 5551 3325 
+Q 5797 3066 5797 2591 
+Q 5797 2488 5784 2364 
+Q 5772 2241 5747 2113 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-22c5" d="M 684 2619 
+L 1344 2619 
+L 1344 1825 
+L 684 1825 
+L 684 2619 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-Oblique-77" d="M 544 3500 
+L 1113 3500 
+L 1259 684 
+L 2566 3500 
+L 3231 3500 
+L 3425 684 
+L 4666 3500 
+L 5241 3500 
+L 3641 0 
+L 2969 0 
+L 2797 2900 
+L 1459 0 
+L 781 0 
+L 544 3500 
+z
+" transform="scale(0.015625)"/>
+     <path id="STIXSizeOneSym-Regular-28" d="M 2445 -858 
+L 2445 -1050 
+Q 1728 -371 1309 630 
+Q 890 1632 890 2886 
+Q 890 4122 1309 5136 
+Q 1728 6150 2445 6822 
+L 2445 6630 
+Q 1408 5363 1408 2886 
+Q 1408 410 2445 -858 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-31" d="M 794 531 
+L 1825 531 
+L 1825 4091 
+L 703 3866 
+L 703 4441 
+L 1819 4666 
+L 2450 4666 
+L 2450 531 
+L 3481 531 
+L 3481 0 
+L 794 0 
+L 794 531 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-38" d="M 2034 2216 
+Q 1584 2216 1326 1975 
+Q 1069 1734 1069 1313 
+Q 1069 891 1326 650 
+Q 1584 409 2034 409 
+Q 2484 409 2743 651 
+Q 3003 894 3003 1313 
+Q 3003 1734 2745 1975 
+Q 2488 2216 2034 2216 
+z
+M 1403 2484 
+Q 997 2584 770 2862 
+Q 544 3141 544 3541 
+Q 544 4100 942 4425 
+Q 1341 4750 2034 4750 
+Q 2731 4750 3128 4425 
+Q 3525 4100 3525 3541 
+Q 3525 3141 3298 2862 
+Q 3072 2584 2669 2484 
+Q 3125 2378 3379 2068 
+Q 3634 1759 3634 1313 
+Q 3634 634 3220 271 
+Q 2806 -91 2034 -91 
+Q 1263 -91 848 271 
+Q 434 634 434 1313 
+Q 434 1759 690 2068 
+Q 947 2378 1403 2484 
+z
+M 1172 3481 
+Q 1172 3119 1398 2916 
+Q 1625 2713 2034 2713 
+Q 2441 2713 2670 2916 
+Q 2900 3119 2900 3481 
+Q 2900 3844 2670 4047 
+Q 2441 4250 2034 4250 
+Q 1625 4250 1398 4047 
+Q 1172 3844 1172 3481 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-30" d="M 2034 4250 
+Q 1547 4250 1301 3770 
+Q 1056 3291 1056 2328 
+Q 1056 1369 1301 889 
+Q 1547 409 2034 409 
+Q 2525 409 2770 889 
+Q 3016 1369 3016 2328 
+Q 3016 3291 2770 3770 
+Q 2525 4250 2034 4250 
+z
+M 2034 4750 
+Q 2819 4750 3233 4129 
+Q 3647 3509 3647 2328 
+Q 3647 1150 3233 529 
+Q 2819 -91 2034 -91 
+Q 1250 -91 836 529 
+Q 422 1150 422 2328 
+Q 422 3509 836 4129 
+Q 1250 4750 2034 4750 
+z
+" transform="scale(0.015625)"/>
+     <path id="STIXSizeOneSym-Regular-29" d="M 550 6630 
+L 550 6822 
+Q 1267 6144 1686 5142 
+Q 2106 4141 2106 2886 
+Q 2106 1651 1686 636 
+Q 1267 -378 550 -1050 
+L 550 -858 
+Q 1587 410 1587 2886 
+Q 1587 5363 550 6630 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-2212" d="M 678 2272 
+L 4684 2272 
+L 4684 1741 
+L 678 1741 
+L 678 2272 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-2c" d="M 750 794 
+L 1409 794 
+L 1409 256 
+L 897 -744 
+L 494 -744 
+L 750 256 
+L 750 794 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-34" d="M 2419 4116 
+L 825 1625 
+L 2419 1625 
+L 2419 4116 
+z
+M 2253 4666 
+L 3047 4666 
+L 3047 1625 
+L 3713 1625 
+L 3713 1100 
+L 3047 1100 
+L 3047 0 
+L 2419 0 
+L 2419 1100 
+L 313 1100 
+L 313 1709 
+L 2253 4666 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-32" d="M 1228 531 
+L 3431 531 
+L 3431 0 
+L 469 0 
+L 469 531 
+Q 828 903 1448 1529 
+Q 2069 2156 2228 2338 
+Q 2531 2678 2651 2914 
+Q 2772 3150 2772 3378 
+Q 2772 3750 2511 3984 
+Q 2250 4219 1831 4219 
+Q 1534 4219 1204 4116 
+Q 875 4013 500 3803 
+L 500 4441 
+Q 881 4594 1212 4672 
+Q 1544 4750 1819 4750 
+Q 2544 4750 2975 4387 
+Q 3406 4025 3406 3419 
+Q 3406 3131 3298 2873 
+Q 3191 2616 2906 2266 
+Q 2828 2175 2409 1742 
+Q 1991 1309 1228 531 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-36" d="M 2113 2584 
+Q 1688 2584 1439 2293 
+Q 1191 2003 1191 1497 
+Q 1191 994 1439 701 
+Q 1688 409 2113 409 
+Q 2538 409 2786 701 
+Q 3034 994 3034 1497 
+Q 3034 2003 2786 2293 
+Q 2538 2584 2113 2584 
+z
+M 3366 4563 
+L 3366 3988 
+Q 3128 4100 2886 4159 
+Q 2644 4219 2406 4219 
+Q 1781 4219 1451 3797 
+Q 1122 3375 1075 2522 
+Q 1259 2794 1537 2939 
+Q 1816 3084 2150 3084 
+Q 2853 3084 3261 2657 
+Q 3669 2231 3669 1497 
+Q 3669 778 3244 343 
+Q 2819 -91 2113 -91 
+Q 1303 -91 875 529 
+Q 447 1150 447 2328 
+Q 447 3434 972 4092 
+Q 1497 4750 2381 4750 
+Q 2619 4750 2861 4703 
+Q 3103 4656 3366 4563 
+z
+" transform="scale(0.015625)"/>
+     <path id="STIXSizeTwoSym-Regular-28" d="M 3219 -1555 
+L 3219 -1786 
+Q 2144 -774 1517 730 
+Q 890 2234 890 4115 
+Q 890 6003 1533 7593 
+Q 2176 9184 3219 10022 
+L 3219 9811 
+Q 2490 9062 1994 7606 
+Q 1498 6150 1498 4115 
+Q 1498 563 3219 -1555 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-Oblique-67" d="M 3816 3500 
+L 3219 434 
+Q 3047 -456 2561 -893 
+Q 2075 -1331 1253 -1331 
+Q 950 -1331 690 -1286 
+Q 431 -1241 206 -1147 
+L 313 -588 
+Q 525 -725 762 -790 
+Q 1000 -856 1269 -856 
+Q 1816 -856 2167 -557 
+Q 2519 -259 2631 300 
+L 2681 563 
+Q 2441 288 2122 144 
+Q 1803 0 1434 0 
+Q 903 0 598 351 
+Q 294 703 294 1319 
+Q 294 1803 478 2267 
+Q 663 2731 997 3091 
+Q 1219 3328 1514 3456 
+Q 1809 3584 2131 3584 
+Q 2484 3584 2746 3420 
+Q 3009 3256 3138 2956 
+L 3238 3500 
+L 3816 3500 
+z
+M 2950 2216 
+Q 2950 2641 2750 2872 
+Q 2550 3103 2181 3103 
+Q 1953 3103 1747 3012 
+Q 1541 2922 1394 2759 
+Q 1156 2491 1023 2127 
+Q 891 1763 891 1375 
+Q 891 944 1092 712 
+Q 1294 481 1672 481 
+Q 2219 481 2584 976 
+Q 2950 1472 2950 2216 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-35" d="M 691 4666 
+L 3169 4666 
+L 3169 4134 
+L 1269 4134 
+L 1269 2991 
+Q 1406 3038 1543 3061 
+Q 1681 3084 1819 3084 
+Q 2600 3084 3056 2656 
+Q 3513 2228 3513 1497 
+Q 3513 744 3044 326 
+Q 2575 -91 1722 -91 
+Q 1428 -91 1123 -41 
+Q 819 9 494 109 
+L 494 744 
+Q 775 591 1075 516 
+Q 1375 441 1709 441 
+Q 2250 441 2565 725 
+Q 2881 1009 2881 1497 
+Q 2881 1984 2565 2268 
+Q 2250 2553 1709 2553 
+Q 1456 2553 1204 2497 
+Q 953 2441 691 2322 
+L 691 4666 
+z
+" transform="scale(0.015625)"/>
+     <path id="DejaVuSans-39" d="M 703 97 
+L 703 672 
+Q 941 559 1184 500 
+Q 1428 441 1663 441 
+Q 2288 441 2617 861 
+Q 2947 1281 2994 2138 
+Q 2813 1869 2534 1725 
+Q 2256 1581 1919 1581 
+Q 1219 1581 811 2004 
+Q 403 2428 403 3163 
+Q 403 3881 828 4315 
+Q 1253 4750 1959 4750 
+Q 2769 4750 3195 4129 
+Q 3622 3509 3622 2328 
+Q 3622 1225 3098 567 
+Q 2575 -91 1691 -91 
+Q 1453 -91 1209 -44 
+Q 966 3 703 97 
+z
+M 1959 2075 
+Q 2384 2075 2632 2365 
+Q 2881 2656 2881 3163 
+Q 2881 3666 2632 3958 
+Q 2384 4250 1959 4250 
+Q 1534 4250 1286 3958 
+Q 1038 3666 1038 3163 
+Q 1038 2656 1286 2365 
+Q 1534 2075 1959 2075 
+z
+" transform="scale(0.015625)"/>
+     <path id="STIXSizeTwoSym-Regular-29" d="M 730 9792 
+L 730 10022 
+Q 1805 9011 2432 7507 
+Q 3059 6003 3059 4115 
+Q 3059 2234 2416 643 
+Q 1773 -947 730 -1786 
+L 730 -1574 
+Q 1459 -826 1955 633 
+Q 2451 2093 2451 4115 
+Q 2451 7674 730 9792 
+z
+" transform="scale(0.015625)"/>
+    </defs>
+    <use xlink:href="#DejaVuSans-47" transform="translate(0 0.026562)"/>
+    <use xlink:href="#DejaVuSans-72" transform="translate(77.490234 0.026562)"/>
+    <use xlink:href="#DejaVuSans-75" transform="translate(118.603516 0.026562)"/>
+    <use xlink:href="#DejaVuSans-6e" transform="translate(181.982422 0.026562)"/>
+    <use xlink:href="#DejaVuSans-64" transform="translate(245.361328 0.026562)"/>
+    <use xlink:href="#DejaVuSans-77" transform="translate(308.837891 0.026562)"/>
+    <use xlink:href="#DejaVuSans-65" transform="translate(390.625 0.026562)"/>
+    <use xlink:href="#DejaVuSans-72" transform="translate(452.148438 0.026562)"/>
+    <use xlink:href="#DejaVuSans-74" transform="translate(493.261719 0.026562)"/>
+    <use xlink:href="#DejaVuSans-3d" transform="translate(551.953125 0.026562)"/>
+    <use xlink:href="#DejaVuSans-Oblique-6d" transform="translate(655.224609 0.026562)"/>
+    <use xlink:href="#DejaVuSans-22c5" transform="translate(772.119141 0.026562)"/>
+    <use xlink:href="#DejaVuSans-Oblique-77" transform="translate(823.388672 0.026562)"/>
+    <use xlink:href="#DejaVuSans-22c5" transform="translate(924.658203 0.026562)"/>
+    <use xlink:href="#STIXSizeOneSym-Regular-28" transform="translate(975.927734 -23.96875) scale(0.99577)"/>
+    <use xlink:href="#DejaVuSans-Oblique-77" transform="translate(1060.552231 43.823437) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-31" transform="translate(1022.552231 -39.379687) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-38" transform="translate(1067.088364 -39.379687) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-30" transform="translate(1111.624496 -39.379687) scale(0.7)"/>
+    <use xlink:href="#STIXSizeOneSym-Regular-29" transform="translate(1168.660629 -23.96875) scale(0.99577)"/>
+    <use xlink:href="#DejaVuSans-2212" transform="translate(1216.242157 38.307812) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-30" transform="translate(1274.894501 38.307812) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-2c" transform="translate(1319.430634 38.307812) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-34" transform="translate(1341.68161 38.307812) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-32" transform="translate(1386.217743 38.307812) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-36" transform="translate(1430.753876 38.307812) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-22c5" transform="translate(1497.506805 0.026562)"/>
+    <use xlink:href="#STIXSizeTwoSym-Regular-28" transform="translate(1548.776337 -19.453125) scale(0.74773)"/>
+    <use xlink:href="#DejaVuSans-Oblique-67" transform="translate(1635.804077 58.38125) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-35" transform="translate(1592.804077 -39.379687) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-39" transform="translate(1633.49021 -39.379687) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-30" transform="translate(1678.026343 -39.379687) scale(0.7)"/>
+    <use xlink:href="#STIXSizeTwoSym-Regular-29" transform="translate(1735.062476 -19.453125) scale(0.74773)"/>
+    <use xlink:href="#DejaVuSans-30" transform="translate(1781.467505 38.307812) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-2c" transform="translate(1826.003638 38.307812) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-31" transform="translate(1848.254614 38.307812) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-34" transform="translate(1892.790747 38.307812) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-35" transform="translate(1937.32688 38.307812) scale(0.7)"/>
+    <use xlink:href="#DejaVuSans-22c5" transform="translate(2004.07981 0.026562)"/>
+    <use xlink:href="#DejaVuSans-31" transform="translate(2055.349341 0.026562)"/>
+    <use xlink:href="#DejaVuSans-2c" transform="translate(2118.972388 0.026562)"/>
+    <use xlink:href="#DejaVuSans-31" transform="translate(2150.759497 0.026562)"/>
+    <use xlink:href="#DejaVuSans-38" transform="translate(2214.382544 0.026562)"/>
+    <path d="M 1022.552231 18.823437 
+L 1022.552231 25.073437 
+L 1156.160629 25.073437 
+L 1156.160629 18.823437 
+L 1022.552231 18.823437 
+z
+"/>
+    <path d="M 1592.804077 18.823438 
+L 1592.804077 25.073438 
+L 1722.562476 25.073438 
+L 1722.562476 18.823438 
+L 1592.804077 18.823438 
+z
+"/>
+   </g>
+  </g>
+ </g>
+</svg>
+        </div>
+        <p>Dabei gilt:</p>
+        <ul class="wr-methodik-legend">
+          <li><strong>m:</strong> Lokaler Medianpreis pro Quadratmeter in Franken</li>
+          <li><strong>w:</strong> Wohnfläche in Quadratmetern</li>
+          <li><strong>g:</strong> Grundstücksfläche in Quadratmetern (rechnerisch mindestens 40 m²)</li>
+          <li><strong>−0,426:</strong> Korrekturfaktor für die abnehmenden Quadratmeterpreise bei zunehmender Wohnfläche</li>
+          <li><strong>0,145:</strong> Korrekturfaktor für den abnehmenden Wertzuwachs zusätzlicher Grundstücksfläche</li>
+          <li><strong>1,18:</strong> Kalibrierungsfaktor des Bewertungsmodells</li>
+        </ul>
+      </section>
+    </div>
+  </details>
+</section>
+<div class="mobile-estimate-action"><button class="estimate-button" id="estimateButtonMobile" type="button">Verkehrswert bestimmen</button></div>
+</main>
+<div class="result-shell" id="resultShell"><aside aria-live="polite" class="result result-invoice" id="resultCard">
+<div class="invoice-title">Verkehrswertberechnung</div>
+<div class="invoice-row"><span>Rohwert</span><strong id="rawout">—</strong></div>
+<div class="invoice-row"><span>Altersabzug</span><strong id="ageout">—</strong></div>
+<div class="invoice-row"><span id="garageLabel">0 Garagenplätze</span><strong id="garageout">—</strong></div>
+<div class="invoice-row"><span id="outsideLabel">0 Aussenparkplätze</span><strong id="outsideout">—</strong></div>
+<div class="invoice-total"><span>Total Verkehrswert</span><strong id="estimate">—</strong></div>
+</aside>
+<div class="result-actions" id="resultActions"><button class="estimate-button" id="estimateButtonDesktop" type="button">Verkehrswert bestimmen</button><div class="post-estimate-actions" id="postEstimateActions"><button class="adjust-button" id="adjustButton" type="button">Nachjustieren</button><button class="reset-button" id="reset" type="button">Neue Schätzung</button></div></div></div>
+</div>
+
+</div>
+<!-- Weitere Rechner und Informationsseiten: auf Desktop und Smartphone sichtbar. -->
+<nav class="wr-below-nav" aria-label="Weitere Angebote und Informationen">
+  <h2>Weitere Berechnungen</h2>
+  <div class="wr-related-links">
+    <a href="wohnungen.html">Eigentumswohnung schätzen <span class="wr-link-arrow" aria-hidden="true">→</span></a>
+    <a href="miete.html">Miete berechnen <span class="wr-link-arrow" aria-hidden="true">→</span></a>
+    <a href="bauland.html">Baulandpreise berechnen <span class="wr-link-arrow" aria-hidden="true">→</span></a>
+  </div>
+
+  <div class="wr-info-links" aria-label="Weitere Informationen">
+    <a href="ueber-wohnradar.html">Über Wohnradar</a>
+    <a href="faq.html">FAQ</a>
+    <a href="kontakt.html">Kontakt</a>
+    <a href="impressum.html">Impressum</a>
+  </div>
+</nav>
+
+<script src="javascript_dateien/haeuser.js?v=buttons2"></script>
+<script>
+/* Beträge einheitlich mit CHF rechts anzeigen; Rohwert ohne Änderung des Bewertungsmodells rekonstruieren. */
+(() => {
+  const ids = ['estimate', 'ageout', 'garageout', 'outsideout'];
+  const els = ids.map(id => document.getElementById(id));
+  const raw = document.getElementById('rawout');
+  const parse = el => {
+    const t = el.textContent.trim();
+    if (!/\d/.test(t)) return null;
+    const cleaned = t.replace(/[’'\s\u00a0]/g, '').replace(/[^\d,.-]/g, '');
+    const n = Number(cleaned.replace(/,/g, '.'));
+    return Number.isFinite(n) ? n : null;
+  };
+  const formatCHF = (el) => {
+    const original = el.textContent.trim();
+    const value = parse(el);
+    if (value === null) return;
+    const sign = /^\s*[-−]/.test(original) ? '−' : /^\s*\+/.test(original) ? '+' : '';
+    const formatted = sign + Math.abs(value).toLocaleString('de-CH', { maximumFractionDigits: 0 }) + ' CHF';
+    if (original !== formatted) el.textContent = formatted;
+  };
+  const update = () => {
+    const [total, age, garage, outside] = els.map(parse);
+    els.forEach(formatCHF);
+    if ([total, age, garage, outside].some(n => n === null)) { raw.textContent = '—'; return; }
+    // Altersabzug wird abgezogen, Parkplätze werden addiert.
+    const amount = total + Math.abs(age) - Math.abs(garage) - Math.abs(outside);
+    const formattedRaw = Math.round(amount).toLocaleString('de-CH') + ' CHF';
+    if (raw.textContent !== formattedRaw) raw.textContent = formattedRaw;
+  };
+  const observer = new MutationObserver(update);
+  els.forEach(el => observer.observe(el, { childList: true, characterData: true, subtree: true }));
+  update();
+})();
+</script>
+
+<!-- Footer-Inhalt wird ausschliesslich aus footer.html geladen. -->
+<div id="wohnradar-footer"></div>
+<!-- Mobiler Scroll-Hinweis: verschwindet nach der ersten Scrollbewegung. -->
+
+
+<div class="wr-scrollcue" id="wrScrollCue" aria-hidden="true">
+  <svg
+    width="25"
+    height="25"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round">
+    <path d="M12 4v16"/>
+    <path d="m5 13 7 7 7-7"/>
+  </svg>
+</div>
+
+
+
+
+
+
+
+<script src="javascript_dateien/ux-flow.js?v=buttons3"></script>
+<script src="wohnradar-mobile.js" defer></script>
+
+<script src="javascript_dateien/wohnradar-slider-schutz.js?v=7" defer></script>
+
+<!-- Direkte Links zur Methodik öffnen den aufklappbaren Abschnitt automatisch. -->
+<script>
+(function () {
+  function openLinkedMethodik() {
+    if (location.hash !== '#methodik' && !location.hash.startsWith('#methodik-')) return;
+    const section = document.getElementById('methodik');
+    if (!section) return;
+    section.open = true;
+    requestAnimationFrame(() => {
+      const target = document.getElementById(location.hash.slice(1)) || section;
+      target.scrollIntoView({block: 'start'});
+    });
+  }
+  window.addEventListener('DOMContentLoaded', openLinkedMethodik);
+  window.addEventListener('hashchange', openLinkedMethodik);
+})();
+</script>
+</body>
+</html>
