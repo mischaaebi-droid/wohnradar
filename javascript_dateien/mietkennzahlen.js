@@ -21,16 +21,12 @@ async function starteMietkennzahlen() {
     const mobileButton = $('estimateButtonMobile');
     const mobileMode = window.matchMedia('(max-width: 840px)');
     const formatCHF = value => Math.round(value).toLocaleString('de-CH');
-    const normalize = value => String(value || '')
-        .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    const normalize = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
 
     let model = null;
     let places = [];
     let selectedPlz = null;
-    let activeSuggestion = -1;
-    let placeFocused = false;
-    let choosing = false;
-    let blurTimer = null;
+    let ortssuche = null;
 
     // Unveränderte Formel des bisherigen Mietpreis-Testtools:
     // Jahresmiete in CHF/m² = beta0 + beta1*ln(A) + beta2*ln(A)^2.
@@ -49,88 +45,12 @@ async function starteMietkennzahlen() {
         mobileButton.disabled = !ready;
     }
 
-    function closeSuggestions() {
-        suggestionsEl.classList.add('hide');
-        placeInput.setAttribute('aria-expanded', 'false');
-        placeInput.removeAttribute('aria-activedescendant');
-        activeSuggestion = -1;
-    }
-
     function invalidateSelection() {
         selectedPlz = null;
         resultShell.classList.remove('has-estimate');
         resultValues.hidden = true;
         resultPlaceholder.hidden = false;
         resultPlace.textContent = '';
-    }
-
-    function choose(plz) {
-        if (!model || !model[plz]) return;
-        const info = places.find(p => p.plz === plz);
-        selectedPlz = plz;
-        choosing = true;
-        placeInput.value = `${plz} ${info ? info.ort : ''}`.trim();
-        $('placeHint').textContent = '';
-        closeSuggestions();
-        placeInput.blur();
-        choosing = false;
-        // Eine neue Ortsauswahl erfordert einen bewussten Klick auf "Berechnen".
-        resultShell.classList.remove('has-estimate');
-        resultValues.hidden = true;
-        resultPlaceholder.hidden = false;
-        resultPlace.textContent = '';
-    }
-
-    function getMatches(raw) {
-        if (raw.length < 2) return [];
-        const exactPLZ = /^\d{2,4}$/.test(raw);
-        return places.filter(place => {
-            if (place.plz.startsWith(raw)) return true;
-            if (exactPLZ) return false;
-            return place.search.some(name => name.startsWith(raw) || name.includes(' ' + raw));
-        }).sort((a, b) => {
-            const aStart = a.plz.startsWith(raw) || a.search.some(name => name.startsWith(raw));
-            const bStart = b.plz.startsWith(raw) || b.search.some(name => name.startsWith(raw));
-            return Number(bStart) - Number(aStart) ||
-                   a.ort.localeCompare(b.ort, 'de-CH') || a.plz.localeCompare(b.plz);
-        }).slice(0, 12);
-    }
-
-    function showSuggestions() {
-        const raw = normalize(placeInput.value);
-        if (!placeFocused || raw.length < 2) {
-            closeSuggestions();
-            return;
-        }
-        const matches = getMatches(raw);
-        suggestionsEl.replaceChildren();
-        matches.forEach((p, i) => {
-            const button = document.createElement('button');
-            button.type = 'button';
-            button.id = `suggest_${i}`;
-            button.dataset.plz = p.plz;
-            button.setAttribute('role', 'option');
-            button.setAttribute('aria-selected', 'false');
-            button.append(document.createTextNode(`${p.ort} `));
-            const small = document.createElement('small');
-            small.textContent = `PLZ ${p.plz}`;
-            button.appendChild(small);
-            button.addEventListener('pointerdown', ev => ev.preventDefault());
-            button.addEventListener('click', () => choose(p.plz));
-            suggestionsEl.appendChild(button);
-        });
-        suggestionsEl.classList.toggle('hide', matches.length === 0);
-        placeInput.setAttribute('aria-expanded', String(matches.length > 0));
-        activeSuggestion = -1;
-    }
-
-    function highlightSuggestion(i) {
-        const buttons = [...suggestionsEl.querySelectorAll('button')];
-        if (!buttons.length) return;
-        activeSuggestion = (i + buttons.length) % buttons.length;
-        buttons.forEach((button, n) => button.setAttribute('aria-selected', String(n === activeSuggestion)));
-        placeInput.setAttribute('aria-activedescendant', buttons[activeSuggestion].id);
-        buttons[activeSuggestion].scrollIntoView({block: 'nearest'});
     }
 
     function calculate() {
@@ -189,61 +109,6 @@ async function starteMietkennzahlen() {
     arrangeResult();
     window.addEventListener('resize', arrangeResult);
 
-    placeInput.addEventListener('focus', () => {
-        if (blurTimer !== null) clearTimeout(blurTimer);
-        if (!choosing) {
-            placeFocused = true;
-            selectedPlz = null;
-            placeInput.value = '';
-            resultShell.classList.remove('has-estimate');
-            resultValues.hidden = true;
-            resultPlaceholder.hidden = false;
-            resultPlace.textContent = '';
-            showSuggestions();
-        }
-    });
-    placeInput.addEventListener('input', () => {
-        if (blurTimer !== null) clearTimeout(blurTimer);
-        invalidateSelection();
-        $('placeHint').textContent = placeInput.value.trim() ? 'Ort oder PLZ auswählen' : '';
-        showSuggestions();
-    });
-    placeInput.addEventListener('keydown', ev => {
-        const buttons = [...suggestionsEl.querySelectorAll('button')];
-        if (ev.key === 'ArrowDown' && buttons.length) {
-            ev.preventDefault();
-            highlightSuggestion(activeSuggestion + 1);
-        } else if (ev.key === 'ArrowUp' && buttons.length) {
-            ev.preventDefault();
-            highlightSuggestion(activeSuggestion < 0 ? buttons.length - 1 : activeSuggestion - 1);
-        } else if (ev.key === 'Enter') {
-            if (buttons.length) {
-                ev.preventDefault();
-                choose(buttons[Math.max(0, activeSuggestion)].dataset.plz);
-            } else if (selectedPlz) {
-                ev.preventDefault();
-                calculate();
-            }
-        } else if (ev.key === 'Escape') {
-            closeSuggestions();
-            placeInput.blur();
-        }
-    });
-    placeInput.addEventListener('blur', () => {
-        placeFocused = false;
-        blurTimer = window.setTimeout(closeSuggestions, 160);
-    });
-    $('clearPlace').addEventListener('click', () => {
-        invalidateSelection();
-        placeInput.value = '';
-        $('placeHint').textContent = '';
-        placeInput.focus();
-    });
-    document.addEventListener('pointerdown', ev => {
-        if (!placeInput.contains(ev.target) && !suggestionsEl.contains(ev.target) && !$('clearPlace').contains(ev.target)) {
-            closeSuggestions();
-        }
-    });
     // Wohnfläche wie beim Hausrechner: erst eine bewusste Reglerbedienung zählt.
     function updateArea() {
         areaSelected = true;
@@ -260,7 +125,7 @@ async function starteMietkennzahlen() {
     });
     $('reset').addEventListener('click', () => {
         invalidateSelection();
-        closeSuggestions();
+        ortssuche?.close();
         placeInput.value = '';
         areaInput.value = areaInput.min;
         areaSelected = false;
@@ -284,6 +149,29 @@ async function starteMietkennzahlen() {
             const ort = item.ort || plz;
             const aliases = item.alias || [];
             return {plz, ort, search: [ort, ...aliases].map(normalize)};
+        });
+        const { initOrtssuche } = await import(new URL('javascript_dateien/ortssuche.js?v=20261119-1', document.baseURI).href);
+        ortssuche = initOrtssuche({
+            places,
+            isSelected: () => !!selectedPlz,
+            onSelect: plz => {
+                if (!model || !model[plz]) return;
+                selectedPlz = plz;
+                $('placeHint').textContent = '';
+                // Neue Ortsauswahl: erneut ausdrücklich «Berechnen» drücken.
+                resultShell.classList.remove('has-estimate');
+                resultValues.hidden = true;
+                resultPlaceholder.hidden = false;
+                resultPlace.textContent = '';
+            },
+            onEdit: value => {
+                invalidateSelection();
+                $('placeHint').textContent = value.trim() ? 'Ort oder PLZ auswählen' : '';
+            },
+            onClear: () => {
+                invalidateSelection();
+                $('placeHint').textContent = '';
+            }
         });
         setButtonsReady(true);
         setStatus('');

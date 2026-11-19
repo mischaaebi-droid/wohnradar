@@ -167,8 +167,6 @@ async function starteMietrechner() {
     outside: 0
   };
 
-  let placeFocused = false;
-  let activeSuggestion = -1;
 
   const selected = {
     condition: "normal",
@@ -504,373 +502,34 @@ async function starteMietrechner() {
   }, true);
 
   /* =====================================================
-     7. EINHEITLICHE ORTSSUCHE
+     7. GEMEINSAME ORTSSUCHE
      ===================================================== */
 
   const placeInput = $("placeInput");
-  const suggestionList = $("suggestions");
-
-  const mobilePlaceMode =
-    window.matchMedia("(max-width: 840px)");
-
-  let selectingPlace = false;
-  let keyboardTimer = null;
-
   placeInput.value = "";
-  placeInput.placeholder = "Ort oder PLZ eingeben";
-  placeInput.setAttribute("autocomplete", "off");
-
-  function closeSuggestions() {
-
-    clearTimeout(keyboardTimer);
-
-    suggestionList.classList.add("hide");
-    suggestionList.style.display = "none";
-
-    placeInput.setAttribute(
-      "aria-expanded",
-      "false"
-    );
-
-    placeInput.removeAttribute(
-      "aria-activedescendant"
-    );
-
-    activeSuggestion = -1;
-  }
-
-  function showSuggestions() {
-
-    suggestionList.classList.remove("hide");
-
-    suggestionList.style.display = "block";
-    suggestionList.style.visibility = "visible";
-    suggestionList.style.opacity = "1";
-    
-    placeInput.setAttribute(
-      "aria-expanded",
-      "true"
-    );
-  }
-
-  function choose(plz) {
-
-    if (!MODEL[plz]) return;
-
-    selectingPlace = false;
-    selection = plz;
-    placeChosen = true;
-    setPlaceError(false);
-
-    placeInput.value =
-      plz + " " + ortsname(plz);
-
-    placeHint.textContent = "";
-
-    closeSuggestions();
-    placeInput.blur();
-
-    refresh();
-  }
-
-  function suggestions() {
-
-    const q = normalize(placeInput.value);
-
-    if (!placeFocused || q.length < 3) {
-      closeSuggestions();
-      return;
-    }
-
-    const matches = places
-      .filter(p =>
-        p.plz.startsWith(q) ||
-        normalize(p.ort).startsWith(q) ||
-        p.norm.includes(" " + q)
-      )
-      .sort((a, b) => {
-
-        const aa =
-          a.plz.startsWith(q) ||
-          normalize(a.ort).startsWith(q);
-
-        const bb =
-          b.plz.startsWith(q) ||
-          normalize(b.ort).startsWith(q);
-
-        return (
-          Number(bb) - Number(aa) ||
-          a.ort.localeCompare(b.ort, "de")
-        );
-      })
-      .slice(0, 12);
-
-    suggestionList.replaceChildren();
-    activeSuggestion = -1;
-
-    if (!matches.length) {
-      closeSuggestions();
-      return;
-    }
-
-    matches.forEach((p, i) => {
-
-      const button =
-        document.createElement("button");
-
-      button.type = "button";
-      button.id = "suggest_" + i;
-      button.dataset.plz = p.plz;
-
-      button.setAttribute(
-        "role",
-        "option"
-      );
-
-      button.setAttribute(
-        "aria-selected",
-        "false"
-      );
-
-      button.append(
-        document.createTextNode(p.ort + " ")
-      );
-
-      const small =
-        document.createElement("small");
-
-      small.textContent = "PLZ " + p.plz;
-
-      button.append(small);
-
-      button.addEventListener(
-        "pointerdown",
-        e => e.preventDefault()
-      );
-
-      button.addEventListener(
-        "click",
-        () => choose(p.plz)
-      );
-
-      suggestionList.append(button);
-    });
-
-    showSuggestions();
-
-    /* -------------------------------------
-       SMARTPHONE: 700 MS TIPP-PAUSE
-       ------------------------------------- */
-
-    if (mobilePlaceMode.matches) {
-
-      clearTimeout(keyboardTimer);
-
-      keyboardTimer = setTimeout(() => {
-
-        if (
-          document.activeElement === placeInput &&
-          !suggestionList.classList.contains("hide") &&
-          suggestionList.querySelector("button")
-        ) {
-
-          selectingPlace = true;
-
-          // Smartphone-Tastatur schliessen.
-          placeInput.blur();
-
-          // Vorschläge bleiben sichtbar.
-          requestAnimationFrame(() => {
-
-            if (selectingPlace) {
-              showSuggestions();
-            }
-          });
-        }
-
-      }, 700);
-    }
-  }
-
-  function highlightSuggestion(index) {
-
-    const buttons = [
-      ...suggestionList.querySelectorAll("button")
-    ];
-
-    if (!buttons.length) return;
-
-    activeSuggestion =
-      (index + buttons.length) % buttons.length;
-
-    buttons.forEach((b, i) => {
-
-      b.setAttribute(
-        "aria-selected",
-        String(i === activeSuggestion)
-      );
-    });
-
-    placeInput.setAttribute(
-      "aria-activedescendant",
-      buttons[activeSuggestion].id
-    );
-
-    buttons[activeSuggestion].scrollIntoView({
-      block: "nearest"
-    });
-  }
-
-  /* =====================================================
-     8. EREIGNISSE DER ORTSSUCHE
-     ===================================================== */
-
-  placeInput.addEventListener("focus", () => {
-
-    selectingPlace = false;
-    placeFocused = true;
-
-    closeSuggestions();
-
-    // Neue Suche: Feld sofort leeren.
-    placeInput.value = "";
-    placeChosen = false;
-    placeInput.placeholder = "";
-
-    if (!placeHint.classList.contains("wr-place-error")) placeHint.textContent = "";
-  });
-
-  placeInput.addEventListener("input", () => {
-    placeChosen = false;
-
-    if (!placeHint.classList.contains("wr-place-error")) placeHint.textContent =
-      placeInput.value.trim()
-        ? "Ort oder PLZ auswählen"
-        : "";
-
-    suggestions();
-  });
-
-  $("clearPlace").addEventListener(
-    "click",
-    () => {
-
-      selectingPlace = false;
-
-      closeSuggestions();
-
-      placeInput.value = "";
+  const { initOrtssuche } = await import(new URL('javascript_dateien/ortssuche.js?v=20261119-1', document.baseURI).href);
+  const ortssuche = initOrtssuche({
+    places,
+    isSelected: () => placeChosen,
+    hasError: () => placeHint.classList.contains("wr-place-error"),
+    onSelect: plz => {
+      if (!MODEL[plz]) return;
+      selection = plz;
+      placeChosen = true;
+      setPlaceError(false);
+      placeHint.textContent = "";
+      refresh();
+    },
+    onEdit: value => {
+      placeChosen = false;
+      if (!placeHint.classList.contains("wr-place-error"))
+        placeHint.textContent = value.trim() ? "Ort oder PLZ auswählen" : "";
+    },
+    onClear: () => {
       placeChosen = false;
       if (!placeHint.classList.contains("wr-place-error")) placeHint.textContent = "";
-
-      placeInput.focus();
     }
-  );
-
-  placeInput.addEventListener(
-    "keydown",
-    e => {
-
-      const buttons = [
-        ...suggestionList.querySelectorAll("button")
-      ];
-
-      if (
-        e.key === "ArrowDown" &&
-        buttons.length
-      ) {
-
-        e.preventDefault();
-
-        highlightSuggestion(
-          activeSuggestion + 1
-        );
-
-      } else if (
-        e.key === "ArrowUp" &&
-        buttons.length
-      ) {
-
-        e.preventDefault();
-
-        highlightSuggestion(
-          activeSuggestion < 0
-            ? buttons.length - 1
-            : activeSuggestion - 1
-        );
-
-      } else if (
-        e.key === "Enter" &&
-        buttons.length
-      ) {
-
-        e.preventDefault();
-
-        choose(
-          buttons[
-            Math.max(0, activeSuggestion)
-          ].dataset.plz
-        );
-
-      } else if (e.key === "Escape") {
-
-        selectingPlace = false;
-
-        closeSuggestions();
-        placeInput.blur();
-      }
-    }
-  );
-
-  placeInput.addEventListener(
-    "blur",
-    () => {
-
-      placeInput.placeholder =
-        "Ort oder PLZ eingeben";
-
-      if (!selectingPlace) {
-        clearTimeout(keyboardTimer);
-      }
-
-      placeFocused = false;
-
-      setTimeout(() => {
-
-        if (!selectingPlace) {
-          closeSuggestions();
-        }
-
-        if (
-          !selectingPlace &&
-          placeInput.value.trim() &&
-          placeInput.value.trim() !==
-            selection + " " + ortsname(selection)
-        ) {
-
-          if (!placeHint.classList.contains("wr-place-error")) placeHint.textContent =
-            "Bitte einen Ort aus den Vorschlägen wählen";
-        }
-
-      }, 160);
-    }
-  );
-
-  document.addEventListener(
-    "pointerdown",
-    e => {
-
-      if (
-        !placeInput.contains(e.target) &&
-        !suggestionList.contains(e.target) &&
-        !$("clearPlace").contains(e.target)
-      ) {
-
-        selectingPlace = false;
-        closeSuggestions();
-      }
-    }
-  );
+  });
 
   /* =====================================================
      9. AUSSENFLÄCHEN
@@ -1071,7 +730,7 @@ async function starteMietrechner() {
 
       updateExterior();
 
-      choose(defaultZip);
+      selection = defaultZip;
 
       // Nach Reset nur Platzhalter anzeigen.
       placeInput.value = "";
@@ -1088,7 +747,7 @@ async function starteMietrechner() {
 
   updateExterior();
 
-  choose(defaultZip);
+  selection = defaultZip;
 
   // Intern ist die Standard-PLZ für die Berechnung
   // vorhanden. Das Eingabefeld bleibt leer.

@@ -230,13 +230,6 @@ async function starteWohnungswert() {
     const suggestionList = $('suggestions');
     const placeHint = $('placeHint');
 
-    const mobilePlaceMode = window.matchMedia('(max-width: 840px)');
-
-    let placeFocused = false;
-    let activeSuggestion = -1;
-    let selectingPlace = false;
-    let keyboardTimer = null;
-
     placeInput.value = '';
     placeInput.placeholder = 'Ort oder PLZ eingeben';
     placeInput.setAttribute('autocomplete', 'off');
@@ -295,177 +288,34 @@ async function starteWohnungswert() {
     }
 
 
-    function closeSuggestions() {
-
-        clearTimeout(keyboardTimer);
-
-        suggestionList.classList.add('hide');
-        suggestionList.style.display = 'none';
-
-        placeInput.setAttribute('aria-expanded', 'false');
-        placeInput.removeAttribute('aria-activedescendant');
-
-        activeSuggestion = -1;
-    }
-
-    function showSuggestions() {
-
-        suggestionList.classList.remove('hide');
-        suggestionList.style.display = 'block';
-        suggestionList.style.visibility = 'visible';
-        suggestionList.style.opacity = '1';
-
-        placeInput.setAttribute('aria-expanded', 'true');
-    }
-
-    function choose(plz) {
-
-        if (!DATA[plz]) return;
-
-        selectingPlace = false;
-
-        S.plz = plz;
-        S.placeSelected = true;
-        clearPlaceError();
-
-        placeInput.value = plz + ' ' + DATA[plz].ort;
-
-        closeSuggestions();
-
-        placeHint.textContent = '';
-        placeInput.blur();
-
-        calc();
-    }
-
-    function suggestions() {
-
-        const raw = normalize(placeInput.value);
-
-        if (!placeFocused || raw.length < 3) {
-            closeSuggestions();
-            return;
+    const { initOrtssuche } = await import(new URL('javascript_dateien/ortssuche.js?v=20261119-1', document.baseURI).href);
+    const ortssuche = initOrtssuche({
+        places,
+        isSelected: () => S.placeSelected,
+        hasError: () => placeInput.classList.contains('wr-place-invalid'),
+        onSelect: plz => {
+            if (!DATA[plz]) return;
+            S.plz = plz;
+            S.placeSelected = true;
+            clearPlaceError();
+            placeHint.textContent = '';
+            calc();
+        },
+        onEdit: value => {
+            S.placeSelected = false;
+            S.estimateRequested = false;
+            calc();
+            if (!placeInput.classList.contains('wr-place-invalid'))
+                placeHint.textContent = value.trim() ? 'Ort oder PLZ auswählen' : '';
+        },
+        onClear: () => {
+            S.placeSelected = false;
+            S.estimateRequested = false;
+            calc();
+            if (!placeInput.classList.contains('wr-place-invalid'))
+                placeHint.textContent = 'Ortschaft oder PLZ eingeben';
         }
-
-        const matches = places
-            .filter(p =>
-                p.plz.startsWith(raw) ||
-                normalize(p.ort).startsWith(raw) ||
-                p.norm.includes(' ' + raw)
-            )
-            .sort((a, b) => {
-
-                const aa =
-                    normalize(a.ort).startsWith(raw) ||
-                    a.plz.startsWith(raw);
-
-                const bb =
-                    normalize(b.ort).startsWith(raw) ||
-                    b.plz.startsWith(raw);
-
-                return Number(bb) - Number(aa) ||
-                    a.ort.localeCompare(b.ort, 'de');
-            })
-            .slice(0, 12);
-
-        suggestionList.replaceChildren();
-
-        activeSuggestion = -1;
-        placeInput.removeAttribute('aria-activedescendant');
-
-        if (!matches.length) {
-            closeSuggestions();
-            return;
-        }
-
-        matches.forEach((p, i) => {
-
-            const btn = document.createElement('button');
-
-            btn.type = 'button';
-            btn.setAttribute('role', 'option');
-            btn.setAttribute('aria-selected', 'false');
-
-            btn.id = 'suggest_' + i;
-            btn.dataset.plz = p.plz;
-
-            btn.append(document.createTextNode(p.ort + ' '));
-
-            const small = document.createElement('small');
-            small.textContent = 'PLZ ' + p.plz;
-
-            btn.append(small);
-
-            btn.addEventListener(
-                'pointerdown',
-                e => e.preventDefault()
-            );
-
-            btn.addEventListener('click', () => choose(p.plz));
-
-            suggestionList.append(btn);
-        });
-
-        showSuggestions();
-
-        // Smartphone: Tastatur nach 700 ms schliessen,
-        // Vorschlagsliste aber geöffnet lassen.
-
-        if (mobilePlaceMode.matches) {
-
-            clearTimeout(keyboardTimer);
-
-            keyboardTimer = setTimeout(() => {
-
-                if (
-                    document.activeElement === placeInput &&
-                    !suggestionList.classList.contains('hide') &&
-                    suggestionList.querySelector('button')
-                ) {
-
-                    selectingPlace = true;
-                    placeInput.blur();
-
-                    requestAnimationFrame(() => {
-                        if (selectingPlace) {
-                            showSuggestions();
-                        }
-                    });
-                }
-
-            }, 700);
-        }
-    }
-
-    function highlightSuggestion(i) {
-
-        const buttons = [
-            ...suggestionList.querySelectorAll('button')
-        ];
-
-        if (!buttons.length) return;
-
-        activeSuggestion =
-            (i + buttons.length) % buttons.length;
-
-        buttons.forEach((b, j) => {
-            b.setAttribute(
-                'aria-selected',
-                String(j === activeSuggestion)
-            );
-        });
-
-        const activeButton = buttons[activeSuggestion];
-
-        placeInput.setAttribute(
-            'aria-activedescendant',
-            activeButton.id
-        );
-
-        activeButton.scrollIntoView({
-            block: 'nearest'
-        });
-    }
+    });
 
     // ==========================================================
     // BEWERTUNG
@@ -742,138 +592,10 @@ async function starteWohnungswert() {
     }
 
     // ==========================================================
-    // EREIGNISSE DER ORTSSUCHE
-    // ==========================================================
-
-    placeInput.addEventListener('focus', () => {
-
-        selectingPlace = false;
-        placeFocused = true;
-
-        closeSuggestions();
-
-        placeInput.value = '';
-        placeInput.placeholder = '';
-
-        if (!placeInput.classList.contains('wr-place-invalid')) placeHint.textContent = '';
-    });
-
-    placeInput.addEventListener('input', () => {
-
-        // Neue Eingabe: bisherige Ortsauswahl ungültig.
-        S.placeSelected = false;
-        S.estimateRequested = false;
-
-        calc();
-
-        if (!placeInput.classList.contains('wr-place-invalid')) {
-            placeHint.textContent = placeInput.value.trim() ? 'Ort oder PLZ auswählen' : '';
-        }
-
-        suggestions();
-    });
-
-    $('clearPlace').addEventListener('click', () => {
-
-        selectingPlace = false;
-
-        closeSuggestions();
-
-        placeInput.value = '';
-
-        S.placeSelected = false;
-        S.estimateRequested = false;
-
-        calc();
-
-        if (!placeInput.classList.contains('wr-place-invalid')) placeHint.textContent = 'Ortschaft oder PLZ eingeben';
-
-        placeInput.focus();
-    });
-
-    placeInput.addEventListener('keydown', e => {
-
-        const buttons = [
-            ...suggestionList.querySelectorAll('button')
-        ];
-
-        if (e.key === 'ArrowDown' && buttons.length) {
-
-            e.preventDefault();
-            highlightSuggestion(activeSuggestion + 1);
-
-        } else if (e.key === 'ArrowUp' && buttons.length) {
-
-            e.preventDefault();
-
-            highlightSuggestion(
-                activeSuggestion < 0
-                    ? buttons.length - 1
-                    : activeSuggestion - 1
-            );
-
-        } else if (e.key === 'Enter' && buttons.length) {
-
-            e.preventDefault();
-
-            choose(
-                buttons[Math.max(0, activeSuggestion)].dataset.plz
-            );
-
-        } else if (e.key === 'Escape') {
-
-            selectingPlace = false;
-            closeSuggestions();
-            placeInput.blur();
-        }
-    });
-
-    placeInput.addEventListener('blur', () => {
-
-        placeInput.placeholder = 'Ort oder PLZ eingeben';
-
-        if (!selectingPlace) {
-            clearTimeout(keyboardTimer);
-        }
-
-        placeFocused = false;
-
-        setTimeout(() => {
-
-            if (!selectingPlace) {
-                closeSuggestions();
-            }
-
-            if (
-                !selectingPlace &&
-                placeInput.value.trim() &&
-                placeInput.value.trim() !==
-                    S.plz + ' ' + DATA[S.plz].ort
-            ) {
-
-                if (!placeInput.classList.contains('wr-place-invalid')) {
-                    placeHint.textContent = 'Bitte einen Ort aus den Vorschlägen wählen';
-                }
-            }
-
-        }, 160);
-    });
-
-    document.addEventListener('pointerdown', e => {
-
-        if (
-            !placeInput.contains(e.target) &&
-            !suggestionList.contains(e.target) &&
-            !$('clearPlace').contains(e.target)
-        ) {
-
-            selectingPlace = false;
-            closeSuggestions();
-        }
-    });
+    // EREIGNISSE DER ORTSSUCHE – zentral in ortssuche.js
 
     // ==========================================================
-    // EREIGNISSE DER REGLER
+        // EREIGNISSE DER REGLER
     // ==========================================================
 
     [

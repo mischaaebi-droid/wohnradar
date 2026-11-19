@@ -375,17 +375,7 @@ async function starteHauswert() {
     // ORTSSUCHE
     // ==================================================
 
-    let placeFocused = false;
-    let activeSuggestion = -1;
-
-    const mobilePlaceMode =
-        window.matchMedia('(max-width: 840px)');
-
-    let selectingPlace = false;
-    let keyboardTimer = null;
-
     const placeInput = $('placeInput');
-
     placeInput.placeholder = 'Ort oder PLZ eingeben';
     placeInput.setAttribute('autocomplete', 'off');
 
@@ -475,194 +465,35 @@ async function starteHauswert() {
         });
     }
 
-    function normalize(t) {
-
-        return t
-            .normalize('NFD')
-            .replace(/[\u0300-\u036f]/g, '')
-            .toLowerCase()
-            .trim();
-    }
-
-
-    function closeSuggestions() {
-
-        clearTimeout(keyboardTimer);
-
-        const list = $('suggestions');
-
-        list.classList.add('hide');
-
-        $('placeInput').setAttribute(
-            'aria-expanded',
-            'false'
-        );
-
-        activeSuggestion = -1;
-    }
-
-
-    function suggestions() {
-
-        const raw = normalize($('placeInput').value);
-        const list = $('suggestions');
-
-        if (!placeFocused || raw.length < 3) {
-            closeSuggestions();
-            return;
+    // Gemeinsame Orts-/PLZ-Suche. Alle Schätzformeln bleiben unverändert.
+    const { initOrtssuche } = await import(new URL('javascript_dateien/ortssuche.js?v=20261119-1', document.baseURI).href);
+    const ortssuche = initOrtssuche({
+        places,
+        isSelected: () => S.placeSelected,
+        hasError: () => placeInput.classList.contains('wr-place-invalid'),
+        onSelect: plz => {
+            if (!DATA[plz]) return;
+            S.plz = plz;
+            S.placeSelected = true;
+            clearPlaceError();
+            placeHint.textContent = '';
+            calc();
+        },
+        onEdit: value => {
+            S.placeSelected = false;
+            S.estimateRequested = false;
+            if (!placeInput.classList.contains('wr-place-invalid'))
+                placeHint.textContent = value.trim() ? 'Ort oder PLZ auswählen' : '';
+            calc();
+        },
+        onClear: () => {
+            S.placeSelected = false;
+            S.estimateRequested = false;
+            calc();
+            if (!placeInput.classList.contains('wr-place-invalid'))
+                placeHint.textContent = 'Ortschaft oder PLZ eingeben';
         }
-
-        const matches = places.filter(p =>
-            p.plz.startsWith(raw) ||
-            normalize(p.ort).startsWith(raw) ||
-            p.norm.includes(' ' + raw)
-        ).sort((a, b) => {
-
-            const as =
-                normalize(a.ort).startsWith(raw) ||
-                a.plz.startsWith(raw);
-
-            const bs =
-                normalize(b.ort).startsWith(raw) ||
-                b.plz.startsWith(raw);
-
-            return Number(bs) - Number(as) ||
-                a.ort.localeCompare(b.ort, 'de');
-
-        }).slice(0, 12);
-
-        list.replaceChildren();
-
-        matches.forEach((p, i) => {
-
-            const btn = document.createElement('button');
-
-            btn.type = 'button';
-            btn.setAttribute('role', 'option');
-            btn.setAttribute('aria-selected', 'false');
-
-            btn.id = 'suggest_' + i;
-            btn.dataset.plz = p.plz;
-
-            btn.append(
-                document.createTextNode(p.ort + ' ')
-            );
-
-            const small = document.createElement('small');
-
-            small.textContent = 'PLZ ' + p.plz;
-
-            btn.append(small);
-
-            btn.addEventListener(
-                'pointerdown',
-                e => e.preventDefault()
-            );
-
-            btn.addEventListener(
-                'click',
-                () => choose(p.plz)
-            );
-
-            list.append(btn);
-        });
-
-        list.classList.toggle(
-            'hide',
-            matches.length === 0
-        );
-
-        $('placeInput').setAttribute(
-            'aria-expanded',
-            String(matches.length > 0)
-        );
-
-        activeSuggestion = -1;
-
-        if (mobilePlaceMode.matches && matches.length) {
-
-            clearTimeout(keyboardTimer);
-
-            keyboardTimer = setTimeout(() => {
-
-                if (
-                    document.activeElement === $('placeInput') &&
-                    !list.classList.contains('hide') &&
-                    list.querySelector('button')
-                ) {
-
-                    selectingPlace = true;
-
-                    $('placeInput').blur();
-
-                    requestAnimationFrame(() => {
-
-                        if (selectingPlace) {
-                            list.classList.remove('hide');
-                        }
-
-                    });
-                }
-
-            }, 550);
-        }
-    }
-
-
-    // ==================================================
-    // GEMEINDE AUSWÄHLEN
-    // ==================================================
-
-    function choose(plz) {
-
-        if (!DATA[plz]) return;
-
-        selectingPlace = false;
-
-        S.plz = plz;
-        S.placeSelected = true;
-        clearPlaceError();
-
-        $('placeInput').value =
-            plz + ' ' + DATA[plz].ort;
-
-        closeSuggestions();
-
-        $('placeHint').textContent = '';
-
-        $('placeInput').blur();
-
-        // Berechnung erfolgt, aber Verkehrswert wird
-        // erst nach Klick auf "Schätzen" angezeigt.
-        calc();
-    }
-
-
-    function highlightSuggestion(i) {
-
-        const buttons = [
-            ...$('suggestions').querySelectorAll('button')
-        ];
-
-        if (!buttons.length) return;
-
-        activeSuggestion =
-            (i + buttons.length) % buttons.length;
-
-        buttons.forEach((b, j) => {
-
-            b.setAttribute(
-                'aria-selected',
-                String(j === activeSuggestion)
-            );
-
-        });
-
-        buttons[activeSuggestion].scrollIntoView({
-            block: 'nearest'
-        });
-    }
-
+    });
 
     // ==================================================
     // VERKEHRSWERT BERECHNEN
@@ -930,171 +761,10 @@ async function starteHauswert() {
 
 
     // ==================================================
-    // EREIGNISSE: ORTSSUCHE
-    // ==================================================
-
-    $('placeInput').addEventListener('focus', () => {
-
-        selectingPlace = false;
-        placeFocused = true;
-
-        closeSuggestions();
-
-        // Neue Suche beginnt mit leerem Feld.
-        placeInput.value = '';
-        placeInput.placeholder = '';
-
-        if (!placeInput.classList.contains('wr-place-invalid')) {
-            placeHint.textContent = '';
-        }
-    });
-
-
-    $('placeInput').addEventListener('input', () => {
-
-        // Während einer neuen Suche gilt die bisherige
-        // Gemeinde nicht mehr als ausgewählt.
-        S.placeSelected = false;
-
-        // Neue Schätzung erst nach erneuter Auswahl
-        // und Klick auf "Schätzen".
-        S.estimateRequested = false;
-
-        if (!placeInput.classList.contains('wr-place-invalid')) {
-            placeHint.textContent = placeInput.value.trim()
-                ? 'Ort oder PLZ auswählen' : '';
-        }
-
-        suggestions();
-
-        calc();
-    });
-
-
-    $('clearPlace').addEventListener('click', () => {
-
-        selectingPlace = false;
-
-        closeSuggestions();
-
-        placeInput.value = '';
-
-        S.placeSelected = false;
-        S.estimateRequested = false;
-
-        calc();
-
-        $('placeInput').focus();
-
-        if (!placeInput.classList.contains('wr-place-invalid')) {
-            placeHint.textContent = 'Ortschaft oder PLZ eingeben';
-        }
-    });
-
-
-    $('placeInput').addEventListener('keydown', e => {
-
-        const buttons = [
-            ...$('suggestions').querySelectorAll('button')
-        ];
-
-        if (
-            e.key === 'ArrowDown' &&
-            buttons.length
-        ) {
-
-            e.preventDefault();
-
-            highlightSuggestion(
-                activeSuggestion + 1
-            );
-
-        } else if (
-            e.key === 'ArrowUp' &&
-            buttons.length
-        ) {
-
-            e.preventDefault();
-
-            highlightSuggestion(
-                activeSuggestion - 1
-            );
-
-        } else if (
-            e.key === 'Enter' &&
-            buttons.length
-        ) {
-
-            e.preventDefault();
-
-            choose(
-                buttons[
-                    Math.max(0, activeSuggestion)
-                ].dataset.plz
-            );
-
-        } else if (e.key === 'Escape') {
-
-            selectingPlace = false;
-
-            closeSuggestions();
-
-            $('placeInput').blur();
-        }
-    });
-
-
-    $('placeInput').addEventListener('blur', () => {
-
-        placeInput.placeholder =
-            'Ort oder PLZ eingeben';
-
-        if (!selectingPlace) {
-            clearTimeout(keyboardTimer);
-        }
-
-        placeFocused = false;
-
-        setTimeout(() => {
-
-            if (!selectingPlace) {
-                closeSuggestions();
-            }
-
-            if (
-                !selectingPlace &&
-                $('placeInput').value.trim() &&
-                $('placeInput').value !==
-                    S.plz + ' ' + DATA[S.plz].ort
-            ) {
-
-                if (!placeInput.classList.contains('wr-place-invalid')) {
-                    placeHint.textContent =
-                        'Bitte einen Ort aus den Vorschlägen wählen';
-                }
-            }
-
-        }, 160);
-    });
-
-
-    document.addEventListener('pointerdown', e => {
-
-        if (
-            !$('placeInput').contains(e.target) &&
-            !$('suggestions').contains(e.target) &&
-            !$('clearPlace').contains(e.target)
-        ) {
-
-            selectingPlace = false;
-
-            closeSuggestions();
-        }
-    });
-
+    // EREIGNISSE: ORTSSUCHE – siehe ortssuche.js
 
     // ==================================================
-    // EREIGNISSE: REGLER
+        // EREIGNISSE: REGLER
     // ==================================================
 
     // Auch ein Tippen auf den Startwert bestätigt diesen ausdrücklich.
