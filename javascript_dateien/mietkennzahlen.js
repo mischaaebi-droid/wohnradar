@@ -182,4 +182,12 @@ async function starteMietkennzahlen() {
     }
 }
 
-starteMietkennzahlen();
+// Erst starten, sobald die HTML-Elemente vorhanden sind.
+// Funktioniert mit und ohne defer-Attribut im HTML.
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        starteMietkennzahlen();
+    }, { once: true });
+} else {
+    starteMietkennzahlen();
+}
