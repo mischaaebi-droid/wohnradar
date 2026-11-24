@@ -203,6 +203,26 @@ body.wr-bauland .wr-related-links a:hover { text-decoration-color: currentColor;
 #wr-blmap-card .wr-blmap-legal{font-size:11px;color:var(--muted,#786761);line-height:1.5;margin:13px 0 0}
 #wr-blmap-tooltip{position:fixed;z-index:10000;pointer-events:none;display:none;background:#273832;color:white;padding:7px 10px;border-radius:5px;font-size:12px;max-width:230px}
 @media(max-width:760px){#wr-blmap-card .wr-blmap-grid{grid-template-columns:1fr}#wr-blmap-card .wr-blmap-frame{height:360px}#wr-blmap-card .wr-blmap-aside{padding:12px}#wr-blmap-card .wr-blmap-legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}#wr-blmap-card .wr-blmap-legend-item{font-size:10px}#wr-blmap-card .wr-blmap-details{margin-top:10px}}
+
+/* Mobile Karte: ein Finger scrollt die Seite; mit zwei Fingern wird die Karte bedient. */
+@media(max-width:760px){
+ #wr-blmap-card{padding:12px 10px 14px}
+ #wr-blmap-card .wr-blmap-frame{height:440px;touch-action:pan-y;cursor:default}
+ #wr-blmap-card .wr-blmap-grid{gap:10px}
+ #wr-blmap-card .wr-blmap-aside{padding:11px}
+ #wr-blmap-card .wr-blmap-legend{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 8px}
+ #wr-blmap-card .wr-blmap-legend-item{font-size:11px;gap:6px;margin:5px 0}
+ #wr-blmap-card .wr-blmap-zoom button{min-width:40px;height:40px}
+ #wr-blmap-card .wr-blmap-help{font-size:11px;max-width:calc(100% - 80px)}
+}
+#wr-blmap-card .wr-blmap-zoom .wr-blmap-fullscreen{font-size:19px}
+#wr-blmap-card .wr-blmap-frame.wr-blmap-expanded{
+ position:fixed;inset:8px;z-index:20000;width:auto;height:auto;
+ border-radius:6px;touch-action:none;cursor:grab;
+ box-shadow:0 0 0 20px rgba(0,0,0,.55);
+}
+@media(max-width:760px){#wr-blmap-card .wr-blmap-frame.wr-blmap-expanded{height:auto}}
+body.wr-blmap-open{overflow:hidden!important}
 </style>
 </head>
 <body class="wr-bauland">
@@ -262,8 +282,9 @@ body.wr-bauland .wr-related-links a:hover { text-decoration-color: currentColor;
         <button id="wr-blmap-zoom-in" type="button" aria-label="Karte vergrössern">+</button>
         <button id="wr-blmap-zoom-out" type="button" aria-label="Karte verkleinern">−</button>
         <button id="wr-blmap-reset" type="button" aria-label="Gesamte Schweiz anzeigen" title="Gesamtansicht">⌂</button>
+         <button id="wr-blmap-fullscreen" class="wr-blmap-fullscreen" type="button" aria-label="Karte im Vollbild anzeigen" title="Karte vergrössern">⛶</button>
       </div>
-      <div class="wr-blmap-help">Zoomen und verschieben · Gebiet anklicken</div>
+      <div class="wr-blmap-help">Ein Finger: Seite scrollen · zwei Finger: Karte bewegen</div>
     </div>
     <aside class="wr-blmap-aside">
       <p class="wr-blmap-note" id="wr-blmap-summary" hidden>Karte wird geladen …</p>
@@ -416,7 +437,7 @@ body.wr-bauland .wr-related-links a:hover { text-decoration-color: currentColor;
 </nav>
 
 <script src="javascript_dateien/bauland.js?v=orts20261119"></script>
-<script src="javascript_dateien/baulandkarte.js?v=20261123-1" defer></script>
+<script src="javascript_dateien/baulandkarte.js?v=20261124-mobile2" defer></script>
 <!-- Gemeinsame Ergebnissteuerung: zeigt die Schätzung auch mobil an. -->
 <script src="javascript_dateien/ux-flow.js?v=bauland-mobile-fix-20261121"></script>
 <!-- Footer-Inhalt wird ausschliesslich aus footer.html geladen. -->
