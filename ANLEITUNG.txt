@@ -1,0 +1,27 @@
+WOHNRADAR BAULAND – BFS STATPOP 2025 (21.11.2026)
+
+Dateien:
+- bauland.js -> javascript_dateien/bauland.js (bestehende Datei ersetzen)
+- gemeinde_einwohner.json -> daten/gemeinde_einwohner.json
+- gemeinde_dichte.json -> daten/gemeinde_dichte.json
+- plz_gemeinde.json -> daten/plz_gemeinde.json (gleiche räumliche Zuordnung wie bisher)
+
+Zusätzlich vorausgesetzt, bereits auf der Website:
+- daten/wohnungspreise.json
+- daten/immobilienpreise.json
+- daten/mietmodell_plz_mit_nebenkosten.json
+- javascript_dateien/ortssuche.js
+
+Bevölkerungsdaten: Vollständiger vom Nutzer gelieferter BFS-PXWEB-Export, STATPOP 2025,
+ständige Wohnbevölkerung, alle Geschlechter/Zivilstände, 31.12.2025.
+Gemeindestand für JSON-Schlüssel und Gemeindeflächen: 01.01.2026 (2110 Gemeinden).
+Die fünf Gemeindebestandsänderungen 2026 werden gemäss amtlicher Fusionen
+auf den neuen Gemeindestand umgerechnet (siehe bfs_2025_gemeindemutationen.csv).
+Moutier wurde von BFS 0700 (BE, 2025) zu 6831 (JU, 2026) zugeordnet.
+Bevölkerungsdichte = STATPOP-Einwohner / vorhandene BFS-Gesamtfläche km².
+Nicht nur Wohn-/Siedlungsfläche; die bisherige Modellkalibrierung verwendet Gesamtfläche.
+
+Zusätzlich im ZIP: zwei Prüf-CSV und das Reproduktionsskript.
+
+Hinweis: Der Fallback in bauland.js bleibt für nicht zuordenbare PLZ oder
+fehlende EFH-/Mietdaten bestehen; er bedeutet KEINE fehlenden Gemeinde-Einwohnerzahlen.

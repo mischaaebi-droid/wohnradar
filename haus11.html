@@ -1,0 +1,501 @@
+<!-- GitHub Test 2026 -->
+<!DOCTYPE html>
+
+<html lang="de-CH">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+
+
+
+<title>Haus kostenlos schätzen – ohne E-Mail & Handynummer | Schweiz</title>
+<meta name="description" content="Wie viel ist Ihr Haus wert? Ermitteln Sie den Verkehrswert anonym und mit wenigen Klicks – anhand lokaler Immobilienpreise, Lage und Zustand. Ergebnis sofort online sichtbar.">
+
+
+<link href="styles.css" rel="stylesheet"/>
+<style>
+/* Kompakte, responsive Rechnungsdarstellung */
+.result-invoice { padding: 18px 20px !important; }
+.result-invoice .invoice-title { font-size: 13px; font-weight: 700; letter-spacing: .02em; opacity: .75; margin-bottom: 10px; }
+.result-invoice .invoice-row { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 5px 0; font-size: 14px; line-height: 1.35; }
+.result-invoice .invoice-row strong { font-weight: 600; white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
+.result-invoice .invoice-total { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 9px; padding-top: 12px; border-top: 2px solid var(--accent, #B0523B); font-weight: 750; line-height: 1.25; }
+.result-invoice .invoice-total strong { font-size: clamp(19px, 2.2vw, 27px); white-space: nowrap; font-variant-numeric: tabular-nums; text-align: right; }
+@media (max-width: 650px) {
+  .result-invoice { padding: 13px 15px !important; }
+  .result-invoice .invoice-title { margin-bottom: 6px; font-size: 12px; }
+  .result-invoice .invoice-row { padding: 3px 0; font-size: 13px; }
+  .result-invoice .invoice-total { margin-top: 7px; padding-top: 9px; font-size: 13px; }
+  .result-invoice .invoice-total strong { font-size: 20px; }
+}
+
+/* Muster: neuer Ablauf, bestehende Farbpalette und Schieberegler unverändert */
+.result-shell { min-width:0; }
+.result-actions { margin-top:10px; }
+.estimate-button { width:100%; min-height:52px; padding:12px 18px; border:0; border-radius:11px; background:var(--ink); color:white; font:inherit; font-weight:750; font-size:15px; cursor:pointer; }
+.post-estimate-actions { display:none; grid-template-columns:1fr 1fr; gap:0; }
+.post-estimate-actions button { min-height:48px; padding:10px 8px; border:1px solid var(--line); background:var(--card); color:var(--ink); font:inherit; font-weight:700; cursor:pointer; }
+.post-estimate-actions button:first-child { border-radius:0 0 0 11px; }
+.post-estimate-actions button:last-child { border-radius:0 0 11px 0; border-left:0; }
+.result-shell.has-estimate .post-estimate-actions { display:grid; }
+.result-shell.has-estimate .result-actions { margin-top:0; }
+.result-shell.has-estimate .result { border-radius:2px 2px 0 0; }
+.result-shell.has-estimate .estimate-button { display:none; }
+.mobile-estimate-action { display:none; }
+@media(max-width:840px) {
+  .result-shell { display:none; }
+  .result-shell.has-estimate { display:block; margin:0 0 17px; }
+  .result-shell .result { position:static; }
+  .result-shell .result-actions { margin-top:0; }
+  .mobile-estimate-action { display:block; margin:3px 0 14px; }
+  .result-shell.has-estimate ~ * { margin-top:0; }
+  .result-shell .post-estimate-actions { gap:0; }
+}
+
+</style>
+<link href="wohnradar-ux.css" rel="stylesheet"/>
+<link rel="stylesheet" href="footer.css">
+<script src="footer.js" defer></script>
+<link rel="stylesheet" href="wohnradar-logo.css">
+<link rel="stylesheet" href="wohnradar-resultate.css">
+<link rel="stylesheet" href="wohnradar-header-fix.css">
+
+<link rel="stylesheet" href="wohnradar-methodik.css">
+
+<style>
+/* Kopfbereich: Logo links, Markenname und Unterzeile exakt linksbündig. */
+.wrap > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.wrap > header .wr-header-lockup {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+.wrap > header .wr-header-lockup .wr-brand-mark {
+  display: block;
+  width: 52px !important;
+  height: 52px !important;
+  max-width: none;
+  object-fit: contain;
+  flex: 0 0 52px;
+}
+.wrap > header .wr-header-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+.wrap > header .wr-header-copy .wr-brand-name {
+  display: block;
+  line-height: 1.15;
+  white-space: nowrap;
+}
+.wrap > header .wr-header-copy .header-description {
+  display: block;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  white-space: nowrap;
+}
+.wrap > header .home-link { flex-shrink: 0; }
+@media (max-width: 700px) {
+  .wrap > header .wr-header-lockup { gap: 8px; }
+  .wrap > header .wr-header-lockup .wr-brand-mark {
+    width: 48px !important;
+    height: 48px !important;
+    flex-basis: 48px;
+  }
+  .wrap > header .wr-header-copy .header-description { font-size: 12px; }
+}
+</style>
+</head>
+<body>
+<span id="wohnradar-top" aria-hidden="true"></span>
+<div class="wrap">
+
+
+
+<header>
+  <div class="brand wr-header-lockup">
+    <img class="wr-brand-mark" src="wohnradar-logo.png" alt="" aria-hidden="true" width="52" height="52" decoding="async">
+    <div class="wr-header-copy">
+      <span class="wr-brand-name">WOHN<em>RADAR</em></span>
+      <p class="header-description">Immobilienbewertung</p>
+    </div>
+  </div>
+
+  <a class="home-link" href="index.html" aria-label="Zur Startseite">
+    <svg class="home-icon" viewBox="0 0 24 24"
+         width="20" height="20" fill="none"
+         stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round" stroke-linejoin="round"
+         aria-hidden="true">
+      <path d="m3 10 9-7 9 7"/>
+      <path d="M5 9v12h14V9"/>
+      <path d="M9 21v-7h6v7"/>
+    </svg>
+    <span class="home-text">Home</span>
+  </a>
+</header>
+
+
+
+
+
+
+
+<div class="layout">
+<main class="stack">
+<h1 class="wr-page-title">Haus kostenlos schätzen</h1>
+
+ <p>
+                    
+           Wie viel ist Ihr Haus wert? Wohnradar berechnet den Verkehrswert Ihres Einfamilienhauses anhand lokaler Immobilienpreise und individueller Eigenschaften. Das Ergebnis sehen Sie sofort online – ohne E-Mail-Adresse.
+                    </p>
+
+
+
+<section class="card house-overview">
+<div class="grid" style="grid-template-columns:1fr">
+<div class="field">
+<label for="placeInput">
+         PLZ, Ortschaft oder Gemeinde
+        </label>
+<div class="place-wrap">
+<input aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" aria-label="Ortschaft oder Postleitzahl suchen" autocomplete="off" id="placeInput" role="combobox" spellcheck="false" value="5400 Baden"/>
+<button aria-label="Ortschaft löschen" class="clear-place" id="clearPlace" title="Eingabe löschen" type="button">
+          ×
+         </button>
+</div>
+<div class="suggest hide" id="suggestions" role="listbox">
+</div>
+<div class="hint" id="placeHint">
+</div>
+</div>
+</div>
+<div class="lbl" style="margin-top:19px">
+       Haustyp
+      </div>
+<div class="types" id="type" role="radiogroup" aria-label="Haustyp">
+<label class="typechoice" title="Freistehendes Einfamilienhaus">
+<input checked="" name="houseType" type="radio" value="free" aria-label="Freistehendes Einfamilienhaus"/>
+<span>Freistehend</span>
+</label>
+<label class="typechoice" title="Eckhaus oder Doppelhaus">
+<input name="houseType" type="radio" value="end" aria-label="Eckhaus oder Doppelhaus"/>
+<span>Doppel-/Eckhaus</span>
+</label>
+<label class="typechoice" title="Reihenmittelhaus">
+<input name="houseType" type="radio" value="mid" aria-label="Reihenmittelhaus"/>
+<span>Reihenhaus</span>
+</label>
+</div>
+<div class="grid">
+<div class="range">
+<div class="rangehead">
+<label for="living">
+          Wohnfläche
+         </label>
+<output id="livingv">
+</output>
+</div>
+<input id="living" max="290" min="60" step="5" type="range" value="60"/>
+</div>
+<div class="range">
+<div class="rangehead">
+<label for="land">
+          Parzellenfläche
+         </label>
+<output id="landv">
+</output>
+</div>
+<input id="land" max="1900" min="100" step="25" type="range" value="100"/>
+</div>
+</div>
+<div class="parking-inputs" style="margin-top:18px"><div class="parking-field">
+<div class="lbl">
+         Garagenplätze
+        </div>
+<div class="count">
+<button aria-label="Garagenplätze verringern" data-count="garage:-1">
+          −
+         </button>
+<output id="garagev">
+          0
+         </output>
+<button aria-label="Garagenplätze erhöhen" data-count="garage:1">
+          +
+         </button>
+</div>
+</div><div class="parking-field">
+<div class="lbl">
+         Aussenparkplätze
+        </div>
+<div class="count">
+<button aria-label="Aussenparkplätze verringern" data-count="outside:-1">
+          −
+         </button>
+<output id="outsidev">
+          0
+         </output>
+<button aria-label="Aussenparkplätze erhöhen" data-count="outside:1">
+          +
+         </button>
+</div>
+</div></div>
+</section>
+<section class="card">
+<h2>
+       Lage und Wohnkomfort
+      </h2>
+<div id="sliders">
+</div>
+</section><section class="card">
+<h2>
+       Alter und Renovationen
+      </h2>
+<div class="range">
+<div class="rangehead">
+<label for="built">
+         Baujahr
+        </label>
+<output id="builtv">
+</output>
+</div>
+<input id="built" max="2026" min="1910" step="1" type="range" value="1850"/>
+</div>
+<div class="range">
+  <div class="rangehead">
+    <label for="condition">Zustand</label>
+    <output id="conditionv">Mittel</output>
+  </div>
+  <input id="condition" type="range" min="0" max="5" step="1" value="2" aria-label="Zustand der Liegenschaft"/>
+</div>
+<details>
+<summary>
+        Optional: Zustand detailliert
+       </summary>
+<div class="hint">
+        Jahr der letzten Erneuerung wählen. Nie erneuert? Baujahr belassen.
+       </div>
+<div id="ageFields">
+</div>
+</details>
+</section>
+
+<!-- Methodik: transparenter, aufklappbarer Erläuterungstext direkt nach den Eingaben -->
+<section class="card wr-methodik-card" aria-label="Methodik der Hausbewertung">
+  <details class="wr-methodik" id="methodik">
+    
+	<summary class="wr-methodik-summary">
+  <span class="wr-methodik-summary-text">
+    <span class="wr-methodik-summary-title">Methodik</span>
+    <span class="wr-methodik-summary-subtitle">– so berechnet Wohnradar den Wert</span>
+  </span>
+  <span class="wr-methodik-chevron" aria-hidden="true"></span>
+</summary>
+
+	
+	<div class="wr-methodik-content">
+      <h2>So berechnet Wohnradar den Wert Ihres Hauses</h2>
+      <p>Wohnradar schätzt den Verkehrswert eines Einfamilienhauses anhand der lokalen Immobilienpreise und der Eigenschaften des Gebäudes. Berücksichtigt werden unter anderem das allgemeine Immobilienpreisniveau in der jeweiligen Gemeinde oder im jeweiligen Stadtteil, die Wohnfläche, die Grundstücksgrösse, das Alter und der Zustand. Die Berechnung erfolgt in mehreren Schritten.</p>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-1">
+        <h3 id="methodik-1">1. Lokales Immobilienpreisniveau</h3>
+        <p>Die Immobilienpreise unterscheiden sich in der Schweiz von Ort zu Ort. Ein Haus in Zürich kostet in der Regel deutlich mehr als ein vergleichbares Haus in einer ländlichen Gemeinde. Wohnradar berücksichtigt diese Unterschiede anhand von lokalen Immobilienpreisdaten. Für die erfassten Postleitzahlen sind durchschnittliche Preisniveaus in Form von Medianpreisen pro Quadratmeter hinterlegt. Die verwendeten lokalen Quadratmeterpreise wurden im Oktober 2026 für Wohnradar zusammengestellt. Sie beruhen auf statistischen Auswertungen des Immobilienmarkts, unter anderem von Angebotspreisen und tatsächlichen Verkaufspreisen.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-2">
+        <h3 id="methodik-2">2. Die Wohnfläche</h3>
+        <p>Die Wohnfläche ist ein wichtiger Faktor für den Hauswert. Allerdings ist ein Haus mit 300 m² Wohnfläche in der Regel nicht doppelt so viel wert wie ein vergleichbares Haus mit 150 m². <strong>Denn je grösser ein Haus ist, desto tiefer liegt gewöhnlich der Preis pro Quadratmeter Wohnfläche.</strong> Wohnradar berücksichtigt diesen Zusammenhang mit einer mathematischen Formel, die den Quadratmeterpreis abhängig von der Wohnfläche anpasst.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-3">
+        <h3 id="methodik-3">3. Die Grundstücksfläche</h3>
+        <p>Neben der Wohnfläche beeinflusst auch die Grundstücksgrösse den Hauswert. Allerdings ist ihr Einfluss deutlich geringer als jener der Wohnfläche. Ein Haus auf einer Parzelle von 800 m² ist deshalb in der Regel nicht annähernd doppelt so viel wert wie ein vergleichbares Haus auf 400 m². Wohnradar berücksichtigt diese Zusammenhänge mit einer mathematischen Formel, deren Faktoren mithilfe multipler Regressionsrechnung ermittelt wurden.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-4">
+        <h3 id="methodik-4">4. Lage, Haustyp und Wohnkomfort</h3>
+        <p>Im nächsten Schritt berücksichtigt Wohnradar die individuellen Eigenschaften der Liegenschaft.</p>
+        <p>Dazu werden auf den bereits um die altersbedingten Abzüge verminderten Hauswert prozentuale Zu- oder Abschläge angewendet.</p>
+        <div class="wr-methodik-table-scroll" role="region" aria-label="Zu- und Abschläge für Lage, Haustyp und Wohnkomfort" tabindex="0">
+          <table class="wr-methodik-table">
+            <thead><tr><th scope="col">Einflussfaktor</th><th scope="col">Zu- oder Abschlag</th></tr></thead>
+            <tbody>
+              <tr><td>Freistehendes Einfamilienhaus</td><td>+2,5 %</td></tr>
+              <tr><td>Reiheneckhaus</td><td>−2 %</td></tr>
+              <tr><td>Reihenmittelhaus</td><td>−6 %</td></tr>
+              <tr><td>Aussicht</td><td>−4 % bis +8 %</td></tr>
+              <tr><td>Erreichbarkeit von Geschäften, Schulen und öffentlichem Verkehr</td><td>−4 % bis +4 %</td></tr>
+              <tr><td>Ruhe und Lärmbelastung</td><td>−4 % bis +4 %</td></tr>
+              <tr><td>Bauqualität und Wohnkomfort</td><td>−4 % bis +4 %</td></tr>
+              <tr><td>Gebäudealter (zusätzliche Korrektur)</td><td>0 % bis −3,5 %</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-5">
+        <h3 id="methodik-5">5. Alter und Renovationen</h3>
+        <p>Ein älteres Haus ist nicht zwangsläufig weniger wert als ein jüngeres. Entscheidend ist auch, wann wichtige Gebäudeteile zuletzt erneuert wurden.</p>
+        <p>Wohnradar unterscheidet deshalb neun Bauteilgruppen. Eine Bauteilgruppe ist etwa die Küche. Eine andere Bauteilgruppe ist das Dach. Für jede Bauteilgruppe werden die ungefähren Erneuerungskosten und eine typische Nutzungsdauer angenommen. Daraus berechnet Wohnradar einen altersabhängigen Wertabzug. Das Prinzip ist einfach: Ein gerade erneuertes Bauteil führt zu keinem Altersabzug. Mit zunehmendem Alter einer Bauteilgruppe (also zum Beispiel der Küche) steigt der Abzug schrittweise bis zu einem Maximalwert. Dieser entspricht den Kosten, die für die totale Erneuerung der Bauteilgruppe anfallen.</p>
+        <h4>Beispiel: Ein Einfamilienhaus mit 180 m² Wohnfläche</h4>
+        <p>Die folgende Tabelle zeigt, wie Wohnradar die Altersabzüge berechnet.</p>
+        <p>Angenommen wird ein Haus mit 180 m² Wohnfläche in einer Gemeinde mit einem lokalen Immobilienpreisniveau von 10'000 Franken pro m².</p>
+        <p>Alle aufgeführten Bauteile wurden vor 15 Jahren zuletzt erneuert.</p>
+        <div class="wr-methodik-table-scroll" role="region" aria-label="Beispieltabelle der Altersabzüge" tabindex="0">
+          <table class="wr-methodik-table wr-methodik-table--renovations">
+            <thead><tr><th scope="col">Bauteil</th><th scope="col">Angenommene Erneuerungskosten</th><th scope="col">Nutzungsdauer</th><th scope="col">Altersabzug nach 15 Jahren</th></tr></thead>
+            <tbody>
+              <tr><td>Küche</td><td>30'000 Fr.</td><td>30 Jahre</td><td>15'000 Fr.</td></tr>
+              <tr><td>Bäder und WC</td><td>40'000 Fr.</td><td>30 Jahre</td><td>20'000 Fr.</td></tr>
+              <tr><td>Innenausbau</td><td>65'000 Fr.</td><td>30 Jahre</td><td>32'500 Fr.</td></tr>
+              <tr><td>Fenster</td><td>35'000 Fr.</td><td>35 Jahre</td><td>15'000 Fr.</td></tr>
+              <tr><td>Heizung</td><td>35'000 Fr.</td><td>25 Jahre</td><td>21'000 Fr.</td></tr>
+              <tr><td>Wasser- und Abwasserleitungen</td><td>30'000 Fr.</td><td>50 Jahre</td><td>9'000 Fr.</td></tr>
+              <tr><td>Elektroinstallationen</td><td>25'000 Fr.</td><td>40 Jahre</td><td>9'400 Fr.</td></tr>
+              <tr><td>Dach</td><td>50'000 Fr.</td><td>50 Jahre</td><td>15'000 Fr.</td></tr>
+              <tr><td>Fassade</td><td>35'000 Fr.</td><td>40 Jahre</td><td>13'100 Fr.</td></tr>
+            </tbody>
+            <tfoot><tr><th scope="row">Total</th><td>345'000 Fr.</td><td></td><td>150'000 Fr.</td></tr></tfoot>
+          </table>
+        </div>
+        <p>In diesem Beispiel beträgt der gesamte altersbedingte Wertabzug rund 150'000 Franken.</p>
+        <p><strong>Wichtig:</strong> Die angenommenen Erneuerungskosten sind keine festen Beträge für jedes Haus. Wohnradar passt sie an die Wohnfläche und das örtliche Immobilienpreisniveau an. Bei grösseren Häusern und an teureren Standorten wird zum Beispiel angenommen, dass eine teurere Küche eingebaut ist als bei einem kleinen Haus an einem Standort mit tiefem Immobilienpreisniveau. Die Tabelle zeigt somit ein konkretes Rechenbeispiel und keine allgemein gültigen Renovationskosten.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-6">
+        <h3 id="methodik-6">6. Garagen und Parkplätze</h3>
+        <p>Wohnradar berücksichtigt auch hier das lokale Preisniveau. An teuren Standorten wird für einen Garagen- oder Aussenparkplatz grundsätzlich ein höherer Wert angesetzt als an günstigeren Standorten.</p>
+        <div class="wr-methodik-table-scroll" role="region" aria-label="Werte für Garagen und Aussenparkplätze" tabindex="0">
+          <table class="wr-methodik-table">
+            <thead><tr><th scope="col">Parkierung</th><th scope="col">Angesetzter Wert pro Platz</th></tr></thead>
+            <tbody>
+              <tr><td>Garagenplatz</td><td>28'000 bis 38'000 Fr.</td></tr>
+              <tr><td>Aussenparkplatz</td><td>8'000 bis 18'000 Fr.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Die berechneten Einzelwerte werden mit der Anzahl der vorhandenen Plätze multipliziert und zum Hauswert addiert.</p>
+      </section>
+
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-7">
+        <h3 id="methodik-7">7. Wie zuverlässig ist die Schätzung?</h3>
+        <p>Wohnradar liefert eine modellbasierte Schätzung des Verkehrswerts. Sie beruht auf aktuellen lokalen Immobilienpreisen, den Angaben zum Gebäude und festgelegten Bewertungsregeln.</p>
+        <p>Das Verfahren ermöglicht eine rasche und nachvollziehbare Einschätzung, ohne dass eine Besichtigung notwendig ist.</p>
+        <p>Allerdings kann ein automatisiertes Modell nicht alle Besonderheiten einer Liegenschaft berücksichtigen. Dazu gehören beispielsweise aussergewöhnliche Grundrisse, rechtliche Einschränkungen, zusätzliche Ausnützungsreserven oder spezielle bauliche Mängel.</p>
+        <p>Der berechnete Wert ist deshalb als Orientierung und nicht als verbindliches Verkehrswertgutachten zu verstehen. Der tatsächlich erzielbare Verkaufspreis kann davon abweichen.</p>
+      </section>
+
+      <section class="wr-methodik-appendix" aria-labelledby="methodik-anhang">
+        <h3 id="methodik-anhang">Mathematischer Anhang: Berechnung des Grundwerts</h3>
+        <p>Für Interessierte und Fachpersonen legen wir hier die mathematische Grundlage der Flächenbewertung offen.</p>
+        <p class="wr-methodik-formula-label">Grundformel:</p>
+        <div class="wr-methodik-formula" role="math" aria-label="Grundwert gleich m mal w mal (w durch 180) hoch minus 0 Komma 426 mal (g durch 590) hoch 0 Komma 145 mal 1 Komma 18">
+          <span class="wr-methodik-mathpart">Grundwert = <var>m</var> × <var>w</var> ×</span>
+          <span class="wr-methodik-mathpart">(<var>w</var> / 180)<sup>−0,426</sup> ×</span>
+          <span class="wr-methodik-mathpart">(<var>g</var> / 590)<sup>0,145</sup> × 1,18</span>
+        </div>
+        <p>Dabei gilt:</p>
+        <ul class="wr-methodik-legend">
+          <li><strong>m:</strong> Lokaler Medianpreis pro Quadratmeter in Franken</li>
+          <li><strong>w:</strong> Wohnfläche in Quadratmetern</li>
+          <li><strong>g:</strong> Grundstücksfläche in Quadratmetern (rechnerisch mindestens 40 m²)</li>
+          <li><strong>−0,426:</strong> Korrekturfaktor für die abnehmenden Quadratmeterpreise bei zunehmender Wohnfläche</li>
+          <li><strong>0,145:</strong> Korrekturfaktor für den abnehmenden Wertzuwachs zusätzlicher Grundstücksfläche</li>
+          <li><strong>1,18:</strong> Kalibrierungsfaktor des Bewertungsmodells</li>
+        </ul>
+      </section>
+    </div>
+  </details>
+</section>
+<div class="mobile-estimate-action"><button class="estimate-button" id="estimateButtonMobile" type="button">Verkehrswert bestimmen</button></div>
+</main>
+<div class="result-shell" id="resultShell"><aside aria-live="polite" class="result result-invoice" id="resultCard">
+<div class="invoice-title">Verkehrswertberechnung</div>
+<div class="invoice-row"><span>Rohwert</span><strong id="rawout">—</strong></div>
+<div class="invoice-row"><span>Altersabzug</span><strong id="ageout">—</strong></div>
+<div class="invoice-row"><span id="garageLabel">0 Garagenplätze</span><strong id="garageout">—</strong></div>
+<div class="invoice-row"><span id="outsideLabel">0 Aussenparkplätze</span><strong id="outsideout">—</strong></div>
+<div class="invoice-total"><span>Total Verkehrswert</span><strong id="estimate">—</strong></div>
+</aside>
+<div class="result-actions" id="resultActions"><button class="estimate-button" id="estimateButtonDesktop" type="button">Verkehrswert bestimmen</button><div class="post-estimate-actions" id="postEstimateActions"><button class="adjust-button" id="adjustButton" type="button">Nachjustieren</button><button class="reset-button" id="reset" type="button">Zurücksetzen</button></div></div></div>
+</div>
+
+</div>
+<script src="javascript_dateien/haeuser.js?v=ux1"></script>
+<script>
+/* Beträge einheitlich mit CHF rechts anzeigen; Rohwert ohne Änderung des Bewertungsmodells rekonstruieren. */
+(() => {
+  const ids = ['estimate', 'ageout', 'garageout', 'outsideout'];
+  const els = ids.map(id => document.getElementById(id));
+  const raw = document.getElementById('rawout');
+  const parse = el => {
+    const t = el.textContent.trim();
+    if (!/\d/.test(t)) return null;
+    const cleaned = t.replace(/[’'\s\u00a0]/g, '').replace(/[^\d,.-]/g, '');
+    const n = Number(cleaned.replace(/,/g, '.'));
+    return Number.isFinite(n) ? n : null;
+  };
+  const formatCHF = (el) => {
+    const original = el.textContent.trim();
+    const value = parse(el);
+    if (value === null) return;
+    const sign = /^\s*[-−]/.test(original) ? '−' : /^\s*\+/.test(original) ? '+' : '';
+    const formatted = sign + Math.abs(value).toLocaleString('de-CH', { maximumFractionDigits: 0 }) + ' CHF';
+    if (original !== formatted) el.textContent = formatted;
+  };
+  const update = () => {
+    const [total, age, garage, outside] = els.map(parse);
+    els.forEach(formatCHF);
+    if ([total, age, garage, outside].some(n => n === null)) { raw.textContent = '—'; return; }
+    // Altersabzug wird abgezogen, Parkplätze werden addiert.
+    const amount = total + Math.abs(age) - Math.abs(garage) - Math.abs(outside);
+    const formattedRaw = Math.round(amount).toLocaleString('de-CH') + ' CHF';
+    if (raw.textContent !== formattedRaw) raw.textContent = formattedRaw;
+  };
+  const observer = new MutationObserver(update);
+  els.forEach(el => observer.observe(el, { childList: true, characterData: true, subtree: true }));
+  update();
+})();
+</script>
+
+<!-- Footer-Inhalt wird ausschliesslich aus footer.html geladen. -->
+<div id="wohnradar-footer"></div>
+<!-- Mobiler Scroll-Hinweis: verschwindet nach der ersten Scrollbewegung. -->
+
+
+<div class="wr-scrollcue" id="wrScrollCue" aria-hidden="true">
+  <svg
+    width="25"
+    height="25"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round">
+    <path d="M12 4v16"/>
+    <path d="m5 13 7 7 7-7"/>
+  </svg>
+</div>
+
+
+
+
+
+
+
+<script src="wohnradar-mobile.js" defer></script>
+</body>
+</html>

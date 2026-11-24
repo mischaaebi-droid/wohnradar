@@ -578,8 +578,8 @@ async function starteHauswert() {
         // ----------------------------------------------
 
         const typePct = {
-            free: 2.5,
-            end: -2,
+            free: 0.5,
+            end: -3.5,
             mid: -6
         }[
             document.querySelector(

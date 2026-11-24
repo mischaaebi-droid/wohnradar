@@ -1,0 +1,372 @@
+
+<!DOCTYPE html>
+
+<html lang="de-CH"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/>
+
+<link href="styles.css" rel="stylesheet"/>
+
+<title>Baulandpreise Schweiz – Wert pro m² berechnen | Wohnradar</title>
+<meta name="description" content="Was ist Ihr Bauland wert? Baulandpreis pro m² für Schweizer Gemeinden kostenlos schätzen – inkl. Preisspanne nach Lage. Sofort-Ergebnis.">
+
+
+
+
+
+
+<link href="wohnradar-ux.css" rel="stylesheet"/>
+<link rel="stylesheet" href="footer.css">
+<script src="footer.js" defer></script>
+<link rel="stylesheet" href="wohnradar-logo.css">
+<link rel="stylesheet" href="wohnradar-header-fix.css">
+<link rel="stylesheet" href="wohnradar-methodik.css">
+
+<style>/* Drei verständliche Ausnützungsstufen nebeneinander. */
+#type.bl-types {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;}
+#type.bl-types .typechoice {display:flex; flex-direction:column;align-items:center;justify-content:center;gap:3px;text-align:center;min-width:0;min-height:65px;padding:10px 6px;line-height:1.3;cursor:pointer;}
+#type.bl-types .typechoice .bl-choice-main {font-size:12px;font-weight:700;overflow-wrap:anywhere;}
+#type.bl-types .typechoice .bl-choice-sub {font-size:11px;font-weight:400;opacity:.8;}
+#type.bl-types input[type=radio] {margin:0 0 3px;}
+.bl-type-help {margin:8px 0 0;font-size:12px;color:var(--muted,#786761);line-height:1.45;}
+.bl-type-guide {margin:0 0 3px;padding-left:18px;list-style:disc;}
+.bl-type-guide li {margin:2px 0;}
+.bl-type-help small {font-size:11px;line-height:1.35;}
+@media(max-width:650px) {
+
+ #type.bl-types {gap:7px;}
+ #type.bl-types .typechoice {padding:9px 3px; min-height:85px;}
+ #type.bl-types .typechoice .bl-choice-main {font-size:11px;}
+ #type.bl-types .typechoice .bl-choice-sub {font-size:10px;}
+}
+</style>
+<style>
+/* Formeln im Methodik-Anhang: auch auf schmalen Displays lesbar. */
+.wr-bauland .wr-methodik-formula { overflow-x: auto; max-width: 100%; }
+.wr-bauland .wr-methodik-formula math { font-size: clamp(17px, 2.4vw, 23px); color: var(--ink, #352a28); margin: 0 auto; width: max-content; max-width: none; }
+/* Exponenten bewusst gut lesbar, weiterhin korrekt hochgestellt. */
+.wr-bauland .wr-methodik-formula math msup > mn { font-size: 0.70em; }
+.wr-bauland .wr-methodik-formula math msup { math-style: normal; }
+</style>
+<link rel="stylesheet" href="wohnradar-resultate.css?v=buttons2">
+<style>
+/* =======================================================
+   Navigation auf den Rechnerseiten – bauland
+   ======================================================= */
+.wr-bauland .wr-page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 22px;
+    margin-left: auto;
+}
+.wr-bauland .wr-page-nav > a:not(.home-link) {
+    color: var(--ink, #352a28);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.wr-bauland .wr-page-nav > a:hover,
+.wr-bauland .wr-page-nav > a:focus-visible {
+    color: var(--accent, #a4513e);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+.wr-bauland .wr-page-nav > a:focus-visible,
+.wr-bauland .wr-below-nav a:focus-visible {
+    outline: 2px solid var(--accent, #a4513e);
+    outline-offset: 4px;
+    border-radius: 2px;
+}
+.wr-bauland .wr-below-nav {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 1080px;
+    margin: 24px auto 16px;
+    padding: 0 24px;
+    color: var(--ink, #352a28);
+}
+.wr-bauland .wr-below-nav h2 {
+    margin: 0 0 8px;
+    font-size: 17px;
+    font-weight: 750;
+}
+/* Die Rechnerlinks sind die primäre Navigation unter dem Rechner. */
+.wr-bauland .wr-related-links,
+.wr-bauland .wr-info-links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+.wr-bauland .wr-related-links {
+    gap: 8px 22px;
+}
+.wr-bauland .wr-related-links a {
+    color: var(--accent-dark, #89542d);
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.6;
+    text-decoration: none;
+}
+.wr-bauland .wr-related-links a .wr-link-arrow {
+    margin-left: 4px;
+    color: var(--accent, #a4513e);
+}
+.wr-bauland .wr-related-links a:hover,
+.wr-bauland .wr-related-links a:focus-visible {
+    color: var(--accent, #a4513e);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+/* Informationslinks bleiben bewusst kleiner und zurückhaltender. */
+.wr-bauland .wr-info-links {
+    gap: 6px 18px;
+    border-top: 1px solid var(--line, #ded5ce);
+    margin-top: 15px;
+    padding-top: 12px;
+}
+.wr-bauland .wr-info-links a {
+    color: var(--muted, #786761);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.45;
+    text-decoration: none;
+}
+.wr-bauland .wr-info-links a:hover,
+.wr-bauland .wr-info-links a:focus-visible {
+    color: var(--accent-dark, #89542d);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+/* Auf breiten Ansichten ausführliche, auf Smartphones kurze Linktexte. */
+.wr-bauland .wr-related-links .wr-link-mobile { display: none; }
+@media (max-width: 650px) {
+    .wr-bauland .wr-page-nav { gap: 0; flex-wrap: nowrap; }
+    .wr-bauland .wr-page-nav > a:not(.home-link) { display: none; }
+    .wr-bauland .wr-below-nav {
+        margin-top: 15px;
+        margin-bottom: 12px;
+        padding: 0 16px;
+    }
+    .wr-bauland .wr-below-nav h2 { font-size: 15px; margin-bottom: 7px; }
+    .wr-bauland .wr-related-links {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 14px;
+    }
+    .wr-bauland .wr-related-links a {
+        font-size: 12px;
+        line-height: 1.35;
+        white-space: nowrap;
+    }
+    .wr-bauland .wr-related-links .wr-link-desktop { display: none; }
+    .wr-bauland .wr-related-links .wr-link-mobile { display: inline; }
+    .wr-bauland .wr-info-links {
+        gap: 6px 15px;
+        margin-top: 12px;
+        padding-top: 10px;
+    }
+    .wr-bauland .wr-info-links a { font-size: 12px; line-height: 1.4; }
+}
+
+/* Links bleiben auch ohne Hover eindeutig erkennbar. */
+body.wr-bauland .wr-related-links a {
+    text-decoration: underline;
+    text-decoration-color: rgba(137, 84, 45, .55);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+}
+body.wr-bauland .wr-related-links a:hover { text-decoration-color: currentColor; }
+</style>
+</head>
+<body class="wr-bauland">
+<span id="wohnradar-top" aria-hidden="true"></span><div class="wrap">
+
+<header>
+  <div class="brand"><img class="wr-brand-mark" src="wohnradar-logo.png" alt="" aria-hidden="true" width="46" height="30" decoding="async"><span class="wr-brand-name">WOHN<em>RADAR</em></span></div>
+
+  <p class="header-description">
+    Baulandpreise<span class="separator">●</span>Verkehrswert
+  </p>
+
+  <button class="reset" hidden="" id="reset" type="button">Zurücksetzen</button>
+
+  <nav class="wr-page-nav" aria-label="Hauptnavigation">
+<a class="home-link" href="index.html" aria-label="Zur Übersicht aller Rechner">
+    <svg class="home-icon" viewBox="0 0 24 24"
+         width="20" height="20" fill="none"
+         stroke="currentColor" stroke-width="1.8"
+         stroke-linecap="round" stroke-linejoin="round"
+         aria-hidden="true">
+      <path d="m3 10 9-7 9 7"/>
+      <path d="M5 9v12h14V9"/>
+      <path d="M9 21v-7h6v7"/>
+    </svg>
+    <span class="home-text">Alle Rechner</span>
+  </a>
+    <a href="ueber-wohnradar.html">Über uns</a>
+    <a href="faq.html">FAQ</a>
+    <a href="kontakt.html">Kontakt</a>
+  </nav>
+</header>
+
+<div class="layout"><main class="stack"><section class="card"><h2>Bauland schätzen</h2><div class="grid"><div class="field"><label for="placeInput">PLZ, Ortschaft oder Gemeinde</label><div class="place-wrap"><input aria-autocomplete="list" aria-controls="suggestions" aria-expanded="false" aria-label="Ortschaft oder Postleitzahl suchen" autocomplete="off" id="placeInput" role="combobox" spellcheck="false" value="5400 Baden"/><button aria-label="Ortschaft löschen" class="clear-place" id="clearPlace" title="Eingabe löschen" type="button">×</button></div><div class="suggest hide" id="suggestions" role="listbox"></div><div class="hint" id="placeHint"></div></div></div><div class="lbl" style="margin-top:19px" id="bl-type-label">Welche Bebauung ist erlaubt?</div>
+<div class="types bl-types" id="type" role="radiogroup" aria-labelledby="bl-type-label">
+  <label class="typechoice"><input checked name="landType" type="radio" value="single"/><span class="bl-choice-main">Einfamilienhaus</span><span class="bl-choice-sub">Tiefe Ausnützung</span></label>
+  <label class="typechoice"><input name="landType" type="radio" value="medium"/><span class="bl-choice-main">Mehrfamilienhaus</span><span class="bl-choice-sub">Mittlere Ausnützung</span></label>
+  <label class="typechoice"><input name="landType" type="radio" value="multi"/><span class="bl-choice-main">Mehrfamilienhaus</span><span class="bl-choice-sub">Hohe Ausnützung</span></label>
+</div>
+<div class="bl-type-help" aria-label="Orientierung zur Ausnützung">
+  <ul class="bl-type-guide">
+    <li><strong>Tiefe Ausnützung:</strong> etwa Bauzone W2, bis 2 Geschosse</li>
+    <li><strong>Mittlee Ausnützung:</strong> etwa Bauzone W3, 3 Geschosse</li>
+    <li><strong>Hohe Ausnützung:</strong> etwa Bauzone W4+, ab 4 Geschossen</li>
+  </ul>
+
+</div></section>
+
+<!-- Methodik: gleiche aufklappbare Darstellung wie bei der Hausbewertung -->
+<section class="card wr-methodik-card" aria-label="Methodik der Baulandbewertung">
+  <details class="wr-methodik" id="methodik">
+    <summary class="wr-methodik-summary">
+      <span class="wr-methodik-summary-text">
+        <span class="wr-methodik-summary-title">Methodik</span>
+        <span class="wr-methodik-summary-subtitle">– so berechnet Wohnradar den Wert</span>
+      </span>
+      <span class="wr-methodik-chevron" aria-hidden="true"></span>
+    </summary>
+    <div class="wr-methodik-content">
+      <h2>So berechnet Wohnradar den Wert von Bauland</h2>
+      <p>Die Bewertung von unbebautem Bauland ist schwieriger als jene von Häusern oder Eigentumswohnungen. Grund: In vielen Schweizer Gemeinden wird nur wenig Bauland verkauft. Deshalb fehlen oft zuverlässige Statistiken über die tatsächlich bezahlten Preise.</p>
+      <p>Wohnradar schätzt den Baulandwert deshalb indirekt. Das mathematische Modell orientiert sich an anerkannten Verfahren der Immobilienbewertung und berücksichtigt lokale Immobilien- und Mietpreise sowie die Einwohnerzahl und Bevölkerungsdichte der Standortgemeinden. <strong>Die Berechnung wurde anhand tatsächlicher Baulandverkäufe aus mehreren Schweizer Kantonen überprüft und weiterentwickelt.</strong></p>
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-1">
+      <h3 id="methodik-1">1. Wie lässt sich der Baulandwert indirekt bestimmen?</h3>
+      <h4>Die Residualwertmethode</h4>
+      <p>Bei dieser Methode wird vom Gesamtwert einer Liegenschaft auf den Wert des Grundstücks geschlossen. Vom geschätzten Verkehrswert werden die Baukosten für ein vergleichbares Gebäude abgezogen. Die Differenz entspricht vereinfacht dem Landwert.</p>
+      <p><strong>Beispiel:</strong></p>
+      <ul class="wr-methodik-legend"><li>Verkehrswert eines neu gebauten Hauses: 1'500'000 Franken</li><li>Baukosten ohne Land: 900'000 Franken</li><li><strong>Wert des Grundstücks: 600'000 Franken</strong></li></ul>
+      <p>Das Prinzip lässt sich auch auf ganze Ortschaften übertragen. Dabei wird ermittelt, wie viel ein standardisiertes Gebäude am jeweiligen Standort wert wäre und welcher Anteil davon auf das Land entfällt.</p>
+      <h4>Die Lageklassenmethode</h4>
+      <p>Die Lageklassenmethode beruht auf einem grundlegenden Zusammenhang:</p>
+      <p><strong>Je höher das Immobilienpreisniveau an einem Standort, desto grösser ist in der Regel der Anteil des Landes am gesamten Immobilienwert.</strong></p>
+      <p>In ländlichen Gemeinden mit tiefen Immobilienpreisen ist der Landwertanteil meist kleiner als an begehrten Standorten in Zürich oder Genf.</p>
+      <p>Der Grund: Die Baukosten vergleichbarer Gebäude unterscheiden sich regional weit weniger stark als die Immobilienpreise. An teuren Standorten entfällt deshalb ein grösserer Teil des Gesamtwerts auf das Grundstück.</p>
+      </section>
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-2">
+      <h3 id="methodik-2">2. Wie geht Wohnradar vor?</h3>
+      <p>Wohnradar verwendet ein Modell, das sich am Prinzip der Lageklassenmethode orientiert.</p>
+      <p><strong>Ausgangspunkt sind die lokalen Immobilienpreise und Nettomieten.</strong> Aus den Quadratmeterpreisen von Einfamilienhäusern und den ortsüblichen Nettomieten berechnet Wohnradar zunächst ein gemeinsames Immobilienpreisniveau. Daraus wird mit einer mathematischen Funktion der rechnerische Landwertanteil bestimmt.</p>
+      <p>Anders als bei der klassischen Lageklassenmethode werden keine festen Lageklassen verwendet. Der Landwertanteil verändert sich kontinuierlich mit dem Immobilienpreisniveau.</p>
+      <h4>Überprüfung anhand tatsächlicher Baulandverkäufe</h4>
+      <p>Wohnradar hat das Modell anhand amtlicher Baulandpreisdaten aus den Kantonen Zürich, Schwyz, Basel-Landschaft und Thurgau überprüft.</p>
+      <p><strong>Dabei zeigte sich ein starker statistischer Zusammenhang zwischen den berechneten und den tatsächlich bezahlten Baulandpreisen.</strong> Die Korrelationskoeffizienten lagen je nach Datensatz zwischen 0,87 und 0,93. Ein Wert von 1 würde einen perfekten linearen Zusammenhang bedeuten.</p>
+      <p>Trotz dieser hohen Übereinstimmung waren die Abweichungen bei einzelnen Gemeinden teilweise beträchtlich. Deshalb wurden weitere mögliche Einflussgrössen untersucht, um die Schätzgenauigkeit zu verbessern.</p>
+      <h4>Einwohnerzahl und Bevölkerungsdichte</h4>
+      <p>Zwei Gemeinden können ähnliche Immobilienpreise aufweisen, obwohl sich ihre Siedlungsstruktur stark unterscheidet. Die eine ist möglicherweise ein dicht besiedeltes regionales Zentrum, die andere besteht aus mehreren verstreuten Dörfern.</p>
+      <p>Die statistischen Untersuchungen zeigten, dass sich die Baulandpreise genauer schätzen lassen, wenn zusätzlich zwei Merkmale berücksichtigt werden:</p>
+      <ul class="wr-methodik-legend"><li><strong>Einwohnerzahl:</strong> Wie viele Menschen leben in der politischen Gemeinde?</li><li><strong>Bevölkerungsdichte:</strong> Wie viele Menschen leben durchschnittlich auf einem Quadratkilometer Gemeindefläche?</li></ul>
+      <p>Bei sonst gleichen Voraussetzungen ergibt das Modell für grössere und dichter besiedelte Gemeinden höhere Baulandpreise.</p>
+      <p>Die Einwohnerzahlen stammen aus der Bevölkerungsstatistik 2025 des Bundesamts für Statistik (BFS). Die Bevölkerungsdichte wird anhand der gesamten Gemeindefläche berechnet.</p>
+      </section>
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-3">
+      <h3 id="methodik-3">3. Wie wird die bauliche Ausnützung berücksichtigt?</h3>
+      <p>Der Wert eines Grundstücks hängt auch davon ab, wie stark es bebaut werden darf. Auf einem Grundstück für ein viergeschossiges Mehrfamilienhaus lässt sich normalerweise mehr Wohnfläche realisieren als auf einem gleich grossen Grundstück für ein Einfamilienhaus.</p>
+      <p><strong>Allerdings steigt der Landwert nicht im gleichen Verhältnis wie die zulässige Geschossfläche.</strong> Eine doppelt so hohe Ausnützung bedeutet also nicht automatisch einen doppelt so hohen Baulandpreis.</p>
+      <p>Dafür gibt es mehrere Gründe: Mit zunehmender Bebauungsdichte steigen häufig die Baukosten, etwa für zusätzliche Geschosse, Tiefgaragen und die Erschliessung. Gleichzeitig können Besonnung, Privatsphäre und Wohnqualität abnehmen. Die zusätzlich geschaffene Wohnfläche erzielt deshalb nicht zwingend denselben wirtschaftlichen Ertrag wie die bereits vorhandene.</p>
+      <p>In der Ökonomie spricht man vom <strong>Gesetz des abnehmenden Grenznutzens</strong>. Mathematisch lässt sich dieser Zusammenhang mit einer degressiven Potenzfunktion beschreiben.</p>
+      <p>Wohnradar unterscheidet drei Ausnützungsstufen:</p>
+      <div class="wr-methodik-table-scroll" role="region" aria-label="Methodiktabelle" tabindex="0"><table class="wr-methodik-table"><thead><tr><th scope="col">Ausnützung</th><th scope="col">Typische Bebauung</th><th scope="col">Angenommene Ausnützungsziffer</th></tr></thead><tbody><tr><td>Tief</td><td>Einfamilienhäuser, etwa W2</td><td>unter 0,35</td></tr><tr><td>Mittel</td><td>Kleinere Mehrfamilienhäuser, etwa W3</td><td>0,36 bis 0,64</td></tr><tr><td>Hoch</td><td>Grössere Mehrfamilienhäuser, etwa W4 und höher</td><td>ab 0,65</td></tr></tbody></table></div>
+      <p>Für die Baulandbewertung verwendet Wohnradar eigene Berechnungsfaktoren von <strong>0,39, 0,50 und 0,65</strong>. Diese berücksichtigen den Wertzuwachs durch eine höhere Ausnützung in vereinfachter Form und sind nicht mit den baurechtlichen Ausnützungsziffern gleichzusetzen.</p>
+      </section>
+      <section class="wr-methodik-chapter" aria-labelledby="methodik-4">
+      <h3 id="methodik-4">4. Wie zuverlässig ist die Schätzung?</h3>
+      <p>Wohnradar ermöglicht eine rasche Einschätzung des Baulandwerts, auch wenn keine zuverlässigen örtlichen Verkaufsstatistiken vorliegen.</p>
+      <p>Das Modell wurde anhand amtlicher Baulandpreise überprüft. Dennoch können die tatsächlichen Preise erheblich vom berechneten Wert abweichen.</p>
+      <p>Entscheidend sind insbesondere die genaue Lage, die Erschliessung, die Grundstücksform, die Topografie und die zulässige Bebauung. Diese Eigenschaften können innerhalb derselben Gemeinde stark variieren.</p>
+      <p>Wohnradar zeigt deshalb neben dem mittleren Baulandpreis eine Preisspanne für schlechtere und bessere Lagen.</p>
+      <p><strong>Die Schätzung dient der Orientierung und ersetzt kein individuelles Verkehrswertgutachten.</strong></p>
+      </section>
+      <section class="wr-methodik-appendix" aria-labelledby="methodik-anhang">
+      <h3 id="methodik-anhang">Mathematischer Anhang</h3>
+      <p>Für Interessierte und Fachpersonen legen wir die Berechnung offen.</p>
+      <h4>1. Immobilienpreisniveau</h4>
+      <p>Wohnradar kombiniert die lokalen EFH-Preise mit den Nettomieten. Diese werden mit einem Kapitalisierungssatz von 3 Prozent in einen rechnerischen Immobilienwert umgerechnet.</p>
+      <div class="wr-methodik-formula" role="group" aria-label="P gleich 0,7 mal H plus 0,3 mal M geteilt durch 0,03"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>P</mi><mo>=</mo><mn>0,7</mn><mi>H</mi><mo>+</mo><mn>0,3</mn><mfrac><mi>M</mi><mn>0,03</mn></mfrac></math></div>
+      <p>Dabei bezeichnet:</p>
+      <ul class="wr-methodik-legend"><li><strong>P:</strong> kombiniertes Immobilienpreisniveau in CHF/m² Wohnfläche</li><li><strong>H:</strong> Medianpreis von Einfamilienhäusern in CHF/m² Wohnfläche</li><li><strong>M:</strong> jährliche Nettomiete in CHF/m² Wohnfläche</li></ul>
+      <h4>2. Landwertanteil</h4>
+      <p>Aus dem Immobilienpreisniveau ergibt sich der rechnerische Landwertanteil:</p>
+      <div class="wr-methodik-formula" role="group" aria-label="L gleich 0,3212595 plus 0,2652819 mal natürlicher Logarithmus von P geteilt durch 10000"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>L</mi><mo>=</mo><mn>0,3212595</mn><mo>+</mo><mn>0,2652819</mn><mo>·</mo><mi mathvariant="normal">ln</mi><mo>(</mo><mfrac><mi>P</mi><mn>10000</mn></mfrac><mo>)</mo></math></div>
+      <p>Der Landwertanteil wird auf mindestens 6,25 und höchstens 62,5 Prozent begrenzt. «ln» bezeichnet den natürlichen Logarithmus.</p>
+      <h4>3. Einwohnerzahl und Bevölkerungsdichte</h4>
+      <p>Der zusätzliche Gemeindefaktor lautet:</p>
+      <div class="wr-methodik-formula" role="group" aria-label="F gleich 0,859 mal E durch 4000 hoch 0,088 mal D durch 500 hoch 0,1383"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>F</mi><mo>=</mo><mn>0,859</mn><mo>·</mo><msup><mrow><mo>(</mo><mfrac><mi>E</mi><mn>4000</mn></mfrac><mo>)</mo></mrow><mn>0,088</mn></msup><mo>·</mo><msup><mrow><mo>(</mo><mfrac><mi>D</mi><mn>500</mn></mfrac><mo>)</mo></mrow><mn>0,1383</mn></msup></math></div>
+      <p>Dabei sind:</p>
+      <ul class="wr-methodik-legend"><li><strong>E:</strong> Einwohnerzahl der politischen Gemeinde</li><li><strong>D:</strong> Einwohner pro km² Gemeindefläche</li><li><strong>F:</strong> daraus berechneter Korrekturfaktor</li></ul>
+      <p>Die Koeffizienten wurden anhand amtlicher Baulandpreisdaten statistisch bestimmt.</p>
+      <h4>4. Baulandpreis</h4>
+      <p>Der geschätzte Quadratmeterpreis des Baulands ergibt sich aus:</p>
+      <div class="wr-methodik-formula" role="group" aria-label="B gleich P mal L mal A mal K von P mal F"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>B</mi><mo>=</mo><mi>P</mi><mo>·</mo><mi>L</mi><mo>·</mo><mi>A</mi><mo>·</mo><mi>K</mi><mo>(</mo><mi>P</mi><mo>)</mo><mo>·</mo><mi>F</mi></math></div>
+      <p>Dabei sind:</p>
+      <ul class="wr-methodik-legend"><li><strong>B:</strong> geschätzter Baulandpreis in CHF/m² Grundstücksfläche</li><li><strong>A:</strong> Ausnützungsfaktor (0,39, 0,50 oder 0,65)</li><li><strong>K(P):</strong> preisabhängiger Korrekturfaktor zwischen 1,09 und 1,17</li><li><strong>P, L und F:</strong> die zuvor erläuterten Grössen</li></ul>
+      <p>Der Faktor <strong>K(P)</strong> steigt mit dem Immobilienpreisniveau. Die Berechnung verwendet folgende Stützpunkte:</p>
+<div aria-label="Stützpunkte des preisabhängigen Korrekturfaktors" class="wr-methodik-table-scroll" role="region" tabindex="0"><table class="wr-methodik-table"><thead><tr><th scope="col">Immobilienpreisniveau P (CHF/m²)</th><th scope="col">K(P)</th></tr></thead><tbody>
+<tr><td>4'000 oder tiefer</td><td>1,09</td></tr>
+<tr><td>6'000</td><td>1,10</td></tr>
+<tr><td>8'000</td><td>1,11</td></tr>
+<tr><td>10'000</td><td>1,13</td></tr>
+<tr><td>12'000</td><td>1,14</td></tr>
+<tr><td>15'000</td><td>1,16</td></tr>
+<tr><td>20'000 oder höher</td><td>1,17</td></tr>
+</tbody></table></div>
+<p>Zwischen zwei Stützpunkten wird der Faktor <strong>linear interpoliert</strong>. Für zwei benachbarte Punkte (P₁, K₁) und (P₂, K₂) gilt:</p>
+<div aria-label="K von P gleich K eins plus P minus P eins geteilt durch P zwei minus P eins mal K zwei minus K eins" class="wr-methodik-formula" role="group"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><mi>K</mi><mo>(</mo><mi>P</mi><mo>)</mo><mo>=</mo><msub><mi>K</mi><mn>1</mn></msub><mo>+</mo><mfrac><mrow><mi>P</mi><mo>−</mo><msub><mi>P</mi><mn>1</mn></msub></mrow><mrow><msub><mi>P</mi><mn>2</mn></msub><mo>−</mo><msub><mi>P</mi><mn>1</mn></msub></mrow></mfrac><mo>·</mo><mo>(</mo><msub><mi>K</mi><mn>2</mn></msub><mo>−</mo><msub><mi>K</mi><mn>1</mn></msub><mo>)</mo></math></div>
+<p>Unter 4'000 CHF/m² bleibt K(P) bei 1,09, ab 20'000 CHF/m² bei 1,17.</p>
+<p><strong>Beispiel:</strong> Bei einem Immobilienpreisniveau von 9000 CHF/m² liegt P genau zwischen 8000 und 10'000 CHF/m². Der Korrekturfaktor beträgt deshalb 1,12.</p>
+      <h4>5. Berechnungsbeispiel</h4>
+      <p>Angenommen wird eine Gemeinde mit einem EFH-Preis von 10'000 CHF/m², einer jährlichen Nettomiete von 300 CHF/m², 4000 Einwohnern und einer Bevölkerungsdichte von 500 Einwohnern/km².</p>
+      <p>Bei mittlerer Ausnützung ergibt sich:</p>
+      <div class="wr-methodik-table-scroll" role="region" aria-label="Methodiktabelle" tabindex="0"><table class="wr-methodik-table"><thead><tr><th scope="col">Berechnungsschritt</th><th scope="col">Ergebnis</th></tr></thead><tbody><tr><td>Kombiniertes Immobilienpreisniveau P</td><td>10'000 CHF/m²</td></tr><tr><td>Landwertanteil L</td><td>32,13 %</td></tr><tr><td>Gemeindefaktor F</td><td>0,859</td></tr><tr><td>Ausnützungsfaktor A</td><td>0,50</td></tr><tr><td>Preisabhängiger Faktor K(P)</td><td>1,13</td></tr></tbody></table></div>
+      <p>Damit beträgt der geschätzte Baulandpreis:</p>
+      <div class="wr-methodik-formula" role="group" aria-label="B gleich 10000 mal 0,3212595 mal 0,50 mal 1,13 mal 0,859"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi>B</mi><mo>=</mo><mn>10000</mn><mo>·</mo><mn>0,3212595</mn><mo>·</mo><mn>0,50</mn><mo>·</mo><mn>1,13</mn><mo>·</mo><mn>0,859</mn></math></div>
+      <p><strong>Ergebnis: rund 1560 Franken pro m² Bauland.</strong></p>
+      </section>
+    </div>
+  </details>
+</section>
+<div class="mobile-estimate-action"><button class="estimate-button" id="estimateButtonMobile" type="button">Verkehrswert bestimmen</button></div></main>
+<div class="result-shell" id="resultShell"><aside aria-live="polite" class="result bauland-result">
+  <div class="bl-title">Geschätzter Baulandpreis</div>
+  <div class="bl-place" id="resultPlace" hidden></div>
+  <div class="bl-use" id="resultUse" hidden>Ausnützung: <strong id="buildLabel"></strong></div>
+  <div class="bl-row"><span>Schlechte Lage</span><strong id="low">—</strong></div>
+  <div class="bl-row bl-median"><span>Mittlerer Baulandpreis</span><strong id="estimate">—</strong></div>
+  <div class="bl-row"><span>Gute Lage</span><strong id="high">—</strong></div>
+  <span hidden id="apartmentPrice"></span>
+</aside><div class="result-actions"><button class="estimate-button" id="estimateButtonDesktop" type="button">Verkehrswert bestimmen</button><div class="post-estimate-actions"><button id="adjustButton" type="button">Nachjustieren</button><button id="uxReset" type="button">Neue Schätzung</button></div></div></div></div>
+
+
+<!-- Weitere Rechner und Informationsseiten: auf Desktop und Smartphone sichtbar. -->
+<nav class="wr-below-nav" aria-label="Weitere Angebote und Informationen">
+  <h2>Weitere Berechnungen</h2>
+  <div class="wr-related-links">
+    <a href="haus.html" aria-label="Haus schätzen"><span class="wr-link-desktop">Haus schätzen</span><span class="wr-link-mobile" aria-hidden="true">Haus</span></a>
+    <a href="wohnungen.html" aria-label="Eigentumswohnung schätzen"><span class="wr-link-desktop">Eigentumswohnung schätzen</span><span class="wr-link-mobile" aria-hidden="true">Wohnung</span></a>
+    <a href="miete.html" aria-label="Miete berechnen"><span class="wr-link-desktop">Miete berechnen</span><span class="wr-link-mobile" aria-hidden="true">Miete</span></a>
+  </div>
+  <div class="wr-info-links" aria-label="Weitere Informationen">
+    <a href="ueber-wohnradar.html">Über Wohnradar</a>
+    <a href="faq.html">FAQ</a>
+    <a href="kontakt.html">Kontakt</a>
+    <a href="impressum.html">Impressum</a>
+  </div>
+</nav>
+
+<script src="javascript_dateien/bauland.js?v=orts20261119"></script>
+<!-- Gemeinsame Ergebnissteuerung: zeigt die Schätzung auch mobil an. -->
+<script src="javascript_dateien/ux-flow.js?v=bauland-mobile-fix-20261121"></script>
+<!-- Footer-Inhalt wird ausschliesslich aus footer.html geladen. -->
+<div id="wohnradar-footer"></div>
+<script src="wohnradar-mobile.js" defer></script>
+<script src="javascript_dateien/wohnradar-slider-schutz.js?v=7" defer></script>
+</body></html>
