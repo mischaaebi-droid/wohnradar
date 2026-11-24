@@ -13,7 +13,7 @@
  const currentType=()=>document.querySelector('input[name="landType"]:checked')?.value||'single';
  const mult={single:.39,medium:.50,multi:.65};
  const mobile=()=>window.matchMedia('(pointer:coarse)').matches;
- let prices={},paths=[],boxes=[],pathIndex=new Map(),selected=null,hovered=null;
+ let priceSource=null,prices={},paths=[],boxes=[],pathIndex=new Map(),selected=null,hovered=null;
  let width=1,height=1,dpr=1,base=1,zoom=1,ox=0,oy=0,midX=0,midY=0,fullW=1,fullH=1;
  let minX=0,minY=0,maxX=0,maxY=0,atlas=null,atlasCtx=null,atlasScale=1,ready=false;
  let raf=0,hoverClock=0;
@@ -84,7 +84,16 @@
  async function load(){if(ready||load.started)return;load.started=true;
   try{
    const resp=await fetch('daten/baulandkarte_daten.json');if(!resp.ok)throw new Error('Kartendaten HTTP '+resp.status);
-   const data=await resp.json();prices=data.preise;
+   const data=await resp.json();
+   priceSource=await window.wrBaulandReady;
+   // Die einzige Preisberechnung erfolgt in bauland.js. Einmaliger Cache im RAM.
+   // 'b' ist der Preis vor dem Ausnützungsfaktor (wie bisher in der Karte).
+   prices=Object.create(null);
+   for(const [plz] of data.polygone){
+     if(prices[plz]!==undefined)continue;
+     const v=priceSource.berechne(plz, 'single');
+     if(v)prices[plz]={b:v.base/.39,n:priceSource.ort(plz),g:priceSource.gemeinde(plz)};
+   }
    const X0=5.83,Y0=48.01,COS=Math.cos(46.85*Math.PI/180);const px=lon=>(lon-X0)*COS*310,py=lat=>(Y0-lat)*310;
    let index=0;
    for(const [plz,geom] of data.polygone){

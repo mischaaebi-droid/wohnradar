@@ -25,6 +25,14 @@
  * sind NICHT separat empirisch validiert.
  */
 
+// Gemeinsame Datenquelle für den Rechner und die Karte. Die Karte wartet darauf,
+// statt die JSON-Dateien erneut abzurufen oder eigene Preise zu verwenden.
+let wrBaulandReadyResolve, wrBaulandReadyReject;
+window.wrBaulandReady = new Promise((resolve, reject) => {
+  wrBaulandReadyResolve = resolve;
+  wrBaulandReadyReject = reject;
+});
+
 async function starteBauland() {
 
   // ==========================================================
@@ -98,16 +106,12 @@ async function starteBauland() {
   // 2. BAULAND-BERECHNUNG – UNVERÄNDERT
   // ==========================================================
 
-  function calc() {
-
-    const d = DATA[plz];
-
-    if (!d || !resultReleased || !placeSelected) return;
-
-    const type = document.querySelector(
-      'input[name="landType"]:checked'
-    ).value;
-
+  // Diese eine Funktion bestimmt den Preis für Karte UND Rechner.
+  // Die mathematische Formel entspricht unverändert der Version vom 24.11.2026.
+  function berechneBaulandpreis(zielPlz, type = 'single') {
+    const d = DATA[zielPlz];
+    if (!d || !Number.isFinite(Number(d.median)) || Number(d.median) <= 0) return null;
+    const plz = zielPlz;
     // Beste getestete Baulandformel: EFH-/Mietpreis-Mischindex und Gemeindefaktor.
     // Alle 2110 Gemeinden: einheitlich BFS STATPOP 2025.
     // Bei nicht zuordenbaren PLZ oder fehlenden Immobilienwerten gilt die bisherige Preisberechnung.
@@ -173,6 +177,29 @@ async function starteBauland() {
     const base = p * share *
       ({single: .39, medium: .50, multi: .65}[type] ?? .39) *
       baulandKorrektur(p) * gemeindefaktor;
+
+    return {base, p, mitGemeindefaktor};
+  }
+
+  // Nur einmal laden und berechnen: Karte und Rechner erhalten dieselben Werte.
+  // Keine zweite Preisliste, keine zweite Berechnungsimplementierung.
+  window.wrBaulandPreise = {
+    berechne: berechneBaulandpreis,
+    ort: zielPlz => DATA[zielPlz]?.ort || '',
+    gemeinde: zielPlz => {
+      const bfs = PLZ_GEMEINDE[zielPlz];
+      return EINWOHNER[bfs]?.gemeinde || '';
+    }
+  };
+  wrBaulandReadyResolve(window.wrBaulandPreise);
+
+  function calc() {
+    const d = DATA[plz];
+    if (!d || !resultReleased || !placeSelected) return;
+    const type = document.querySelector('input[name="landType"]:checked').value;
+    const ergebnis = berechneBaulandpreis(plz, type);
+    if (!ergebnis) return;
+    const {base, p, mitGemeindefaktor} = ergebnis;
 
     // Nachvollziehbarkeit für technische Qualitätssicherung.
     // Wichtig: Keine unvollständigen Demografiewerte als 0 interpretieren.
@@ -299,6 +326,7 @@ async function starteBauland() {
 // ============================================================
 
 starteBauland().catch(error => {
+  wrBaulandReadyReject(error);
 
   console.error(
     'Bauland:',
