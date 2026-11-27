@@ -1,0 +1,33 @@
+/* Wohnradar – gemeinsame Darstellung Haus, Eigentumswohnung, Miete. */
+/* Diese Datei nur auf den drei genannten Rechnerseiten einbinden. */
+.wrap > header { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.wrap > header .wr-header-lockup { display:flex; align-items:center; gap:11px; min-width:0; }
+.wrap > header .wr-header-lockup .wr-brand-mark { display:block; width:52px !important; height:52px !important; max-width:none; object-fit:contain; flex:0 0 52px; }
+.wrap > header .wr-header-copy { display:flex; flex-direction:column; align-items:flex-start; gap:2px; min-width:0; }
+.wrap > header .wr-header-copy .wr-brand-name { display:block; line-height:1.15; white-space:nowrap; }
+.wrap > header .wr-header-copy .header-description { display:block; margin:0; padding:0; min-width:0; font-size:13px; font-weight:500; line-height:1.25; white-space:nowrap; }
+.wrap > header .home-link { flex-shrink:0; }
+@media(max-width:700px) {
+ .wrap > header .wr-header-lockup { gap:8px; }
+ .wrap > header .wr-header-lockup .wr-brand-mark { width:48px !important; height:48px !important; flex-basis:48px; }
+ .wrap > header .wr-header-copy .header-description { font-size:12px; }
+}
+/* Einheitliche Pflichtfeld-Hinweise. */
+.house-overview .range:has(.wr-range-invalid),
+.apartment-overview .range:has(.wr-range-invalid),
+.rent-overview .range:has(.wr-range-invalid) { border-color:#b33f39; }
+.house-overview input.wr-range-invalid,
+.apartment-overview input.wr-range-invalid,
+.rent-overview input.wr-range-invalid { outline:2px solid #b33f39; outline-offset:5px; border-radius:5px; }
+.house-overview .wr-required-hint,
+.apartment-overview .wr-required-hint,
+.rent-overview .wr-required-hint { margin-top:7px; color:#a8312e; font-size:12px; line-height:1.4; }
+.house-overview .wr-required-hint[hidden],
+.apartment-overview .wr-required-hint[hidden],
+.rent-overview .wr-required-hint[hidden] { display:none !important; }
+.house-overview .rangehead output.wr-not-selected,
+.apartment-overview .rangehead output.wr-not-selected,
+.rent-overview .rangehead output.wr-not-selected { color:var(--muted,#786761); font-size:13px; font-weight:500; }
+/* Wertanzeige: Haus, Wohnung und Miete; keine Auswirkung auf Bauland/Mietkennzahlen. */
+.result-invoice .invoice-total strong { font-size:clamp(19px,2.2vw,27px); }
+@media(max-width:650px) { .result-invoice .invoice-total strong { font-size:20px; } }
